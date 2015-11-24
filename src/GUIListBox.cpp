@@ -24,7 +24,7 @@ GUIListBox::GUIListBox(int left,int top,int width,int height,bool enabled,bool v
 GUIObject(left,top,width,height,0,NULL,-1,enabled,visible,gravity){
 	//Set the state -1.
 	state=-1;
-	
+
 	//Create the scrollbar and add it to the children.
 	scrollBar=new GUIScrollBar(0,0,16,0,1,0,0,0,0,0,true,false);
 	childControls.push_back(scrollBar);
@@ -33,16 +33,16 @@ GUIObject(left,top,width,height,0,NULL,-1,enabled,visible,gravity){
 bool GUIListBox::handleEvents(int x,int y,bool enabled,bool visible,bool processed){
 	//Boolean if the event is processed.
 	bool b=processed;
-	
+
 	//The GUIObject is only enabled when he and his parent are enabled.
 	enabled=enabled && this->enabled;
 	//The GUIObject is only enabled when he and his parent are enabled.
 	visible=visible && this->visible;
-	
+
 	//Get the absolute position.
 	x+=left;
 	y+=top;
-	
+
 	//Calculate the scrollbar position.
 	scrollBar->left=width-16;
 	scrollBar->height=height;
@@ -58,33 +58,33 @@ bool GUIListBox::handleEvents(int x,int y,bool enabled,bool visible,bool process
 		scrollBar->maxValue=0;
 		scrollBar->visible=false;
 	}
-	
+
 	//Set state negative.
 	state=-1;
-	
+
 	//Check if the GUIListBox is visible, enabled and no event has been processed before.
 	if(enabled&&visible&&!b){
 		//The mouse location (x=i, y=j) and the mouse button (k).
 		int i,j;
 		SDL_GetMouseState(&i,&j);
-		
+
 		//Convert the mouse location to a relative location.
 		i-=x+2;
 		j-=y+2;
-		
+
 		//Check if the mouse is inside the GUIListBox.
 		if(i>=0&&i<width-4&&j>=0&&j<height-4){
 			//Calculate the y location with the scrollbar position.
 			int idx=j/24+scrollBar->value;
-			
+
 			//If the entry isn't above the max we have an event.
 			if(idx>=0&&idx<(int)item.size()){
 				state=idx;
-				
+
 				//Check if the left mouse button is pressed.
 				if(event.type==SDL_MOUSEBUTTONDOWN && event.button.button==SDL_BUTTON_LEFT && value!=idx){
 					value=idx;
-					
+
 					//If event callback is configured then add an event to the queue.
 					if(eventCallback){
 						GUIEvent e={eventCallback,name,this,GUIEventClick};
@@ -92,7 +92,7 @@ bool GUIListBox::handleEvents(int x,int y,bool enabled,bool visible,bool process
 					}
 				}
 			}
-			
+
 			//Check for mouse wheel scrolling.
 			if(event.type==SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_WHEELDOWN && scrollBar->enabled){
 				scrollBar->value+=4;
@@ -105,12 +105,12 @@ bool GUIListBox::handleEvents(int x,int y,bool enabled,bool visible,bool process
 			}
 		}
 	}
-	
+
 	//Process child controls event except for the scrollbar.
 	//That's why i starts at one.
 	for(unsigned int i=1;i<childControls.size();i++){
 		bool b1=childControls[i]->handleEvents(x,y,enabled,visible,b);
-		
+
 		//The event is processed when either our or the childs is true (or both).
 		b=b||b1;
 	}
@@ -121,21 +121,21 @@ void GUIListBox::render(int x,int y,bool draw){
 	//Rectangle the size of the GUIObject, used to draw borders.
 	SDL_Rect r;
 	//There's no need drawing the GUIObject when it's invisible.
-	if(!visible||!draw) 
+	if(!visible||!draw)
 		return;
-	
+
 	//Get the absolute x and y location.
 	x+=left;
 	y+=top;
-	
+
 	//Default background opacity
 	int clr=128;
 	//TODO: Add hover check?
-	
+
 	//Draw the box.
 	Uint32 color=0xFFFFFFFF|clr;
 	drawGUIBox(x,y,width,height,screen,color);
-	
+
 	//We need to draw the items.
 	//The number of items.
 	int m=item.size();
@@ -145,11 +145,11 @@ void GUIListBox::render(int x,int y,bool draw){
 	int i;
 	//The y coordinate the current entries reaches.
 	int j;
-	
+
 	//If the number of items is higer than fits on the screen set the begin value (m) to scrollBar->value+n.
 	if(m>scrollBar->value+n)
 		m=scrollBar->value+n;
-	
+
 	//Loop through the (visible) entries and draw them.
 	for(i=scrollBar->value,j=y+1;i<m;i++,j+=24){
 		//The background color for the entry.
@@ -158,15 +158,15 @@ void GUIListBox::render(int x,int y,bool draw){
 		if(value==i){
 			clr=0xDDDDDDFF;
 		}
-		
+
 		//Check if the current entry is selected. If so draw borders around it.
 		if(state==i)
 			drawGUIBox(x,j-1,width,25,screen,0x00000000);
-		
+
 		//Only draw when clr isn't -1.
 		if(clr!=-1)
 			drawGUIBox(x,j-1,width,25,screen,clr);
-		
+
 		//Now draw the text.
 		const char* s=item[i].c_str();
 		//Make sure the text isn't empty.
@@ -174,17 +174,17 @@ void GUIListBox::render(int x,int y,bool draw){
 			//Render black text.
 			SDL_Color black={0,0,0,0};
 			SDL_Surface *bm=TTF_RenderUTF8_Blended(fontText,s,black);
-			
+
 			//Calculate the text location, center it vertically.
 			r.x=x+4;
 			r.y=j+12-bm->h/2;
-			
+
 			//Draw the text and free the rendered surface.
 			SDL_BlitSurface(bm,NULL,screen,&r);
 			SDL_FreeSurface(bm);
 		}
 	}
-	
+
 	//We now need to draw all the children of the GUIObject.
 	for(unsigned int i=0;i<childControls.size();i++){
 		childControls[i]->render(x,y,draw);
@@ -197,26 +197,26 @@ GUIObject(left,top,width,height,0,NULL,-1,enabled,visible,gravity),animation(0){
 bool GUISingleLineListBox::handleEvents(int x,int y,bool enabled,bool visible,bool processed){
 	//Boolean if the event is processed.
 	bool b=processed;
-	
+
 	//The GUIObject is only enabled when he and his parent are enabled.
 	enabled=enabled && this->enabled;
 	//The GUIObject is only enabled when he and his parent are enabled.
 	visible=visible && this->visible;
-	
+
 	//Get the absolute position.
 	x+=left-gravityX;
 	y+=top;
-	
+
 	state&=~0xF;
 	if(enabled&&visible){
 		//The mouse location (x=i, y=j) and the mouse button (k).
 		int i,j,k;
 		k=SDL_GetMouseState(&i,&j);
-		
+
 		//Convert the mouse location to a relative location.
 		i-=x;
 		j-=y;
-		
+
 		//The selected button.
 		//0=nothing 1=left 2=right.
 		int idx=0;
@@ -231,19 +231,19 @@ bool GUISingleLineListBox::handleEvents(int x,int y,bool enabled,bool visible,bo
 				idx=2;
 			}
 		}
-		
+
 		//If idx is 0 it means the mous doesn't hover any arrow so reset animation.
 		if(idx==0)
 			animation=0;
-		
+
 		//Check if there's a mouse button press or not.
 		if(k&SDL_BUTTON(1)){
-			if(((state>>4)&0xF)==idx) 
+			if(((state>>4)&0xF)==idx)
 				state|=idx;
 		}else{
 			state|=idx;
 		}
-		
+
 		//Check if there's a mouse press.
 		if(event.type==SDL_MOUSEBUTTONDOWN && event.button.button==SDL_BUTTON_LEFT && idx){
 			state=idx|(idx<<4);
@@ -255,7 +255,7 @@ bool GUISingleLineListBox::handleEvents(int x,int y,bool enabled,bool visible,bo
 					if(idx<0||idx>=m) idx=0;
 					if(idx!=value){
 						value=idx;
-						
+
 						//If there is an event callback then call it.
 						if(eventCallback){
 							GUIEvent e={eventCallback,name,this,GUIEventClick};
@@ -267,7 +267,7 @@ bool GUISingleLineListBox::handleEvents(int x,int y,bool enabled,bool visible,bo
 					if(idx<0||idx>=m) idx=m-1;
 					if(idx!=value){
 						value=idx;
-						
+
 						//If there is an event callback then call it.
 						if(eventCallback){
 							GUIEvent e={eventCallback,name,this,GUIEventClick};
@@ -282,11 +282,11 @@ bool GUISingleLineListBox::handleEvents(int x,int y,bool enabled,bool visible,bo
 		//Set state zero.
 		state=0;
 	}
-	
+
 	//Also let the children handle their events.
 	for(unsigned int i=0;i<childControls.size();i++){
 		bool b1=childControls[i]->handleEvents(x,y,enabled,visible,b);
-		
+
 		//The event is processed when either our or the childs is true (or both).
 		b=b||b1;
 	}
@@ -296,52 +296,52 @@ bool GUISingleLineListBox::handleEvents(int x,int y,bool enabled,bool visible,bo
 void GUISingleLineListBox::render(int x,int y,bool draw){
 	//Rectangle the size of the GUIObject, used to draw borders.
 	SDL_Rect r;
-	
+
 	//There's no need drawing the GUIObject when it's invisible.
-	if(!visible) 
+	if(!visible)
 		return;
-	
+
 	//NOTE: logic in the render method since it's the only part that gets called every frame.
 	if((state&0xF)==0x1 || (state&0xF)==0x2){
 		animation++;
 		if(animation>20)
 			animation=-20;
 	}
-	
+
 	//Get the absolute x and y location.
 	x+=left;
 	y+=top;
-	
+
 	if(gravity==GUIGravityCenter)
 		gravityX=int(width/2);
 	else if(gravity==GUIGravityRight)
 		gravityX=width;
-	
+
 	x-=gravityX;
-	
+
 	//Check if the enabled state changed or the caption, if so we need to clear the (old) cache.
 	if(enabled!=cachedEnabled || item[value].compare(cachedCaption)!=0){
 		//Free the cache.
 		SDL_FreeSurface(cache);
 		cache=NULL;
-		
+
 		//And cache the new values.
 		cachedEnabled=enabled;
 		cachedCaption=item[value];
 	}
-	
+
 	//Draw the text.
 	if(value>=0 && value<(int)item.size()){
 		//Get the text.
 		const char* lp=item[value].c_str();
-		
+
 		//Check if the text is empty or not.
 		if(lp!=NULL && lp[0]){
 			if(!cache){
 				//Render black text.
 				SDL_Color black={0,0,0,0};
 				cache=TTF_RenderUTF8_Blended(fontGUI,lp,black);
-				
+
 				//If the text is too wide then we change to smaller font (?)
 				//NOTE: The width is 32px smaller (2x16px for the arrows).
 				if(cache->w>width-32){
@@ -349,18 +349,18 @@ void GUISingleLineListBox::render(int x,int y,bool draw){
 					cache=TTF_RenderUTF8_Blended(fontGUISmall,lp,black);
 				}
 			}
-			
+
 			if(draw){
 				//Center the text both vertically as horizontally.
 				r.x=x+(width-cache->w)/2;
 				r.y=y+(height-cache->h)/2-GUI_FONT_RAISE;
-			
+
 				//Draw the text and free the surface afterwards.
 				SDL_BlitSurface(cache,NULL,screen,&r);
 			}
 		}
 	}
-	
+
 	if(draw){
 		//Draw the arrows.
 		SDL_Rect r2={48,0,16,16};
@@ -375,7 +375,7 @@ void GUISingleLineListBox::render(int x,int y,bool draw){
 			r.x-=abs(animation/2);
 		SDL_BlitSurface(bmGUI,&r2,screen,&r);
 	}
-	
+
 	//We now need to draw all the children of the GUIObject.
 	for(unsigned int i=0;i<childControls.size();i++){
 		childControls[i]->render(x,y,draw);

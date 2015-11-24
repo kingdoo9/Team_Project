@@ -33,7 +33,7 @@ GUIOverlay::GUIOverlay(GUIObject* root,bool dim):root(root),dim(dim){
 	//Now set the GUIObject root to the new root.
 	currentState=this;
 	GUIObjectRoot=root;
-	
+
 	//Dim the background.
 	if(dim){
 		SDL_FillRect(tempSurface,NULL,0);
@@ -65,7 +65,7 @@ void GUIOverlay::enterLoop(bool skip){
 				continue;
 			}
 			GUIObjectHandleEvents(true);
-			
+
 			//Also check for the return, escape or backspace button.
 			//escape = KEYUP.
 			//backspace and return = KEYDOWN.

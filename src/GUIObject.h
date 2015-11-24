@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Me and My Shadow.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+//안지호 수정
 #ifndef GUIOBJECT_H
 #define GUIOBJECT_H
 
@@ -47,9 +47,9 @@ const int GUIGravityCenter=1;
 const int GUIGravityRight=2;
 
 //The event id's.
-//A click event used for e.g. buttons.
+//A click event used for e.g. buttons.(GUI 가 클릭되었을때)
 const int GUIEventClick=0;
-//A change event used for e.g. textboxes.
+//A change event used for e.g. textboxes.(GUI 이벤트가 change 되었을때)
 const int GUIEventChange=1;
 
 
@@ -90,9 +90,9 @@ public:
 	std::string caption;
 
 	//Boolean if the GUIObject is enabled.
-	bool enabled;
+	bool enabled; //사용가능한지
 	//Boolean if the GUIObject is visible.
-	bool visible;
+	bool visible;//보이는지
 
 	//Vector containing the children of the GUIObject.
 	std::vector<GUIObject*> childControls;
@@ -100,7 +100,7 @@ public:
 	//Event callback used to invoke events.
 	GUIEventCallback* eventCallback;
 
-	//Widget's gravity to centering
+	//Widget's gravity to centering (중력 관련 변수)
 	int gravity;
 	int gravityX;
 	bool autoWidth;
@@ -179,7 +179,7 @@ public:
 //kill: Boolean if an SDL_QUIT event may kill the GUIObjectRoot.
 void GUIObjectHandleEvents(bool kill=false);
 
-//A structure containing the needed variables to call an event. (GUI 이벤트)
+//A structure containing the needed variables to call an event. (GUI 이벤트 구조체)
 struct GUIEvent{
 	//Event callback used to invoke the event.
 	GUIEventCallback* eventCallback;

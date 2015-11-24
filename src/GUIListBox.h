@@ -41,7 +41,7 @@ public:
 	//enabled: Boolean if the GUIListBox is enabled or not.
 	//visible: Boolean if the GUIListBox is visisble or not.
 	GUIListBox(int left=0,int Top=0,int width=0,int height=0,bool enabled=true,bool visible=true,int gravity=GUIGravityLeft);
-	
+
 	//Method used to handle mouse and/or key events.
 	//x: The x mouse location.
 	//y: The y mouse location.
@@ -64,7 +64,7 @@ class GUISingleLineListBox:public GUIObject{
 public:
 	//Vector containing the entries of the list.
 	std::vector<std::string> item;
-	
+
 	//Integer used for the animation of the arrow.
 	int animation;
 public:
@@ -76,7 +76,7 @@ public:
 	//enabled: Boolean if the GUIListBox is enabled or not.
 	//visible: Boolean if the GUIListBox is visisble or not.
 	GUISingleLineListBox(int left=0,int top=0,int width=0,int height=0,bool enabled=true,bool visible=true,int gravity=GUIGravityLeft);
-	
+
 	//Method used to handle mouse and/or key events.
 	//x: The x mouse location.
 	//y: The y mouse location.
