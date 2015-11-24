@@ -1,3 +1,5 @@
+// 강승덕 소스 분석
+
 /*
  * Copyright (C) 2011-2012 Me and My Shadow
  *
@@ -32,49 +34,49 @@
 #include <SDL/SDL_mixer.h>
 #include <SDL/SDL_ttf.h>
 
-//Class that represents a moving position for moving blocks.
+//움직이는 블럭을 위한 클래스
 class MovingPosition{
 public:
 	//Integer containing the relative time used to store in the level.
 	int time;
-	//The x location.
+	// x 위치
 	int x;
-	//The x location.
+	// y 위치
 	int y;
 
-	//Constructor.
-	//x: The x position relative to the moving block's position.
-	//y: The y position relative to the moving block's position.
-	//time: The time it takes from the previous position to here.
+	//생성자
+	//x: 움직이는 블럭의 위치에 관련된 x포지션
+	//y: 움직이는 블럭의 위치에 관련된 y포지션
+	//time: 이전 포지션에서 현 포지션까지 걸린 시간
 	MovingPosition(int x,int y,int time);
-	//Destructor.
+	//소멸자
 	~MovingPosition();
 
-	//This will update the moving position.
-	//x: The x position relative to the moving block's position.
-	//y: The y position relative to the moving block's position.
-	void updatePosition(int x,int y);
+	//움직인 위치를 업데이트 시켜주는 함수
+	//x: 움직이는 블럭의 위치에 관련된 x포지션
+	//y: 움직이는 블럭의 위치에 관련된 y포지션
+	void updatePosition(int x,int y); // 포지션 업데이트
 };
 
-//internal tool box class
+//툴 박스 클래스 LevelEditor.cpp 파일에 자세한 내용 있음.
 class LevelEditorToolbox;
 
-//internal selection popup class
+//선택시 팝업 클래스 LevelEditor.cpp 파일에 자세한 내용 있음.
 class LevelEditorSelectionPopup;
 
 //The LevelEditor state, it's based on the Game state.
 class LevelEditor: public Game{
-	friend class LevelEditorToolbox;
-	friend class LevelEditorSelectionPopup;
+	friend class LevelEditorToolbox; //LevelEditorToolbox의 private변수까지 사용가능.
+	friend class LevelEditorSelectionPopup; //LevelEditorSelectionPopup의 private변수까지 사용가능.
 private:
-	//Boolean if the user isplaying/testing the level.
+	//사용자가 플레이중인지 테스트 중인지 알아보는 bool 변수
 	bool playMode;
 
-	//Enumaration containing the tools.
-	//SELECT: The select tool, for selecting/dragging blocks.
-	//ADD: For adding blocks.
-	//REMOVE: For removing blocks.
-	//CONFIGURE: Used to configure special blocks.
+	//tools 안에있는 Enum 함수
+	//SELECT: 블럭의 선택 및 드래그를 위한 변수
+	//ADD: 블럭의 추가를 위한 변수
+	//REMOVE: 블럭의 삭제를 위한 변수
+	//CONFIGURE: 특수 블럭의 상태를 바꾸는 변수
 	enum Tools{
 		SELECT,
 		ADD,
@@ -83,22 +85,22 @@ private:
 
 		NUMBER_TOOLS
 	};
-	//The tool the user has selected.
+	//사용자가 선택한 툴
 	Tools tool;
-	//The toolbar surface.
+	//툴바 화면
 	SDL_Surface* toolbar;
-	//Rectangle the size and location of the toolbar on screen.
+	//화면 툴바의 위치나 사이즈의 사각형 함수
 	SDL_Rect toolbarRect;
 
-	//The editor tool box (if any)
+	//툴박스 클래스
 	LevelEditorToolbox* toolbox;
 
-	//The selection popup (if any)
+	//선택시 팝업 클래스
 	LevelEditorSelectionPopup* selectionPopup;
 
-	//Vector containing pointers to the selected GameObjects.
+	//선택된 GameObject의 포인터를 가지고 있는 vector
 	vector<GameObject*> selection;
-	//The selection square.
+	//네모난 선택 마크
 	SDL_Surface* selectionMark;
 
 	//Surface used for drawing transparent selection/dragging.
@@ -149,7 +151,7 @@ private:
 	bool moving;
 	//Pointer to the moving block that's is being configured.
 	GameObject* movingBlock;
-	
+
 	//Value used for placing the Movespeed label
 	int movingSpeedWidth;
 
