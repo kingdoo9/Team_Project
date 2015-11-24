@@ -1,3 +1,4 @@
+//강승덕 소스분석
 /*
  * Copyright (C) 2011-2012 Me and My Shadow
  *
@@ -57,7 +58,7 @@ using namespace std;
 static int levelTime,levelRecordings;
 static GUIObject *levelTimeProperty,*levelRecordingsProperty;
 
-//Array containing translateble block names
+//블럭들의 이름을 가지고 있는 배열 변수
 static const char* blockNames[TYPE_MAX]={
 	__("Block"),__("Player Start"),__("Shadow Start"),
 	__("Exit"),__("Shadow Block"),__("Spikes"),
@@ -67,7 +68,7 @@ static const char* blockNames[TYPE_MAX]={
 	__("Conveyor Belt"),__("Shadow Conveyor Belt"),__("Notification Block"),__("Collectable")
 };
 
-//Array indicates if block is configurable
+ //블럭이 상태 변경이 가능한지 알려주는 배열 변수
 static const bool isConfigurable[TYPE_MAX]={
 	false,false,false,
 	false,false,false,
@@ -77,7 +78,7 @@ static const bool isConfigurable[TYPE_MAX]={
 	true,true,true,false
 };
 
-//Array indicates if block is linkable
+//블럭이 링크 가능한지 알려주는 배열 변수
 static const bool isLinkable[TYPE_MAX]={
 	false,false,false,
 	false,false,false,
@@ -118,7 +119,7 @@ public:
 	int height(){
 		return 180;
 	}
-	LevelEditorToolbox(LevelEditor* parent){
+	LevelEditorToolbox(LevelEditor* parent){  // 생성자
 		this->parent=parent;
 
 		visible=false;
@@ -718,7 +719,7 @@ LevelEditor::LevelEditor():Game(true){
 
 	toolbox=NULL;
 	selectionPopup=NULL;
-	
+
 	movingSpeedWidth=-1;
 
 	//Load the selectionMark.
@@ -1810,7 +1811,7 @@ void LevelEditor::onClickObject(GameObject* obj,bool selected){
 			movingBlocks[movingBlock].push_back(MovingPosition(x,y,(int)(length*(10/(double)movingSpeed))));
 			return;
 	    }
-	    
+
 	    //Now handle it as if the user pressed enter (show block properties dialog).
 	    onEnterObject(obj);
 	  }
@@ -3187,7 +3188,7 @@ void LevelEditor::renderHUD(){
 				TTF_SizeUTF8(fontText,tfm::format(_("Movespeed: %s"),100).c_str(),&w,NULL);
 				movingSpeedWidth=w+4;
 			}
-		
+
 			//Now render the text.
 			SDL_Color black={0,0,0,0};
 			SDL_Surface* bm=TTF_RenderUTF8_Blended(fontText,tfm::format(_("Movespeed: %s"),movingSpeed).c_str(),black);
@@ -3401,7 +3402,7 @@ void LevelEditor::resize(){
 	placement=SDL_CreateRGBSurface(SDL_SWSURFACE|SDL_SRCALPHA,SCREEN_WIDTH,SCREEN_HEIGHT,32,0x000000FF,0x0000FF00,0x00FF0000,0);
 	SDL_SetColorKey(placement,SDL_SRCCOLORKEY|SDL_RLEACCEL,SDL_MapRGB(placement->format,255,0,255));
 	SDL_SetAlpha(placement,SDL_SRCALPHA,125);
-	
+
 }
 
 //Filling the order array

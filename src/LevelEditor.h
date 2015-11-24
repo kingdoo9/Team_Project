@@ -113,20 +113,20 @@ private:
 	//The current type of block to place in Add mode.
 	int currentType;
 
-	//Boolean if the shift button is pressed.
+	//shift 키가 눌렸는지 확인하는 bool변수
 	bool pressedShift;
-	//Boolean if the left mouse button is pressed.
+	//왼쪽 클릭이 눌렸는지 확인하는 bool변수
 	bool pressedLeftMouse;
-	//Boolean if the mouse is dragged. (Left button pressed and moved)
+	//드래그인지 확인하는 bool변수 (Left button pressed and moved)
 	bool dragging;
 
-	//The camera x velocity.
+	//카메라 x,y축 속도
 	int cameraXvel;
 	int cameraYvel;
 	//SDL_Rect used to store the camera's location when entering playMode.
 	SDL_Rect cameraSave;
 
-	//Boolean if the selection is dragged.
+	//선택된 것이 드래그 되었는지 확인하는 bool 함수
 	bool selectionDrag;
 	//Pointer to the gameobject that's the center of the drag.
 	GameObject* dragCenter;
@@ -137,22 +137,22 @@ private:
 
 	//Vector containing the trigger GameObjects.
 	map<GameObject*,vector<GameObject*> > triggers;
-	//Boolean used in configure mode when linking triggers with their targets.
+	//설정 모드에서 트리거와 타켓이 연결되었을때 사용하는 bool 변수
 	bool linking;
 	//Pointer to the trigger that's is being linked.
 	GameObject* linkingTrigger;
 
-	//Vector containing the moving GameObjects.
+	//움직이는 게임오브젝트를 포함하는 변수
 	map<GameObject*,vector<MovingPosition> > movingBlocks;
 	//Integer containing the speed the block is moving for newly added blocks.
-	//The movingSpeed is capped at 100.
+	//움직임 속도. 100으로 고정
 	int movingSpeed;
 	//Boolean used in configure mode when configuring moving blocks.
 	bool moving;
 	//Pointer to the moving block that's is being configured.
 	GameObject* movingBlock;
 
-	//Value used for placing the Movespeed label
+	//마우스 가로 스피드
 	int movingSpeedWidth;
 
 	//The clipboard.
