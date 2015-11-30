@@ -269,49 +269,49 @@ void MusicManager::pickMusic(){
 		return;
 	}
 
-	//Shuffle the list.
+	// 목록을 섞는다.
 	random_shuffle(list.begin(),list.end());
 
-	//Now loop through the music and search the oldest.
+	// 루프는 통과한다 음악을 그리고 찾는다 가장 오래된걸
 	Music* oldest=NULL;
 	for(unsigned int i=0;i<list.size();i++){
-		//Check if oldest is set.
+		// 만약 가장 오래된 것이 세팅됐는지 체크한다.
 		if(oldest==NULL){
-			//It isn't so pick the first music.
+			// 그것을 첫번째 음악을 선택하지 않는다.
 			oldest=musicCollection[list[i]];
 			continue;
 		}
 
-		//Check if this song is null.
+		// 만약 이 음악이 비었으면 체크한다.
 		if(musicCollection[list[i]]==NULL)
 			continue;
 
-		//Check if this music is never played.
+		// 만약 이 음악이 절대 실행되지 않으면 체크한다.
 		if(musicCollection[list[i]]->lastTime==-1){
 			oldest=musicCollection[list[i]];
-			//And break out.
+			// 그리고 빠져나간다.
 			break;
 		}
 
-		//Check if this music is older.
+		// 만약 이 음악이 더 오래됐으면 체크한다.
 		if(musicCollection[list[i]]->lastTime<oldest->lastTime){
 			oldest=musicCollection[list[i]];
 		}
 	}
 
-	//Check if oldest ins't null.
+	// 만약 가장 오래된 것이 비어있으면 체크한다.
 	if(oldest!=NULL){
 		playMusic(oldest->name);
-		//Set the lastTime and increase it.
+		// 마지막 시간과 증가한것을 정리한다.
 		oldest->lastTime=lastTime;
 		lastTime++;
 	}
 }
 
 void MusicManager::musicStopped(){
-	//Check if there's a music to play.
+	// 플레이하기 위한 음악이있는지 체크한다.
 	if(!nextMusic.empty()){
-		//Check if the music is in the collection.
+		// 만약 음악이 모음집에 있으면 체크한다.
 		Music* music=musicCollection[nextMusic];
 		if(music==NULL){
 			cerr<<"ERROR: Unable to play music "<<nextMusic<<endl;
@@ -326,32 +326,33 @@ void MusicManager::musicStopped(){
 
 		Mix_VolumeMusic(music->volume*float(atoi(getSettings()->getValue("music").c_str())/float(MIX_MAX_VOLUME)));
 
-		//Set playing.
+		// playing 세팅
 		playing=music;
 
-		//Now reset nextMusic.
+		// 다음 음악으로 리셋한다.
 		nextMusic.clear();
 	}else{
-		//Check what kind of loop.
+
+		// 어떤 종류의 루프인지 체크한다.
 		if(playing->loop!=NULL){
 			Mix_FadeInMusicPos(playing->loop,-1,0,playing->loopStart);
 		}else{
-			//This is for looping the end of music.
+			// 이것은 음악의 끝을  위한 루프이다.
 			Mix_FadeInMusicPos(playing->music,0,0,playing->loopStart);
 		}
 	}
 }
 
 void MusicManager::setMusicList(const string &list){
-	//Check if the list exists.
+	// 만약 목록이 존재하면 체크한다.
 
 }
 
 vector<string> MusicManager::createCredits(){
-	//Vector that will be returned.
+	// 동아오는 벡터
 	vector<string> result;
 
-	//Loop through the music tracks.
+	// 루프는 음악 트랙을 통과한다.
 	std::map<std::string,Music*>::iterator it;
 	for(it=musicCollection.begin();it!=musicCollection.end();it++){
 		result.push_back("    - "+it->second->trackName);
@@ -359,6 +360,7 @@ vector<string> MusicManager::createCredits(){
 		result.push_back("        Attribution: "+it->second->author);
 	}
 
+	// 그리고 결과를 반환한다.
 	//And return the result.
 	return result;
 }
