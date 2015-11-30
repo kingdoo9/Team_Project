@@ -1,3 +1,4 @@
+//신수빈
 /*
  * Copyright (C) 2012 Me and My Shadow
  *
@@ -26,115 +27,112 @@
 #include <map>
 #include <vector>
 
-//Class for loading and playing the music.
+// 음악을 로딩해오거나 실행하기 위한 함수이다.
 class MusicManager{
-private:  
-	//This structure is used to hold music information.
+private:
+	// 이 구조체는 음악 정보들을 담기위해 사용된다.
 	struct Music{
-		//Pointer to the actual music.
+		// 음악 포인터
 		Mix_Music* music;
-		//Pointer to the loop music, if any.
+
+		// 음악이 반복된다면, 음악의 반복을 가르치는 포인터
 		Mix_Music* loop;
-		
-		//String containing the name of the music.
-		//This is the same name as in the musicCollection.
-		std::string name;	
-		
-		//String containing the track name of the music.
-		//This is the name given by the author.
+
+		// string이 음악의 이름을 포함한다.
+		// 음악모아놓은것과 같은 이름
+		std::string name;
+
+
+		// 음악 목록이름들을 포함한 string
 		std::string trackName;
-		//String containing the name of the author.
+
+		// 저자의 이름을 포함하는 string
 		std::string author;
-		//String containing the license the music is released under.
+		// 음악의 저작권을 포함하는 string
 		std::string license;
-		
-		//Integer containing the time where to start playing.
+
+		// 어디서 플레이를 시작한 시간을 포함하는 정수형
 		int start;
-		
-		//The volume to play the music with.
-		//Scale 0-128.
+
+		// 플레이할때 음악의 볼륨    범위는 0~128
 		int volume;
-		
-		//Integer containing the loopstart.
+
+		// 음악반복을 포함하는 정수형
 		int loopStart;
-		//Integer containing the loopend.
-		//NOTE: loopend doesn't work and is thus ignored.
+		// 음악반복의 끝을 포함하는 정수형
 		int loopEnd;
-		
-		//Integer used to keep track when which music was played.
+
+		// 각 음악들이 플레이될때 목록을 유지하는데 사용되는 정수형
 		int lastTime;
 	};
 public:
-	//Constructor.
+	// 구조체
 	MusicManager();
-	//Destructor.
+	// 구조체 파괴
 	~MusicManager();
-	
-	//Destroys the music.
+
+	// 음악을 파괴할때
 	void destroy();
-	
-	//Method that will either disable or enable music.
-	//enable: Boolean if the musicManager should be enabled or not.
+
+	//각각 음악을 틀게하거나 안틀게하는 함수
+	// 틀게하는거 : boolean형 음악관리자가 틀게하거나 안틀게한다.
 	void setEnabled(bool enable=true);
-	
-	//Method that will set the volume of the music.
-	//NOTE: The set volume isn't presistent, only use this to update the volume after a change to the music setting.
-	//volume: The new volume.
+
+	// 음악의 볼륨을 세팅하는 기능
 	void setVolume(int volume);
-	
-	//This method will load one music file and add it to the collection.
-	//file: The filename of the music file.
-	//Returns: String containing the loaded music comma sperated, it's empty if it fails.
+
+	// 이 기능은 음악파일 하나를 불러오고 불러온 음악을 목록에 추가한다.
+  // file : 이 음악파일의 파일이름
+	// returns : 불러온 음악을 콤마로 분리 실패하면 그 음악은 비어있다 >> 이걸 포함하는 string
 	std::string loadMusic(const std::string &file);
-	
-	//This method will load from a music list.
-	//file: The filename of the music list file.
-	//Returns: True if no error occurs.
+
+	// 이 method는 음악 목록으로부터 불러온다.
+	// file ; 음악 리스트 파일의 파일이름
+	// returns : 만약 에러가 없으면 참이다.
 	bool loadMusicList(const std::string &file);
-	
-	//This method will start playing a music file.
-	//name: The name of the song.
-	//fade: Boolean if it should fade the current one out or not.
+
+	// 이 method는 음악 파일을 실행한다.
+	// name : 노래의 이름
+	// fade : 만약 희미해진 현재 하나가 나가거나 아니면 boolean
 	void playMusic(const std::string &name,bool fade=true);
-	
-	//This method will pick music from the current music list.
+
+	// 이 method는 현재 음악 목록에서 음악을 고른다.
 	void pickMusic();
-	
-	//Method that will be called when a music stopped.
+
+	// 음악이 멈췄을때 불러오는 method
 	void musicStopped();
-	
-	//Set the music list.
-	//list: The name of the list.
+
+	// 음악 목록을 정리해준다.
+	// list : 목록의 이름
 	void setMusicList(const std::string &list);
 
-	//Method that will create credits text for the (loaded) music tracks.
-	//NOTE: This is only used by the Credits screen.
-	//Returns: A vector containing the lines of credits.
+	// 음악목록들의 크래딧을 생성하는 기능
+	// returns : 크래딧의 줄을 함하는 vector
 	std::vector<std::string> createCredits();
 private:
-	//Boolean if the MusicManager is enabled or not.
-	//The default value is false meaning that the MusicManager has to be enabled before the music starts.
+	//  만약 음악관리자가 실행하거나 안되는 경우 boolean형
+	// 이 default값이 잘못된 값이라면 음악관리자는 가능할 것이다. 실행하기 전에
 	bool enabled;
-	
-	//Integer that is used to keep track of the last played song.
+
+	// 마지막 플레이된 노래의 리스트를 보존하는 정수형
 	int lastTime;
-	
-	//Pointer to the music struct that is currently playing.
+
+	// 최근 실행된 음악 구조체를 가르킴
 	Music* playing;
-	
-	//String containing the name of the music to play when the previous one stopped.
-	//This means that it will be checked in the musicStopped method.
+
+	// 하나가 멈추기 전에 실행되는 음악의 이름을 포함하는 string이다.
+	//  이것은 그것이 음악멈추는 method 에서 체크된다는것을 의미한다.
 	std::string nextMusic;
-	
-	//String containing the name of the current music list.
+
+	// 현재 음악목록의 이름을 포함하는 string
 	std::string currentList;
-	
-	//Map containing the music.
-	//The key is the name of the music and the value is a pointer to the Mix_Music.
+
+	// 음악을 포함하는 map
+	// key는 음악의 이름이고, 값은 Mix_Music의 포인터이다.
 	std::map<std::string,Music*> musicCollection;
-	
-	//Map containing the music lists.
-	//The key is the name of the list and the value is an array of music names.
+
+	// 음악목록을 포함하는 map
+	// key는 목록의 이름이고 값은 음악 이름들의 배열이다.
 	std::map<std::string,std::vector<std::string> > musicLists;
 };
 

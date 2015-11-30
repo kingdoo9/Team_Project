@@ -38,12 +38,12 @@ MusicManager::MusicManager(){
 }
 
 MusicManager::~MusicManager(){
-	//We call destroy().
+	// destroy()를 불러온다.
 	destroy();
 }
 
 void MusicManager::destroy(){
-	//Loop through the imageCollection and free them.
+	// 이미지 모음들을 순환하고 그것들을 자유로이한다.
 	std::map<std::string,Music*>::iterator i;
 	for(i=musicCollection.begin();i!=musicCollection.end();++i){
 		if(i->second!=NULL){
@@ -54,24 +54,24 @@ void MusicManager::destroy(){
 		}
 	}
 	playing=NULL;
-	
-	//And clear the collection and the lists.
+
+	// 모아놓은 것들과 목록들을 클리어한다.
 	musicCollection.clear();
 	musicLists.clear();
 }
 
 void MusicManager::setEnabled(bool enable){
-	//Set the new status.
+	// 새로운 상태로 세팅한다.
 	if(enabled!=enable)
 		enabled=enable;
 	else
 		return;
-  
+
 	if(enable){
-		//It got turned on, so start the menu music.
+		// 켜지면 메뉴의 음악을 시작한다.
 		playMusic("menu",false);
 	}else{
-		//Stop the current music.
+		// 현재의 음악을 멈춘다.
 		Mix_HaltMusic();
 		Mix_VolumeMusic(atoi(getSettings()->getValue("music").c_str()));
 	}
@@ -82,14 +82,14 @@ void MusicManager::setVolume(int volume){
 }
 
 string MusicManager::loadMusic(const std::string &file){
-	//Open the .music file.
+	// .음악파일을 연다.
 	ifstream musicFile;
 	musicFile.open(file.c_str());
 	string returnString="";
-	
-	//Check if the file exists.
+
+	// 파일이 존재하면 체크한다.
 	if(musicFile){
-		//Now parse the file.
+		// 파일을 넘겨준다.
 		TreeStorageNode obj;
 		{
 			POASerializer objSerializer;
@@ -97,21 +97,22 @@ string MusicManager::loadMusic(const std::string &file){
 				cerr<<"ERROR: Invalid file format of music description file."<<endl;
 			}
 		}
-		
-		//Loop through the entries.
+
+		// 입장을 통해 순환한다.
 		for(unsigned int i=0;i<obj.subNodes.size();i++){
 			TreeStorageNode* obj1=obj.subNodes[i];
 			if(obj1==NULL)
 				continue;
 			if(obj1->value.size()>=1 && obj1->name=="music"){
-				//Make sure that this music isn't already loaded.
+				// 이 음악이 이미 불러오지 않았는지 확인한다.
 				map<string,Music*>::iterator it=musicCollection.find(obj1->value[0]);
 				if(it==musicCollection.end()){
+					// 
 					//We've found an entry for a music file.
 					Music* music=new Music;
 					music->music=NULL;
 					music->loop=NULL;
-					
+
 					//Load some data.
 					for(map<string,vector<string> >::iterator i=obj1->attributes.begin();i!=obj1->attributes.end();++i){
 						if(i->first=="file"){
@@ -144,15 +145,15 @@ string MusicManager::loadMusic(const std::string &file){
 							music->loopEnd=(atoi(i->second[0].c_str()));
 						}
 					}
-					
+
 					//Set the default value for lastTime.
 					music->lastTime=-1;
 					music->name=obj1->value[0];
-					
+
 					//Now add it to the collection.
 					musicCollection[obj1->value[0]]=music;
 				}
-				
+
 				//Add the name of the music to the return string even if it's already loaded.
 				//This is to allow music to be in multiple music lists.
 				if(!returnString.empty())
@@ -161,7 +162,7 @@ string MusicManager::loadMusic(const std::string &file){
 			}
 		}
 	}
-	
+
 	//Return the return string.
 	return returnString;
 }
@@ -170,7 +171,7 @@ bool MusicManager::loadMusicList(const std::string &file){
 	//Open the .list file.
 	ifstream musicFile;
 	musicFile.open(file.c_str());
-	
+
 	//Check if the file exists.
 	if(musicFile){
 		//Now parse the file.
@@ -182,7 +183,7 @@ bool MusicManager::loadMusicList(const std::string &file){
 				return false;
 			}
 		}
-		
+
 		//Get the name of the list.
 		std::string name;
 		{
@@ -194,12 +195,12 @@ bool MusicManager::loadMusicList(const std::string &file){
 				return false;
 			}
 		}
-		
+
 		//Check if the list isn't already loaded.
 		std::map<std::string,std::vector<std::string> >::iterator it=musicLists.find(name);
 		if(it!=musicLists.end())
 			return true;
-		
+
 		//Loop through the entries.
 		for(unsigned int i=0;i<obj.subNodes.size();i++){
 			TreeStorageNode* obj1=obj.subNodes[i];
@@ -224,7 +225,7 @@ bool MusicManager::loadMusicList(const std::string &file){
 		cerr<<"ERROR: Unable to open music list file "<<file<<endl;
 		return false;
 	}
-	
+
 	//Nothing went wrong so return true.
 	return true;
 }
@@ -233,14 +234,14 @@ void MusicManager::playMusic(const std::string &name,bool fade){
 	//Make sure music is enabled.
 	if(!enabled)
 		return;
-	
+
 	//Check if the music is in the collection.
 	Music* music=musicCollection[name];
 	if(music==NULL){
 		cerr<<"ERROR: Unable to play music "<<name<<endl;
 		return;
 	}
-	
+
 	//Now check if we should fade the previous one out.
 	if(fade){
 	  	Mix_FadeOutMusic(375);
@@ -253,7 +254,7 @@ void MusicManager::playMusic(const std::string &name,bool fade){
 			Mix_FadeInMusicPos(music->music,0,0,music->start);
 		}
 		Mix_VolumeMusic(music->volume*float(atoi(getSettings()->getValue("music").c_str())/float(MIX_MAX_VOLUME)));
-		
+
 		//Set the playing pointer.
 		playing=music;
 	}
@@ -266,10 +267,10 @@ void MusicManager::pickMusic(){
 		cerr<<"ERROR: Unkown music list "<<currentList<<endl;
 		return;
 	}
-	
+
 	//Shuffle the list.
 	random_shuffle(list.begin(),list.end());
-	
+
 	//Now loop through the music and search the oldest.
 	Music* oldest=NULL;
 	for(unsigned int i=0;i<list.size();i++){
@@ -279,24 +280,24 @@ void MusicManager::pickMusic(){
 			oldest=musicCollection[list[i]];
 			continue;
 		}
-		
+
 		//Check if this song is null.
 		if(musicCollection[list[i]]==NULL)
 			continue;
-		
+
 		//Check if this music is never played.
 		if(musicCollection[list[i]]->lastTime==-1){
 			oldest=musicCollection[list[i]];
 			//And break out.
 			break;
 		}
-		
+
 		//Check if this music is older.
 		if(musicCollection[list[i]]->lastTime<oldest->lastTime){
 			oldest=musicCollection[list[i]];
 		}
 	}
-	
+
 	//Check if oldest ins't null.
 	if(oldest!=NULL){
 		playMusic(oldest->name);
@@ -315,18 +316,18 @@ void MusicManager::musicStopped(){
 			cerr<<"ERROR: Unable to play music "<<nextMusic<<endl;
 			return;
 		}
-		
+
 		if(music->loopStart<=0){
 			Mix_FadeInMusicPos(music->music,-1,375,music->start);
 		}else{
 			Mix_FadeInMusicPos(music->music,0,375,music->start);
 		}
-		
+
 		Mix_VolumeMusic(music->volume*float(atoi(getSettings()->getValue("music").c_str())/float(MIX_MAX_VOLUME)));
-		
+
 		//Set playing.
 		playing=music;
-		
+
 		//Now reset nextMusic.
 		nextMusic.clear();
 	}else{
@@ -342,7 +343,7 @@ void MusicManager::musicStopped(){
 
 void MusicManager::setMusicList(const string &list){
 	//Check if the list exists.
-	
+
 }
 
 vector<string> MusicManager::createCredits(){
