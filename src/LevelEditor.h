@@ -167,13 +167,13 @@ private:
 	//Pointer to the object that is being configured.
 	GameObject* configuredObject;
 
-	//String containing the levelTheme.
+	//레벨테마를 포함하는 스트링
 	std::string levelTheme;
 
 	//Integer containing the button of which a tool tip should be shown.
 	int tooltip;
 
-	//GUI event handling is done here.
+	//GUI 이벤트 핸들링이 이루어지는 장소
 	void GUIEventCallback_OnEvent(std::string name,GUIObject* obj,int eventType);
 
 	//Method that will let you configure the levelSettings.

@@ -1,4 +1,4 @@
-/*
+/* 코드분석자 : 60142270 남채린
  * Copyright (C) 2011-2012 Me and My Shadow
  *
  * This file is part of Me and My Shadow.
@@ -67,6 +67,7 @@ public:
 	//Constructor.
 	ThemeObjectInstance():picture(NULL),parent(NULL),animation(0),savedAnimation(0){}
 	
+	// TimeObject를 그리는 함수
 	//Method used to draw the ThemeObject.
 	//dest: The destination surface to draw the ThemeObject on.
 	//x: The x location on the dest surface.
@@ -74,9 +75,11 @@ public:
 	//clipRect: Rectangle used to clip.
 	void draw(SDL_Surface* dest,int x,int y,SDL_Rect* clipRect=NULL);
 	
+	// 애니메이션을 업데이트 해주는 함수
 	//Method that will update the animation.
 	void updateAnimation();
 	
+	// 애니메이션을 리셋시켜주는 함수
 	//Method that will reset the animation.
 	//save: Boolean if the saved animation should be deleted.
 	void resetAnimation(bool save){
