@@ -27,48 +27,48 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_ttf.h>
 
-//Debug the game record file.
-//#define RECORD_FILE_DEBUG
+// 게임 기록파일을 디버그한다.
 
 class GameObject;
 class Game;
 
-//The different player buttons.
-//The right arrow.
+// 다른 player의 버튼
+// 오른쪽 화살표
 const int PlayerButtonRight=0x01;
-//The left arrow.
+// 왼쪽 화살표
 const int PlayerButtonLeft=0x02;
-//The up arrow for jumping.
+// 점프를 위한 위로 화살표
 const int PlayerButtonJump=0x04;
-//The down arrow for actions.
+// 움직임을 위한 아래화살표
 const int PlayerButtonDown=0x08;
-//space bar for recording. (Only in recordButton)
+// 녹화을 위핸 스페이스바
 const int PlayerButtonSpace=0x10;
 
 class Player{
 protected:
-	//Vector used to store the player actions in when recording.
-	//These can be given to the shadow so he can execute them.
+	// 벡터는 player의 움직임을 저장하는데 사용된다. 녹화할 때
+	// 이건 그림자에게 줄수있게 하고 그는 정확히 그들을 할 수 있다.
 	std::vector<int> playerButton;
 
 private:
-	//Vector used to record the whole game play.
-	//And saved record in checkpoint.
+	// 벡터는 모든 게임의 플레이를 기록하는데 사용한다.
+	// 그리고 체크토인트를 기록해서 저장한다.
 	std::vector<int> recordButton,savedRecordButton;
 
-	//record index. -1 means read input from keyboard,
-	//otherwise read input from recordings (recordButton[recordIndex]).
+	// 기록 인덱스 : -1은 키보드의 입력을 읽어들이는 것을 의미한다.
+	// 다른의미로 녹화한 입력을 읽어들인다.
 	int recordIndex;
 
-	//Vector containing squares along the path the player takes when recording.
-	//It will be drawn as a trail of squares.
+	// 벡터는 포함한다. 네모들의 길을 따라서 player는 가진다 녹화할때
+	// 그것은 네모의 흔적들로 그려진다.
 	std::vector<SDL_Rect> line;
 
-	//Boolean if the player called the shadow to copy his moves.
+	// 만약 player가 그의 움직임을 복사한 그림자를 호출하면 boolean형
 	bool shadowCall;
-	//Boolean if the player is recording his moves.
+	// 만약 player가 그의 움직임을 녹화하면 boolean형
 	bool record;
-	
+
+	// 
 	//The following variables are to store a state.
 	//Rectangle containing the players location.
 	SDL_Rect boxSaved;
@@ -87,11 +87,11 @@ private:
 	int xVelSaved;
 	//The y velocity.
 	int yVelSaved;
-	
+
 protected:
 	//Rectangle containing the player's location.
 	SDL_Rect box;
-	
+
 	//The x and y velocity.
 	int xVel, yVel;
 	//The base x and y velocity, used for standing on moving blocks.
@@ -112,7 +112,7 @@ protected:
 	Mix_Chunk* errorSound;
 	//Sound played when the player picks up a collectable.
 	Mix_Chunk* collectSound;
-	
+
 	//Boolean if the player is in the air.
 	bool inAir;
 	//Boolean if the player is (going to) jump(ing).
@@ -123,7 +123,7 @@ protected:
 	bool canMove;
 	//Boolean if the player is alive/
 	bool dead;
-	
+
 	//The direction the player is walking, 0=right, 1=left.
 	int direction;
 	//Integer containing the state of the player.
@@ -143,10 +143,10 @@ protected:
 	bool spaceKeyPressed;
 	//Pointer to the object that is currently been stand on by the player.
 	//This is always a valid pointer.
-	GameObject* objCurrentStand; 
+	GameObject* objCurrentStand;
 	//Pointer to the object the player stood last on.
 	//NOTE: This is a weak reference only.
-	GameObject* objLastStand; 
+	GameObject* objLastStand;
 	//Pointer to the teleporter the player last took.
 	//NOTE: This is a weak reference only.
 	GameObject* objLastTeleport;
@@ -185,19 +185,19 @@ public:
 	void move(std::vector<GameObject*> &levelObjects);
 	//Method used to check if the player can jump and executes the jump.
 	void jump();
-	
+
 	//This method will render the player to the screen.
 	void show();
 	//Method that stores the actions if the player is recording.
 	void shadowSetState();
-	
+
 	//Method that will reset the state to 0.
 	virtual void stateReset();
-	
+
 	//This method checks the player against the other to see if they stand on eachother.
 	//other: The shadow or the player.
 	void otherCheck(class Player* other);
-	
+
 	//Method that will ease the camera so that the player is in the center.
 	void setMyCamera();
 	//This method will reset the player to it's initial position.
@@ -207,9 +207,9 @@ public:
 	//Returns: SDL_Rect containing the player's location.
 	SDL_Rect getBox();
 
-	//This method will 
+	//This method will
 	void shadowGiveState(class Shadow* shadow);
-	
+
 	//Method that will save the current state.
 	//NOTE: The special <name>Saved variables will be used.
 	virtual void saveState();
@@ -225,13 +225,13 @@ public:
 	//Method that will swap the state of the player with the other.
 	//other: The player or the shadow.
 	void swapState(Player* other);
-	
+
 	//Check if this player is in fact the shadow.
 	//Returns: True if this is the shadow.
 	inline bool isShadow(){
 		return shadow;
 	}
-	
+
 	//Let the player die when he falls of or hits spikes.
 	//animation: Boolean if the death animation should be played, default is true.
 	void die(bool animation=true);
