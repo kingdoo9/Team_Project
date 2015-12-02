@@ -54,7 +54,7 @@ class ThemeCharacter;
 //Instance class of a ThemeObject, this is used by the other Instance classes.
 class ThemeObjectInstance{
 public:
-	//Pointer to the picture.
+	//사진을 가리키는 포인터
 	ThemePicture* picture;
 	//Pointer to the parent the object an instance os is.
 	ThemeObject* parent;
