@@ -312,7 +312,7 @@ public:
 
 class LevelEditorSelectionPopup{
 private:
-	//The parent object
+	//부모 오브젝트
 	LevelEditor* parent;
 
 	//The position of window
@@ -321,7 +321,7 @@ private:
 	//GUI image
 	SDL_Surface *bmGUI;
 
-	//The selection
+	//선택된 게임오브젝트
 	std::vector<GameObject*> selection;
 
 	//The scrollbar
@@ -399,7 +399,7 @@ public:
 		highlightedObj=NULL;
 		highlightedBtn=0;
 
-		//calc window size
+		//윈도우 크기를 계산
 		startRow=0;
 		showedRow=selection.size();
 		int m=SCREEN_HEIGHT/64-1;
@@ -417,7 +417,7 @@ public:
 
 		updateScrollBar();
 
-		//Load the gui images.
+		//gui image 로드
 		bmGUI=loadImage(getDataPath()+"gfx/gui.png");
 	}
 	~LevelEditorSelectionPopup(){
@@ -445,12 +445,12 @@ public:
 		//background
 		drawGUIBox(rect.x,rect.y,rect.w,rect.h,screen,0xFFFFFFFFU);
 
-		//get mouse position
+		//마우스 위치를 얻어옴.
 		int x,y;
 		SDL_GetMouseState(&x,&y);
 		SDL_Rect mouse={x,y,0,0};
 
-		//the tool tip of item
+		//item의 tooltip
 		SDL_Rect tooltipRect;
 		string tooltip;
 
@@ -461,7 +461,7 @@ public:
 		highlightedObj=NULL;
 		highlightedBtn=0;
 
-		//draw avaliable item
+		//사용 가능한 아이템 draw
 		for(int i=0;i<showedRow;i++){
 			int j=startRow+i;
 			if(j>=(int)selection.size()) break;
@@ -477,13 +477,13 @@ public:
 
 			int type=selection[j]->type;
 
-			//draw tile picture
+			//TILE 그림을 그려준다.
 			ThemeBlock* obj=objThemes.getBlock(type);
 			if(obj){
 				obj->editorPicture.draw(screen,r.x+7,r.y+7);
 			}
 
-			//draw name
+			//이름을 DRAW
 			SDL_Color fg={0,0,0};
 			SDL_Surface* txt=TTF_RenderUTF8_Blended(fontText,_(blockNames[type]),fg);
 			if(txt!=NULL){
@@ -493,7 +493,7 @@ public:
 			}
 
 			if(parent!=NULL){
-				//draw selected
+				//선택 된걸 DRAW
 				{
 					std::vector<GameObject*> &v=parent->selection;
 					bool isSelected=find(v.begin(),v.end(),selection[j])!=v.end();
@@ -526,7 +526,7 @@ public:
 					SDL_BlitSurface(bmGUI,&r1,screen,&r2);
 				}
 
-				//draw link
+				//링크 DRAW
 				if(isLinkable[type]){
 					SDL_Rect r1={112,32,16,16};
 					SDL_Rect r2={r.x+r.w-48,r.y+20,24,24};
@@ -571,7 +571,7 @@ public:
 			//Tool specific text.
 			SDL_Surface* tip=TTF_RenderUTF8_Blended(fontText,tooltip.c_str(),fg);
 
-			//Draw only if there's a tooltip available
+			//사용가능한 TOOL TIP 이 있다면 DRAW
 			if(tip!=NULL){
 				tooltipRect.y-=4;
 				tooltipRect.h+=8;
@@ -610,7 +610,7 @@ public:
 		}
 
 		if(event.type==SDL_MOUSEBUTTONDOWN){
-			//check mousewheel
+			//mousewheel 체크
 			if(event.button.button==SDL_BUTTON_WHEELUP){
 				startRow-=2;
 				updateScrollBar();
@@ -636,7 +636,7 @@ public:
 				return;
 			}
 
-			//Check if item is clicked
+			//ITEM이 클릭됬는지 체크
 			if(highlightedObj!=NULL && highlightedBtn>0 && parent!=NULL){
 				std::vector<GameObject*>& v=parent->levelObjects;
 
@@ -702,17 +702,17 @@ void MovingPosition::updatePosition(int x,int y){
 
 /////////////////LEVEL EDITOR//////////////////////////////
 LevelEditor::LevelEditor():Game(true){
-	//Get the target time and recordings.
+	//target time 과 recordings. 을 얻는다.
 	levelTime=levels->getLevel()->targetTime;
 	levelRecordings=levels->getLevel()->targetRecordings;
 
-	//This will set some default settings.
+	//몇가지를 초기값으로 설정함.
 	reset();
 
-	//The level is loaded by the game, so do postLoad.
+	//게임을 로드한 후 실행됨., so do postLoad.
 	postLoad();
 
-	//Load the toolbar.
+	//TOOLBAR 로드
 	toolbar=loadImage(getDataPath()+"gfx/menu/toolbar.png");
 	SDL_Rect tmp={(SCREEN_WIDTH-460)/2,SCREEN_HEIGHT-50,460,50};
 	toolbarRect=tmp;
@@ -722,10 +722,10 @@ LevelEditor::LevelEditor():Game(true){
 
 	movingSpeedWidth=-1;
 
-	//Load the selectionMark.
+	//선택 마크 로드
 	selectionMark=loadImage(getDataPath()+"gfx/menu/selection.png");
 
-	//Load the movingMark.
+	//움직임
 	movingMark=loadImage(getDataPath()+"gfx/menu/moving.png");
 
 	//Create the semi transparent surface.
@@ -735,7 +735,7 @@ LevelEditor::LevelEditor():Game(true){
 }
 
 LevelEditor::~LevelEditor(){
-	//Loop through the levelObjects and delete them.
+	//LEVELOBJECTS를 LOOP돌고 DELETE도 같이 함.
 	for(unsigned int i=0;i<levelObjects.size();i++)
 		delete levelObjects[i];
 	levelObjects.clear();
@@ -744,19 +744,19 @@ LevelEditor::~LevelEditor(){
 	//Free the placement surface.
 	SDL_FreeSurface(placement);
 
-	//Delete the toolbox (if any)
+	//TOOLBOX가 있다면 삭제
 	if(toolbox){
 		delete toolbox;
 		toolbox=NULL;
 	}
 
-	//Delete the popup
+	//POPUP되있다면 삭제
 	if(selectionPopup){
 		delete selectionPopup;
 		selectionPopup=NULL;
 	}
 
-	//Reset the camera.
+	//카메라 리셋
 	camera.x=0;
 	camera.y=0;
 }
@@ -792,7 +792,7 @@ void LevelEditor::reset(){
 	movingSpeed=10;
 	tooltip=-1;
 
-	//Set the player and shadow to their starting position.
+	//플레이어와 그림자를 시작위치에 위치시킴.
 	player.setPosition(player.fx,player.fy);
 	shadow.setPosition(shadow.fx,shadow.fy);
 
@@ -803,7 +803,7 @@ void LevelEditor::reset(){
 }
 
 void LevelEditor::loadLevelFromNode(TreeStorageNode* obj, const std::string& fileName){
-	//call the method of base class.
+	//기본 클래스에서 함수들을 불러온다.
 	Game::loadLevelFromNode(obj,fileName);
 
 	//now do our own stuff.
@@ -823,7 +823,7 @@ void LevelEditor::loadLevelFromNode(TreeStorageNode* obj, const std::string& fil
 }
 
 void LevelEditor::saveLevel(string fileName){
-	//Create the output stream and check if it starts.
+	//출력 STREAM을 생성하고 그것이 시작됬는지 확인한다.
 	std::ofstream save(fileName.c_str());
 	if(!save) return;
 
@@ -831,23 +831,23 @@ void LevelEditor::saveLevel(string fileName){
 	int maxX=0;
 	int maxY=0;
 
-	//The storageNode to put the level data in before writing it away.
+	//STORAGENODE를 데이터안에 넣는다. 파일화 되기 전에.
 	TreeStorageNode node;
 	char s[64];
 
-	//The name of the level.
+	//LEVEL의 이름
 	if(!levelName.empty()){
 		node.attributes["name"].push_back(levelName);
 
-		//Update the level name in the levelpack.
+		//LEVELPACK의 LEVEL 이름을 업데이트 시킨다.
 		levels->getLevel()->name=levelName;
 	}
 
-	//The leveltheme.
+	//LEVELTHEME 부분.
 	if(!levelTheme.empty())
 		node.attributes["theme"].push_back(levelTheme);
 
-	//target time and recordings.
+	//목적시간과 녹화.
 	{
 		char c[32];
 		if(levelTime>=0){
@@ -860,21 +860,21 @@ void LevelEditor::saveLevel(string fileName){
 		}
 	}
 
-	//The width of the level.
+	//LEVEL의 가로넓이
 	maxX=LEVEL_WIDTH;
 	sprintf(s,"%d",maxX);
 	node.attributes["size"].push_back(s);
 
-	//The height of the level.
+	//LEVEL의 세로높이
 	maxY=LEVEL_HEIGHT;
 	sprintf(s,"%d",maxY);
 	node.attributes["size"].push_back(s);
 
-	//Loop through the gameObjects and save them.
+	//GAMEOBJECT 들을 LOOP돌고 저장함.
 	for(int o=0;o<(signed)levelObjects.size();o++){
 		int objectType=levelObjects[o]->type;
 
-		//Check if it's a legal gameObject type.
+		//GAMEOBJECT가 맞는 타입인가 확인함.
 		if(objectType>=0 && objectType<TYPE_MAX){
 			TreeStorageNode* obj1=new TreeStorageNode;
 			node.subNodes.push_back(obj1);
@@ -886,7 +886,7 @@ void LevelEditor::saveLevel(string fileName){
 			sprintf(s,"%d",objectType);
 			obj1->value.push_back(blockName[objectType]);
 
-			//Get the box for the location of the gameObject.
+			//GAMEOBJECT 위치를 위해 BOX를 불러온다.
 			SDL_Rect box=levelObjects[o]->getBox(BoxType_Base);
 			//Put the location in the storageNode.
 			sprintf(s,"%d",box.x);
@@ -905,7 +905,7 @@ void LevelEditor::saveLevel(string fileName){
 		}
 	}
 
-	//Create a POASerializer and write away the level node.
+	//POASerializer을 만들어 LEVEL NODE를 쓴다.
 	POASerializer objSerializer;
 	objSerializer.writeNode(&node,save,true,true);
 }
@@ -913,16 +913,16 @@ void LevelEditor::saveLevel(string fileName){
 
 ///////////////EVENT///////////////////
 void LevelEditor::handleEvents(){
-	//Check if we need to quit, if so we enter the exit state.
+	//종료가 필요하다면 체크하고, 만약 그렇다면 종료 STATE 로 들어간다.
 	if(event.type==SDL_QUIT){
 		setNextState(STATE_EXIT);
 	}
 
-	//If playing/testing we should the game handle the events.
+	//게임이 PLAY중인지 TEST중인지 확인하고 그에 따른 이벤트를 발생시킨다.
 	if(playMode){
 		Game::handleEvents();
 
-		//Also check if we should exit the playMode.
+		//PLAY모드를 종료시킨다면 그에 따른 SET과정.
 		if(inputMgr.isKeyDownEvent(INPUTMGR_ESCAPE)){
 			//Reset the game and disable playMode.
 			Game::reset(true);
@@ -934,23 +934,23 @@ void LevelEditor::handleEvents(){
 			pressedLeftMouse=false;
 		}
 	}else{
-		//Also check if we should exit the editor.
+		//editor를 종료시킨지 확인.
 		if(inputMgr.isKeyDownEvent(INPUTMGR_ESCAPE)){
-			//Before we quit ask a make sure question.
+			//종료전 최종 확인문 출력
 			if(msgBox(_("Are you sure you want to quit?"),MsgBoxYesNo,_("Quit prompt"))==MsgBoxYes){
-				//We exit the level editor.
+				//editor 종료.
 				if(GUIObjectRoot){
 					delete GUIObjectRoot;
 					GUIObjectRoot=NULL;
 				}
 				setNextState(STATE_LEVEL_EDIT_SELECT);
 
-				//Play the menu music again.
+				//menu 음악을 다시 틀어준다.
 				getMusicManager()->playMusic("menu");
 			}
 		}
 
-		//Check if we should redirect the event to selection popup
+		//선택한 것이 popup이 되는 이벤트를 재 연결했는지 체크
 		if(selectionPopup!=NULL){
 			if(event.type==SDL_MOUSEBUTTONDOWN
 				|| event.type==SDL_MOUSEBUTTONUP
@@ -961,16 +961,16 @@ void LevelEditor::handleEvents(){
 			}
 		}
 
-		//Check if toolbar is clicked.
+		//toolbar가 클릭 되었는지 체크
 		if(event.type==SDL_MOUSEBUTTONDOWN && event.button.button==SDL_BUTTON_LEFT && tooltip>=0){
 			int t=tooltip;
 
 			if(t<NUMBER_TOOLS){
 				tool=(Tools)t;
 
-				//Check if we should show tool box
+				//toolbox를 보여줄지 말지 체크
 				if(tool==ADD){
-					//show the tool box
+					//toolbox을 보여줌
 					if(toolbox==NULL){
 						toolbox=new LevelEditorToolbox(this);
 						toolbox->move(event.button.x,event.button.y-toolbox->height()-20);
