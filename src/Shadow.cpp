@@ -1,3 +1,4 @@
+// 신수빈
 /*
  * Copyright (C) 2011-2012 Me and My Shadow
  *
@@ -27,41 +28,41 @@
 using namespace std;
 
 Shadow::Shadow(Game* objParent):Player(objParent){
-	//Most of the initialising happens in the Player's constructor.
-	//Here we only set some shadow specific options.
+	// 초기설정의 대부분은 player의 생성자에서 발생한다.
+	// 우리는 몇가지 그림자의 특별한 옵션을 설정할 것 이다.
 	called=false;
 	shadow=true;
 }
 
 void Shadow::moveLogic(){
-	//If we're called and there are still moves left we to that move.
+
+	// 만약 우리가 호출당하고 거기 여전히 움직임이 남겨진다 우리가 움직이는게 글로
 	if(called && state < (signed)playerButton.size()){
 		int currentKey=playerButton[state];
 
 		xVel=0;
-		//Check if the current move is walking.
+		// 만약 현재 움직임이 걷는거면 체크한다.
 		if(currentKey & PlayerButtonRight) xVel=7;
 		if(currentKey & PlayerButtonLeft) xVel=-7;
 
-		//Check if the current move is jumping.
+		// 만약 현재 움직임이 뛰는거면 체크한다.
 		if((currentKey & PlayerButtonJump) && !inAir){
 			isJump=true;
 		}else{
 			isJump=false;
 		}
 
-		//Check if the current move is an action (DOWN arrow key).
+		// 만약 현재 움직임이 액션이라면 체크한다.
 		if(currentKey & PlayerButtonDown){
 			downKeyPressed=true;
 		}else{
 			downKeyPressed=false;
 		}
 
-		//We've done the move so move on to the next one.
+		// 우리는 움직인다. 다음으로 움직인다.
 		state++;
 	}else{
-		//We ran out of moves so reset it.
-		//FIXME: Every frame when called is false this will be done?
+		// 우리는 움직임을 내달린다 그래서 리셋된다.
 		called=false;
 		state=0;
 		xVel=0;

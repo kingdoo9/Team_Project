@@ -22,30 +22,31 @@
 
 #include "Player.h"
 
-//The shadow class, it extends the player class since their almost the same.
+// 그림자 클래스이다. 이 클래스는 player클래스와 거의 같기때문에 palyer클래스를 상속받는다.
 class Shadow : public Player{
 protected:
-	//Boolean if the shadow is called by the player.
-	//If so the shadow will copy the moves the player made.
+
+	// 만약 그림자가 player로부터 호출받으면 boolean형 호출
+	// 만약 그림자가 player의 움직임을 복사하면ㅎㅎ
 	bool called;
 
 	friend class Player;
 public:
-	//Constructor, it sets a few variables and calls the Player's constructor.
-	//objParent: Pointer to the game instance.
+	// 구조체  이 구조체는 몇가지 변수들을 설정하고  부른다 player의 생성자를
+	// objParent : 게임 instance의 포인터
 	Shadow(Game* objParent);
 
-	//Method that's called before the move function.
-	//It's used to let the shadow do his logic, moving and jumping.
+	// move 함수를 호출전의 method
+ //시킨다 그림자를 그의 음직이거나 뛰는 로직으로 사용됐다.
 	void moveLogic();
-	
-	//Method used to notify the shadow that he is called.
-	//He then must copy the moves that are given to him.
+
+	// 그가 불린 그림자를 알리는데 사용된 method
+	// 그는 그때 움직임을 복사해야한다. 그에게 주어진
 	void meCall();
-	
-	//Method used to reset the state.
+
+	// method는 상태를 reset하는데 사용된다.
 	virtual void stateReset();
-	//Method used to load the state.
+	//상태를 불러오는데 사용되는 method
 	virtual void loadState();
 };
 #endif

@@ -54,7 +54,7 @@ class ThemeCharacter;
 //Instance class of a ThemeObject, this is used by the other Instance classes.
 class ThemeObjectInstance{
 public:
-	//Pointer to the picture.
+	//사진을 가리키는 포인터
 	ThemePicture* picture;
 	//Pointer to the parent the object an instance os is.
 	ThemeObject* parent;
@@ -64,41 +64,39 @@ public:
 	//Integer containing the saved animation frame.
 	int savedAnimation;
 public:
-	//Constructor.
+	// 생성자
 	ThemeObjectInstance():picture(NULL),parent(NULL),animation(0),savedAnimation(0){}
 	
 	// TimeObject를 그리는 함수
-	//Method used to draw the ThemeObject.
+	// dest : 목적지 표면이 ThemeObject를 그림  // 그 목적지가  ThemeObject의 표면을 편평하게 함
 	//dest: The destination surface to draw the ThemeObject on.
-	//x: The x location on the dest surface.
-	//y: The y location on the dest surface.
-	//clipRect: Rectangle used to clip.
+	//x: dest 표면에 x 위치
+	//y: dest 표면에 y 위치
+	//clipRect: 자르는데 사용된 직사각형
 	void draw(SDL_Surface* dest,int x,int y,SDL_Rect* clipRect=NULL);
 	
 	// 애니메이션을 업데이트 해주는 함수
-	//Method that will update the animation.
 	void updateAnimation();
 	
 	// 애니메이션을 리셋시켜주는 함수
-	//Method that will reset the animation.
-	//save: Boolean if the saved animation should be deleted.
+	//save: 저장된 애니메이션이 삭제되는지 아닌지 Boolean type 으로 정함 
 	void resetAnimation(bool save){
 		animation=0;
 		if(save){
 			savedAnimation=0;
 		}
 	}
-	//Method that will save the animation.
+	// 애니메이션을 저장하는 함수
 	void saveAnimation(){
 		savedAnimation=animation;
 	}
-	//Method that will load a saved animation.
+	// 저장된 애니메이션을 불러오는 함수
 	void loadAnimation(){
 		animation=savedAnimation;
 	}
 };
 
-//Instance class of a ThemeBlockState, this is used by the ThemeBlockInstance.
+// ThemeBlockState 의 Instance class로, ThemeBlockInstance에 의해 만들어짐
 class ThemeBlockStateInstance{
 public:
 	//Pointer to the parent the state an instance of is.
