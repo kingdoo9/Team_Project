@@ -92,16 +92,16 @@ static const bool isLinkable[TYPE_MAX]={
 
 class LevelEditorToolbox{
 private:
-	//The parent object
+	//부모 오브젝트
 	LevelEditor* parent;
 
 	//The position of window
 	SDL_Rect rect;
 
-	//Background surface
+	//배경화면
 	SDL_Surface *background;
 
-	//GUI image
+	//GUI 이미지
 	SDL_Surface *bmGUI;
 
 public:
@@ -125,18 +125,18 @@ public:
 		visible=false;
 		dragging=false;
 
-		//calc row count
+		//열(ROW)을 계산
 		startRow=0;
 		maxRow=(LevelEditor::EDITOR_ORDER_MAX+4)/5;
 
-		//set size
+		//사이즈를 정함
 		rect.w=width();
 		rect.h=height();
 
-		//Load the gui images.
+		//GUI 이미지를 로드
 		bmGUI=loadImage(getDataPath()+"gfx/gui.png");
 
-		//create background and draw something on it
+		//배경을 생성하고 거기에 무언가라도 DRAW
 		background=SDL_CreateRGBSurface(SDL_HWSURFACE,
 			rect.w,rect.h,screen->format->BitsPerPixel,
 			screen->format->Rmask,screen->format->Gmask,screen->format->Bmask,0);
@@ -179,7 +179,7 @@ public:
 			SDL_GetMouseState(&x,&y);
 			SDL_Rect mouse={x,y,0,0};
 
-			//draw close button
+			//닫기 버튼을 그림
 			{
 				//check highlight
 				SDL_Rect r={rect.x+rect.w-36,rect.y+12,24,24};
@@ -192,11 +192,11 @@ public:
 				applySurface(rect.x+rect.w-32,rect.y+16,bmGUI,screen,&r1);
 			}
 
-			//the tool tip of item
+			//아이템 TOOL TIP
 			SDL_Rect tooltipRect;
 			string tooltip;
 
-			//draw avaliable item
+			//사용가능한 아이템 DRAW
 			for(int i=0;i<2;i++){
 				int j=startRow+i;
 				if(j>=maxRow) j-=maxRow;
@@ -228,15 +228,15 @@ public:
 				}
 			}
 
-			//draw tooltip
+			//TOOL TIP DRAW
 			if(!tooltip.empty()){
-				//The back and foreground colors.
+				//백그라운드 포그라운드 컬러
 				SDL_Color fg={0,0,0};
 
 				//Tool specific text.
 				SDL_Surface* tip=TTF_RenderUTF8_Blended(fontText,tooltip.c_str(),fg);
 
-				//Draw only if there's a tooltip available
+				//사용가능한 TOOL TIP만 DRAW 해줌
 				if(tip!=NULL){
 					if(tooltipRect.y+tooltipRect.h+tip->h>SCREEN_HEIGHT-20)
 						tooltipRect.y-=tip->h;
@@ -246,11 +246,11 @@ public:
 					if(tooltipRect.x+tip->w>SCREEN_WIDTH-20)
 						tooltipRect.x=SCREEN_WIDTH-20-tip->w;
 
-					//Draw borders around text
+					//텍스트 주위에 경계선 DRAW
 					Uint32 color=0xFFFFFF00|230;
 					drawGUIBox(tooltipRect.x-2,tooltipRect.y-2,tip->w+4,tip->h+4,screen,color);
 
-					//Draw tooltip's text
+					//TOOL TIP 텍스트 DRAW
 					SDL_BlitSurface(tip,NULL,screen,&tooltipRect);
 					SDL_FreeSurface(tip);
 				}
@@ -280,16 +280,16 @@ public:
 				}
 			}
 
-			//Now begin drag the toolbox
+			//이제 TOOL BOX를 그리기 시작
 			dragging=true;
 		}
 		else if(event.type==SDL_MOUSEBUTTONUP && event.button.button==SDL_BUTTON_LEFT){
-			//Stop dragging
+			//드래그 멈춤
 			dragging=false;
 
 			SDL_Rect mouse={event.button.x,event.button.y,0,0};
 
-			//Check if close button clicked
+			//닫기 버튼이 클릭되었는지 체크
 			{
 				SDL_Rect r={rect.x+rect.w-36,rect.y+12,24,24};
 				if(checkCollision(mouse,r)){

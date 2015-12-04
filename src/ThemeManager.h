@@ -1,4 +1,4 @@
-/* 코드분석자 : 60142270 남채린
+f/* 코드분석자 : 60142270 남채린
  * Copyright (C) 2011-2012 Me and My Shadow
  *
  * This file is part of Me and My Shadow.

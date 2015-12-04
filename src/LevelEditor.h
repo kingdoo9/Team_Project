@@ -176,11 +176,10 @@ private:
 	//GUI 이벤트 핸들링이 이루어지는 장소
 	void GUIEventCallback_OnEvent(std::string name,GUIObject* obj,int eventType);
 
-	//Method that will let you configure the levelSettings.
+	//levelSettings를 알려주는 함수.
 	void levelSettings();
 
-	//Method used to save the level.
-	//fileName: Thge filename to write the level to.
+	//level을 저장하는 함수 filename은 저장할 이름.
 	void saveLevel(string fileName);
 
 	//Method used to convert a given x and y to snap to grid.
@@ -208,77 +207,78 @@ protected:
 	virtual void loadLevelFromNode(TreeStorageNode* obj, const std::string& fileName);
 
 public:
-	//Constructor.
+	//생성자
 	LevelEditor();
-	//Destructor.
+	//소멸자
 	~LevelEditor();
 
-	//Method that will reset some default values.
+	//기본값들로 리셋
 	void reset();
 
-	//Inherited from Game(State).
+	//Game에서 다음 함수를 가져옴
 	void handleEvents();
 	void logic();
 	void render();
 	void resize();
 
-	//Method used to draw the currentType on the placement surface.
-	//This will only be called when the tool is ADD.
+	//현재 블럭 타입을 둘 수 있는 곳에 draw 시키는 함수.
+	//Tool에 무언가가 들어있을 경우에만 불러오는 함수
+
 	void showCurrentObject();
-	//Method used to draw the selection that's being dragged.
+	//드래그를 시작할때 현재 블럭 타입을 draw시킴
 	void showSelectionDrag();
-	//Method used to draw configure tool specific things like moving positions, teleport lines.
+	//움직이는 블록이나 텔레포트 같은 특정 블럭의 옵션 toolbar를 그리는 함수.
 	void showConfigure();
 
-	//Method that will render the HUD.
+	//HUD를 랜더링 해준다.
 	//It will be rendered after the placement suface but before the toolbar.
 	void renderHUD();
 
-	//Method called after loading a level.
+	//레벨을 로딩한 후 호출되는 함수
 	//It will fill the triggers vector.
 	void postLoad();
 
-	//Event that is invoked when there's a mouse click on an object.
-	//obj: Pointer to the GameObject clicked on.
-	//selected: Boolean if the GameObject that has been clicked on was selected.
+	//오브젝트가 클릭됬는지 알려주고 이벤트를 처리하는 함수
+	//obj: 클릭된 게임오브젝트의 포인터
+	//selected: 클릭된 게임오브젝트가 선택 되었는지 확인해주는 bool 대수
 	void onClickObject(GameObject* obj,bool selected);
-	//Event that is invoked when there's a right mouse button click on an object.
-	//obj: Pointer to the GameObject clicked on.
-	//selected: Boolean if the GameObject that has been clicked on was selected.
+	//오브젝트가 마우스 오른쪽 클릭이 됬는지 알려주는 함수
+	//obj: 클릭된 게임오브젝트의 포인터
+	//selected: 클릭된 게임오브젝트가 선택 되었는지 확인해주는 bool 대수
 	void onRightClickObject(GameObject* obj,bool selected);
-	//Event that is invoked when there's a mouse click but not on any object.
+	//마우스를 클릭하는데 아무 오브젝트가 클릭되지 않았을때 이벤트 처리 함수
 	//x: The x location of the click on the game field (+= camera.x).
 	//y: The y location of the click on the game field (+= camera.y).
 	void onClickVoid(int x,int y);
-	//Event that is invoked when the dragging starts.
+	//마우스가 드래그를 시작할때 알려주는 함수
 	//x: The x location the drag started. (mouse.x+camera.x)
 	//y: The y location the drag started. (mouse.y+camera.y)
 	void onDragStart(int x,int y);
-	//Event that is invoked when the mouse is dragged.
+	//마우스가 드래그 중일때 알려주는 함수
 	//dx: The relative x distance the mouse dragged.
 	//dy: The relative y distance the mouse dragged.
 	void onDrag(int dx,int dy);
-	//Event that is invoked when the mouse stopped dragging.
+	//마우스의 드래그를 멈추었을때를 알려주는 함수
 	//x: The x location the drag stopped. (mouse.x+camera.x)
 	//y: The y location the drag stopped. (mouse.y+camera.y)
 	void onDrop(int x,int y);
-	//Event that is invoked when the camera is moved.
+	//카메라가 움직일때 알려주는 함수
 	//dx: The relative x distance the camera moved.
 	//dy: The relative y distance the camera moved.
 	void onCameraMove(int dx,int dy);
-	//Event that is invoked when enter is pressed above an object.
+	//물체위에서 enter 키가 눌렸을때 알려주는 함수.
 	//obj: Pointer to the GameObject entered above.
 	void onEnterObject(GameObject* obj);
 
-	//Method used to add a GameObject to the level.
+	//레벨에 오브직트를 추가할때 알려주는 함수
 	//obj: Pointer to the gameobject to add.
 	void addObject(GameObject* obj);
-	//Method used to move a GameObject from the level.
-	//obj: Pointer to the gameobject to move.
+	//레벨에 게임 오브젝트를 추가할때 나오는 함수
+	//obj: 움직인 게임 오브젝트의 포인터
 	//x: The new x location of the GameObject.
 	//y: The new y location of the GameObject.
 	void moveObject(GameObject* obj,int x,int y);
-	//Method used to remove a GameObject from the level.
+	//게임 오브젝트를 삭제할때 나오는 함수 
 	//obj: Pointer to the gameobject to remove.
 	void removeObject(GameObject* obj);
 };
