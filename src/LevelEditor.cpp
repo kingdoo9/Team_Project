@@ -2597,11 +2597,11 @@ void LevelEditor::addObject(GameObject* obj){
 }
 
 void LevelEditor::moveObject(GameObject* obj,int x,int y){
-	//Set the obj at it's new position.
+	//새로운 좌표에 object 설정
 	obj->setPosition(x,y);
 
-	//Check if the object is inside the level dimensions.
-	//If not let the level grow.
+	//level 속에 object가 있는지 체크
+	//만약 그렇지 않다면 레벨을 올림
 	if(obj->getBox().x+50>LEVEL_WIDTH){
 		LEVEL_WIDTH=obj->getBox().x+50;
 	}
@@ -2610,22 +2610,23 @@ void LevelEditor::moveObject(GameObject* obj,int x,int y){
 	}
 	if(obj->getBox().x<0 || obj->getBox().y<0){
 		//A block on the left (or top) side of the level, meaning we need to shift everything.
-		//First calc the difference.
+		//=> 레벨의 왼쪽 또는 위에 있는 블럭은 모든것을 움직여야할 필요가 있음을 의미한다.
+		//차이를 계산
 		int diffx=(0-(obj->getBox().x));
 		int diffy=(0-(obj->getBox().y));
 
 		if(diffx<0) diffx=0;
 		if(diffy<0) diffy=0;
 
-		//Change the level size first.
-		//The level grows with the difference, 0-(x+50).
+		//level size 를 변환시킴
+		//차이점 만큼 레벨의 크기을 올림, 0-(x+50).
 		LEVEL_WIDTH+=diffx;
 		LEVEL_HEIGHT+=diffy;
 		//cout<<"x:"<<diffx<<",y:"<<diffy<<endl; //debug
 		camera.x+=diffx;
 		camera.y+=diffy;
 
-		//Set the position of player and shadow
+		// player and shadow 좌표 설정
 		//(although it's unnecessary if there is player and shadow start)
 		player.setPosition(player.getBox().x+diffx,player.getBox().y+diffy);
 		shadow.setPosition(shadow.getBox().x+diffx,shadow.getBox().y+diffy);
@@ -2636,19 +2637,19 @@ void LevelEditor::moveObject(GameObject* obj,int x,int y){
 		}
 	}
 
-	//If the object is a player or shadow start then change the start position of the player or shadow.
+	//object가 player또는 shadow 라면 시작한후 player와 shadow의 시작점을 바꾼다.
 	if(obj->type==TYPE_START_PLAYER){
 		//Center the player horizontally.
   		player.fx=obj->getBox().x+(50-23)/2;
 		player.fy=obj->getBox().y;
-		//Now reset the player to get him to it's new start position.
+		//새로운 시작점에 player을 두기 위해 reset
 		player.reset(true);
 	}
 	if(obj->type==TYPE_START_SHADOW){
 		//Center the shadow horizontally.
   		shadow.fx=obj->getBox().x+(50-23)/2;
 		shadow.fy=obj->getBox().y;
-		//Now reset the shadow to get him to it's new start position.
+		//새로운 시작점에 shadow를 두기 위해 reset
 		shadow.reset(true);
 	}
 }
@@ -2657,22 +2658,22 @@ void LevelEditor::removeObject(GameObject* obj){
 	std::vector<GameObject*>::iterator it;
 	std::map<GameObject*,vector<GameObject*> >::iterator mapIt;
 
-	//Increase totalCollectables everytime we add a new collectable
+	//새로운 collectable을 추가할 때 마다 totalCollectables을 증가시킴
 	if (obj->type==TYPE_COLLECTABLE) {
 		totalCollectables--;
 	}
 
-	//Check if the object is in the selection.
+	//selection안에 object가 있는지 체크
 	it=find(selection.begin(),selection.end(),obj);
 	if(it!=selection.end()){
-		//It is so we delete it.
+		//만약 그렇다면 삭제시킴
 		selection.erase(it);
 	}
 
-	//Check if the object is in the triggers.
+	//triggers안에 object가 있는지 체크
 	mapIt=triggers.find(obj);
 	if(mapIt!=triggers.end()){
-		//It is so we remove it.
+		//만약 그렇다면 삭제시킴
 		triggers.erase(mapIt);
 	}
 
@@ -2680,9 +2681,9 @@ void LevelEditor::removeObject(GameObject* obj){
 	if(obj->type==TYPE_MOVING_BLOCK || obj->type==TYPE_MOVING_SHADOW_BLOCK || obj->type==TYPE_MOVING_SPIKES
 		|| obj->type==TYPE_CONVEYOR_BELT || obj->type==TYPE_SHADOW_CONVEYOR_BELT || obj->type==TYPE_PORTAL){
 		for(mapIt=triggers.begin();mapIt!=triggers.end();++mapIt){
-			//Now loop the target vector.
+			//target vector를 loop시킴
 			for(unsigned int o=0;o<(*mapIt).second.size();o++){
-				//Check if the obj is in the target vector.
+				//target vector안에 object가 있는지 체크
 				if((*mapIt).second[o]==obj){
 					(*mapIt).second.erase(find((*mapIt).second.begin(),(*mapIt).second.end(),obj));
 					o--;
@@ -2691,15 +2692,15 @@ void LevelEditor::removeObject(GameObject* obj){
 		}
 	}
 
-	//Check if the object is in the movingObjects.
+	//movingObjects안에 object가 있는지 체크
 	std::map<GameObject*,vector<MovingPosition> >::iterator movIt;
 	movIt=movingBlocks.find(obj);
 	if(movIt!=movingBlocks.end()){
-		//It is so we remove it.
+		//만약 그렇다면 삭제시킴
 		movingBlocks.erase(movIt);
 	}
 
-	//Now we remove the object from the levelObjects.
+	//levelObjects에 있는 object를 삭제시킴
 	it=find(levelObjects.begin(),levelObjects.end(),obj);
 	if(it!=levelObjects.end()){
 		levelObjects.erase(it);
@@ -2712,16 +2713,16 @@ void LevelEditor::removeObject(GameObject* obj){
 }
 
 void LevelEditor::GUIEventCallback_OnEvent(std::string name,GUIObject* obj,int eventType){
-	//Check for GUI events.
-	//Notification block configure events.
+	//GUI이벤트를 체크함.
+	//Notificationblock 이벤트 설정
 	if(name=="cfgNotificationBlockOK"){
 		if(GUIObjectRoot){
-			//Set the message of the notification block.
+			//notification block의 메시지 설정
 			std::map<std::string,std::string> editorData;
 			editorData["message"]=objectProperty->caption;
 			configuredObject->setEditorData(editorData);
 
-			//And delete the GUI.
+			//GUI를 삭제
 			objectProperty=NULL;
 			secondObjectProperty=NULL;
 			configuredObject=NULL;
@@ -2729,16 +2730,16 @@ void LevelEditor::GUIEventCallback_OnEvent(std::string name,GUIObject* obj,int e
 			GUIObjectRoot=NULL;
 		}
 	}
-	//Conveyor belt block configure events.
+	//Conveyor belt block 설정 이벤트
 	if(name=="cfgConveyorBlockOK"){
 		if(GUIObjectRoot){
-			//Set the message of the notification block.
+			//notification block의 메시지 설정
 			std::map<std::string,std::string> editorData;
 			editorData["speed"]=secondObjectProperty->caption;
 			editorData["disabled"]=(objectProperty->value==0)?"1":"0";
 			configuredObject->setEditorData(editorData);
 
-			//And delete the GUI.
+			//GUI를 삭제
 			objectProperty=NULL;
 			secondObjectProperty=NULL;
 			configuredObject=NULL;
@@ -2746,16 +2747,16 @@ void LevelEditor::GUIEventCallback_OnEvent(std::string name,GUIObject* obj,int e
 			GUIObjectRoot=NULL;
 		}
 	}
-	//Moving block configure events.
+	//Moving block 설정 이벤트
 	if(name=="cfgMovingBlockOK"){
 		if(GUIObjectRoot){
-			//Set if the moving block is enabled/disabled.
+			//moving block 활성화 또는 비활성화 되었는지 설정
 			std::map<std::string,std::string> editorData;
 			editorData["disabled"]=(objectProperty->value==0)?"1":"0";
 			editorData["loop"]=(secondObjectProperty->value==1)?"1":"0";
 			configuredObject->setEditorData(editorData);
 
-			//And delete the GUI.
+			//GUI를 삭제
 			objectProperty=NULL;
 			secondObjectProperty=NULL;
 			configuredObject=NULL;
@@ -2765,7 +2766,7 @@ void LevelEditor::GUIEventCallback_OnEvent(std::string name,GUIObject* obj,int e
 	}
 	if(name=="cfgMovingBlockClrPath"){
 		if(GUIObjectRoot){
-			//Set the message of the notification block.
+			//notification block의 메시지 설정
 			std::map<std::string,std::string> editorData;
 			editorData["MovingPosCount"]="0";
 			configuredObject->setEditorData(editorData);
@@ -2776,7 +2777,7 @@ void LevelEditor::GUIEventCallback_OnEvent(std::string name,GUIObject* obj,int e
 				(*it).second.clear();
 			}
 
-			//And delete the GUI.
+			//GUI를 삭제
 			objectProperty=NULL;
 			secondObjectProperty=NULL;
 			configuredObject=NULL;
@@ -2786,11 +2787,11 @@ void LevelEditor::GUIEventCallback_OnEvent(std::string name,GUIObject* obj,int e
 	}
 	if(name=="cfgMovingBlockMakePath"){
 		if(GUIObjectRoot){
-			//Set moving.
+			//움직임 설정
 			moving=true;
 			movingBlock=configuredObject;
 
-			//And delete the GUI.
+			//GUI를 삭제
 			objectProperty=NULL;
 			secondObjectProperty=NULL;
 			configuredObject=NULL;
@@ -2798,15 +2799,15 @@ void LevelEditor::GUIEventCallback_OnEvent(std::string name,GUIObject* obj,int e
 			GUIObjectRoot=NULL;
 		}
 	}
-	//Portal block configure events.
+	//Portal block 설정 이벤트
 	if(name=="cfgPortalOK"){
 		if(GUIObjectRoot){
-			//Set the message of the notification block.
+			//notification block의 메시지 설정
 			std::map<std::string,std::string> editorData;
 			editorData["automatic"]=(objectProperty->value==1)?"1":"0";
 			configuredObject->setEditorData(editorData);
 
-			//And delete the GUI.
+			//GUI를 삭제
 			objectProperty=NULL;
 			secondObjectProperty=NULL;
 			configuredObject=NULL;
@@ -2815,11 +2816,11 @@ void LevelEditor::GUIEventCallback_OnEvent(std::string name,GUIObject* obj,int e
 		}
 	}
 	if(name=="cfgPortalLink"){
-		//We set linking true.
+		//linking 을 true로 설정
 		linking=true;
 		linkingTrigger=configuredObject;
 
-		//And delete the GUI.
+		//GUI를 삭제
 		objectProperty=NULL;
 		secondObjectProperty=NULL;
 		configuredObject=NULL;
@@ -2832,16 +2833,16 @@ void LevelEditor::GUIEventCallback_OnEvent(std::string name,GUIObject* obj,int e
 		std::map<GameObject*,vector<GameObject*> >::iterator it;
 		it=triggers.find(configuredObject);
 		if(it!=triggers.end()){
-			//Remove the targets.
+			//targets을 지움
 			(*it).second.clear();
 		}
 
-		//We reset the destination.
+		//destination을 reset시킴
 		std::map<std::string,std::string> editorData;
 		editorData["destination"]="";
 		configuredObject->setEditorData(editorData);
 
-		//And delete the GUI.
+		//GUI를 삭제
 		objectProperty=NULL;
 		secondObjectProperty=NULL;
 		configuredObject=NULL;
@@ -2850,15 +2851,15 @@ void LevelEditor::GUIEventCallback_OnEvent(std::string name,GUIObject* obj,int e
 		}
 		GUIObjectRoot=NULL;
 	}
-	//Trigger block configure events.
+	//Trigger block 설정 이벤트
 	if(name=="cfgTriggerOK"){
 		if(GUIObjectRoot){
-			//Set the message of the notification block.
+			//notification block의 메시지 설정
 			std::map<std::string,std::string> editorData;
 			editorData["behaviour"]=(dynamic_cast<GUISingleLineListBox*>(objectProperty))->item[objectProperty->value];
 			configuredObject->setEditorData(editorData);
 
-			//And delete the GUI.
+			//GUI를 삭제
 			objectProperty=NULL;
 			secondObjectProperty=NULL;
 			configuredObject=NULL;
@@ -2867,11 +2868,11 @@ void LevelEditor::GUIEventCallback_OnEvent(std::string name,GUIObject* obj,int e
 		}
 	}
 	if(name=="cfgTriggerLink"){
-		//We set linking true.
+		//linking를 true로 설정
 		linking=true;
 		linkingTrigger=configuredObject;
 
-		//And delete the GUI.
+		//GUI를 삭제
 		objectProperty=NULL;
 		secondObjectProperty=NULL;
 		configuredObject=NULL;
@@ -2884,11 +2885,11 @@ void LevelEditor::GUIEventCallback_OnEvent(std::string name,GUIObject* obj,int e
 		std::map<GameObject*,vector<GameObject*> >::iterator it;
 		it=triggers.find(configuredObject);
 		if(it!=triggers.end()){
-			//Remove the targets.
+			//targets을 지움
 			(*it).second.clear();
 		}
 
-		//We give the trigger a new id to prevent activating unlinked targets.
+		//연결 되어있지 않은 targets의 활성화를 막기 위해 새로운 아이디를 trigger에 줌
 		std::map<std::string,std::string> editorData;
 		char s[64];
 		sprintf(s,"%d",currentId);
@@ -2896,7 +2897,7 @@ void LevelEditor::GUIEventCallback_OnEvent(std::string name,GUIObject* obj,int e
 		editorData["id"]=s;
 		configuredObject->setEditorData(editorData);
 
-		//And delete the GUI.
+		//GUI를 삭제
 		objectProperty=NULL;
 		secondObjectProperty=NULL;
 		configuredObject=NULL;
@@ -2906,7 +2907,7 @@ void LevelEditor::GUIEventCallback_OnEvent(std::string name,GUIObject* obj,int e
 		GUIObjectRoot=NULL;
 	}
 
-	//Fragile configuration.
+	//Fragile 설정
 	if(name=="cfgFragileOK"){
 		std::map<std::string,std::string> editorData;
 		char s[64];
@@ -2914,7 +2915,7 @@ void LevelEditor::GUIEventCallback_OnEvent(std::string name,GUIObject* obj,int e
 		editorData["state"]=s;
 		configuredObject->setEditorData(editorData);
 
-		//And delete the GUI.
+		//GUI를 삭제
 		objectProperty=NULL;
 		secondObjectProperty=NULL;
 		configuredObject=NULL;
@@ -2924,10 +2925,10 @@ void LevelEditor::GUIEventCallback_OnEvent(std::string name,GUIObject* obj,int e
 		GUIObjectRoot=NULL;
 	}
 
-	//Cancel.
+	//취소
 	if(name=="cfgCancel"){
 		if(GUIObjectRoot){
-			//Delete the GUI.
+			//GUI를 삭제
 			objectProperty=NULL;
 			secondObjectProperty=NULL;
 			configuredObject=NULL;
@@ -2936,12 +2937,12 @@ void LevelEditor::GUIEventCallback_OnEvent(std::string name,GUIObject* obj,int e
 		}
 	}
 
-	//LevelSetting events.
+	//LevelSetting 이벤트
 	if(name=="lvlSettingsOK"){
 		levelName=objectProperty->caption;
 		levelTheme=secondObjectProperty->caption;
 
-		//target time and recordings.
+		//target 시간과 녹화
 		string s=levelTimeProperty->caption;
 		if(s.empty() || !(s[0]>='0' && s[0]<='9')){
 			levelTime=-1;
@@ -2956,7 +2957,7 @@ void LevelEditor::GUIEventCallback_OnEvent(std::string name,GUIObject* obj,int e
 			levelRecordings=atoi(s.c_str());
 		}
 
-		//And delete the GUI.
+		//GUI를 삭제
 		if(GUIObjectRoot){
 			objectProperty=NULL;
 			secondObjectProperty=NULL;
@@ -2978,17 +2979,17 @@ void LevelEditor::GUIEventCallback_OnEvent(std::string name,GUIObject* obj,int e
 ////////////////LOGIC////////////////////
 void LevelEditor::logic(){
 	if(playMode){
-		//PlayMode so let the game do it's logic.
+		//PlayMode 는 게임을 logic대로 하도록 만든다.
 		Game::logic();
 	}else{
-		//Move the camera.
+		//카메라 움직임
 		if(cameraXvel!=0 || cameraYvel!=0){
 			camera.x+=cameraXvel;
 			camera.y+=cameraYvel;
-			//Call the onCameraMove event.
+			//onCameraMove 이벤트를 부름
 			onCameraMove(cameraXvel,cameraYvel);
 		}
-		//Move the camera with the mouse.
+		//마우스와 함께 카메라가 움직임
 		{
 			SDL_Rect r[3]={toolbarRect};
 			int m=1;
@@ -2999,20 +3000,20 @@ void LevelEditor::logic(){
 			setCamera(r,m);
 		}
 
-		//It isn't playMode so the mouse should be checked.
+		//PlayMode가 아니여서 마우스가 체크됨
 		tooltip=-1;
-		//Get the mouse location.
+		//마우스 좌표를 얻음
 		int x,y;
 		SDL_GetMouseState(&x,&y);
 		SDL_Rect mouse={x,y,0,0};
 
-		//We loop through the number of tools + the number of buttons.
+		//buttons의 개수 + tool의 개수 만큼 Loop를 돎
 		for(int t=0; t<NUMBER_TOOLS+6; t++){
 			SDL_Rect toolRect={(SCREEN_WIDTH-460)/2+(t*40)+((t+1)*10),SCREEN_HEIGHT-45,40,40};
 
-			//Check for collision.
+			//충돌을 체크함
 			if(checkCollision(mouse,toolRect)==true){
-				//Set the tooltip tool.
+				//tooltip tool을 설정
 				tooltip=t;
 			}
 		}
@@ -3024,30 +3025,30 @@ void LevelEditor::render(){
 	//Always let the game render the game.
 	Game::render();
 
-	//Only render extra stuff like the toolbar, selection, etc.. when not in playMode.
+	//오직 playMode가 아닐때 toolbar, selection, 다른 등등같은 물건들을 render 한다.
 	if(!playMode){
-		//Render the selectionmarks.
-		//TODO: Check if block is in sight.
+		//selectionmarks를 render
+		//TODO: block이 시야 안에 있는지 체크
 		for(unsigned int o=0; o<selection.size(); o++){
-			//Get the location to draw.
+			//그리기 위해 좌표를 얻음
 			SDL_Rect r=selection[o]->getBox();
 			r.x-=camera.x;
 			r.y-=camera.y;
 
-			//Draw the selectionMarks.
+			//selectionMarks를 그림
 			applySurface(r.x,r.y,selectionMark,screen,NULL);
 			applySurface(r.x+r.w-5,r.y,selectionMark,screen,NULL);
 			applySurface(r.x,r.y+r.h-5,selectionMark,screen,NULL);
 			applySurface(r.x+r.w-5,r.y+r.h-5,selectionMark,screen,NULL);
 		}
 
-		//Clear the placement surface.
+		//placement 표면을 clear
 		SDL_FillRect(placement,NULL,0x00FF00FF);
 
-		//Draw the dark areas marking the outside of the level.
+		//level의 바깥부분을 어둡게 marking 함
 		SDL_Rect r;
 		if(camera.x<0){
-			//Draw left side.
+			//왼쪽 면을 그림
 			r.x=0;
 			r.y=0;
 			r.w=0-camera.x;
@@ -3055,7 +3056,7 @@ void LevelEditor::render(){
 			SDL_FillRect(placement,&r,0);
 		}
 		if(camera.x>LEVEL_WIDTH-SCREEN_WIDTH){
-			//Draw right side.
+			//오른쪽 면을 그림
 			r.x=LEVEL_WIDTH-camera.x;
 			r.y=0;
 			r.w=SCREEN_WIDTH-(LEVEL_WIDTH-camera.x);
@@ -3063,7 +3064,7 @@ void LevelEditor::render(){
 			SDL_FillRect(placement,&r,0);
 		}
 		if(camera.y<0){
-			//Draw the top.
+			//위를 그림
 			r.x=0;
 			r.y=0;
 			r.w=SCREEN_WIDTH;
@@ -3071,7 +3072,7 @@ void LevelEditor::render(){
 			SDL_FillRect(placement,&r,0);
 		}
 		if(camera.y>LEVEL_HEIGHT-SCREEN_HEIGHT){
-			//Draw the bottom.
+			//아래를 그림
 			r.x=0;
 			r.y=LEVEL_HEIGHT-camera.y;
 			r.w=SCREEN_WIDTH;
@@ -3079,7 +3080,7 @@ void LevelEditor::render(){
 			SDL_FillRect(placement,&r,0);
 		}
 
-		//Check if we should draw on the placement surface.
+		//lacement surface위를 그렸는지 체크함
 		if(selectionDrag){
 			showSelectionDrag();
 		}else{
@@ -3091,23 +3092,23 @@ void LevelEditor::render(){
 			}
 		}
 
-		//Draw the level borders.
+		//level 경계선을 그림
 		drawRect(-camera.x,-camera.y,LEVEL_WIDTH,LEVEL_HEIGHT,screen);
 
-		//Render the placement surface.
+		//placement surface를 render
 		applySurface(0,0,placement,screen,NULL);
 
-		//Render the hud layer.
+		//hud layer을 render
 		renderHUD();
 
-		//Render tool box (if any)
+		//tool box를 render
 		if(toolbox!=NULL && tool==ADD && toolbox->visible){
 			toolbox->render();
 		}
 
 		//On top of all render the toolbar.
 		applySurface((SCREEN_WIDTH-460)/2,SCREEN_HEIGHT-50,toolbar,screen,NULL);
-		//Now render a tooltip.
+		//tooltip을 render
 		if(tooltip>=0){
 			//The back and foreground colors.
 			SDL_Color fg={0,0,0};
@@ -3143,14 +3144,14 @@ void LevelEditor::render(){
 					break;
 			}
 
-			//Draw only if there's a tooltip available
+			//사용가능한 tooltip만을 그림
 			if(tip!=NULL){
 				SDL_Rect r={(SCREEN_WIDTH-440)/2+(tooltip*40)+(tooltip*10),SCREEN_HEIGHT-45,40,40};
 				r.y=SCREEN_HEIGHT-50-tip->h;
 				if(r.x+tip->w>SCREEN_WIDTH-50)
 					r.x=SCREEN_WIDTH-50-tip->w;
 
-				//Draw borders around text
+				//text주위의 경계선을 그림
 				Uint32 color=0xFFFFFF00|230;
 				drawGUIBox(r.x-2,r.y-2,tip->w+4,tip->h+4,screen,color);
 
@@ -3160,14 +3161,14 @@ void LevelEditor::render(){
 			}
 		}
 
-		//Draw a rectangle around the current tool.
+		//현재 tool 주위의 사각형을 그림
 		Uint32 color=0xFFFFFF00;
 		drawGUIBox((SCREEN_WIDTH-440)/2+(tool*40)+(tool*10),SCREEN_HEIGHT-46,42,42,screen,color);
 
 		//Render selection popup (if any)
 		if(selectionPopup!=NULL){
 			if(linking){
-				//If we switch to linking mode then delete it
+				//linking모드로 바꾸었다면 삭제시킴
 				delete selectionPopup;
 				selectionPopup=NULL;
 			}else{
@@ -3181,7 +3182,7 @@ void LevelEditor::renderHUD(){
 	//Switch the tool.
 	switch(tool){
 	case CONFIGURE:
-		//If moving show the moving speed in the top right corner.
+		//moving 변수는 오른쪽 위 코너부분에서 moving speed를 보여주는가?
 		if(moving){
 			//Calculate width of text "Movespeed: 100" to keep the same position with every value
 			if (movingSpeedWidth==-1){
@@ -3194,7 +3195,7 @@ void LevelEditor::renderHUD(){
 			SDL_Color black={0,0,0,0};
 			SDL_Surface* bm=TTF_RenderUTF8_Blended(fontText,tfm::format(_("Movespeed: %s"),movingSpeed).c_str(),black);
 
-			//Draw the text in box and free the surface.
+			//box안에 text를 rend하고 surface 를 free시킴
 			drawGUIBox(SCREEN_WIDTH-movingSpeedWidth-2,-2,movingSpeedWidth+8,bm->h+6,screen,0xDDDDDDDD);
 			applySurface(SCREEN_WIDTH-movingSpeedWidth,2,bm,screen,NULL);
 			SDL_FreeSurface(bm);
@@ -3206,7 +3207,7 @@ void LevelEditor::renderHUD(){
 }
 
 void LevelEditor::showCurrentObject(){
-	//Get the current mouse location.
+	//현재 마우스 좌표를 얻음
 	int x,y;
 	SDL_GetMouseState(&x,&y);
 	x+=camera.x;
@@ -3220,7 +3221,7 @@ void LevelEditor::showCurrentObject(){
 		y-=25;
 	}
 
-	//Check if the currentType is a legal type.
+	//currentType이 적합한지 체크함
 	if(currentType>=0 && currentType<EDITOR_ORDER_MAX){
 		ThemeBlock* obj=objThemes.getBlock(editorTileOrder[currentType]);
 		if(obj){
@@ -3230,10 +3231,10 @@ void LevelEditor::showCurrentObject(){
 }
 
 void LevelEditor::showSelectionDrag(){
-	//Get the current mouse location.
+	//현재 마우스 좌표를 얻음
 	int x,y;
 	SDL_GetMouseState(&x,&y);
-	//Create the rectangle.
+	//사각형을 생성
 	x+=camera.x;
 	y+=camera.y;
 
@@ -3245,12 +3246,12 @@ void LevelEditor::showSelectionDrag(){
 		y-=25;
 	}
 
-	//Check if the drag center isn't null.
+	//drag center가 null이 아닌지 체크
 	if(dragCenter==NULL) return;
-	//The location of the dragCenter.
+	//dragCenter의 좌표
 	SDL_Rect r=dragCenter->getBox();
 
-	//Loop through the selection.
+	//selection을 loop
 	//TODO: Check if block is in sight.
 	for(unsigned int o=0; o<selection.size(); o++){
 		ThemeBlock* obj=objThemes.getBlock(selection[o]->type);
@@ -3266,59 +3267,59 @@ void LevelEditor::showConfigure(){
 	static unsigned short arrowAnimation=0;
 	arrowAnimation++;
 
-	//Draw the trigger lines.
+	//trigger lines을 그림
 	{
 		map<GameObject*,vector<GameObject*> >::iterator it;
 		for(it=triggers.begin();it!=triggers.end();++it){
-			//Check if the trigger has linked targets.
+			//trigger가 targets과 연결되었는지(linking) 체크
 			if(!(*it).second.empty()){
-				//The location of the trigger.
+				//trigger의 좌표
 				SDL_Rect r=(*it).first->getBox();
 
 				//Loop through the targets.
 				for(unsigned int o=0;o<(*it).second.size();o++){
-					//Get the location of the target.
+					//target의 좌표를 얻음
 					SDL_Rect r1=(*it).second[o]->getBox();
 
 					//Draw the line from the center of the trigger to the center of the target.
 					drawLineWithArrow(r.x-camera.x+25,r.y-camera.y+25,r1.x-camera.x+25,r1.y-camera.y+25,placement,0,32,arrowAnimation%32);
 
-					//Also draw two selection marks.
+					//두가지 selection marks를 그림
 					applySurface(r.x-camera.x+25-2,r.y-camera.y+25-2,selectionMark,screen,NULL);
 					applySurface(r1.x-camera.x+25-2,r1.y-camera.y+25-2,selectionMark,screen,NULL);
 				}
 			}
 		}
 
-		//Draw a line to the mouse from the linkingTrigger when linking.
+		//linkingTrigger 가 연결되었을때 mouse의 선을 그림
 		if(linking){
-			//Get the current mouse location.
+			//현재 마우스 좌표를 얻음
 			int x,y;
 			SDL_GetMouseState(&x,&y);
 
-			//Draw the line from the center of the trigger to mouse.
+			//trigger의 가운데부터 마우스까지의 선을 그림
 			drawLineWithArrow(linkingTrigger->getBox().x-camera.x+25,linkingTrigger->getBox().y-camera.y+25,x,y,placement,0,32,arrowAnimation%32);
 		}
 	}
 
-	//Draw the moving positions.
+	//moving 좌표를 그림
 	map<GameObject*,vector<MovingPosition> >::iterator it;
 	for(it=movingBlocks.begin();it!=movingBlocks.end();++it){
-		//Check if the block has positions.
+		//block 이 가지고있는 좌표를 체크
 		if(!(*it).second.empty()){
-			//The location of the moving block.
+			//moving block의 좌표
 			SDL_Rect block=(*it).first->getBox();
 			block.x+=25-camera.x;
 			block.y+=25-camera.y;
 
-			//The location of the previous position.
+			//이전위치의 좌표
 			//The first time it's the moving block's position self.
 			SDL_Rect r=block;
 
-			//Loop through the positions.
+			//positions을 loop
 			for(unsigned int o=0;o<(*it).second.size();o++){
-				//Draw the line from the center of the previous position to the center of the position.
-				//x and y are the coordinates for the current moving position.
+				//이전 위치의 가운데 부터 현재 위치의 가운데까지 선을 그림
+				//x and y 를 현재 위치를 위해 조정
 				int x=block.x+(*it).second[o].x;
 				int y=block.y+(*it).second[o].y;
 
@@ -3328,7 +3329,7 @@ void LevelEditor::showConfigure(){
 				double d=sqrt(dx*dx+dy*dy);
 				if(d>0.001f){
 					if(it->second[o].time>0){
-						//Calculate offset to contain the moving speed.
+						//moving speed를 포함하기 위해 offset을 계산
 						int offset=int(d*arrowAnimation/it->second[o].time)%32;
 						drawLineWithArrow(r.x,r.y,x,y,placement,0,32,offset);
 					}else{
@@ -3337,19 +3338,19 @@ void LevelEditor::showConfigure(){
 					}
 				}
 
-				//And draw a marker at the end.
+				//끝부분의 마크를 그림
 				applySurface(x-13,y-13,movingMark,screen,NULL);
 
-				//Get the box of the previous position.
+				//이전 위치의 box를 얻음
 				SDL_Rect tmp={x,y,0,0};
 				r=tmp;
 			}
 		}
 	}
 
-	//Draw a line to the mouse from the previous moving pos.
+	//이전 moving 위치로부터 마우스까지 선을 그림
 	if(moving){
-		//Get the current mouse location.
+		//현재 마우스 위치를 얻음
 		int x,y;
 		SDL_GetMouseState(&x,&y);
 
@@ -3367,9 +3368,9 @@ void LevelEditor::showConfigure(){
 
 		int posX,posY;
 
-		//Check if there are moving positions for the moving block.
+		//moving block을 위해 moving 위치가 있는지 체크
 		if(!movingBlocks[movingBlock].empty()){
-			//Draw the line from the center of the previouse moving positions to mouse.
+			//이전 moving 위치로부터 마우스까지 선을 그림
 			posX=movingBlocks[movingBlock].back().x;
 			posY=movingBlocks[movingBlock].back().y;
 
@@ -3379,12 +3380,12 @@ void LevelEditor::showConfigure(){
 			posX+=movingBlock->getBox().x;
 			posY+=movingBlock->getBox().y;
 		}else{
-			//Draw the line from the center of the movingblock to mouse.
+			//movingBlock의 가운데로부터 마우스까지 선을 그림
 			posX=movingBlock->getBox().x-camera.x;
 			posY=movingBlock->getBox().y-camera.y;
 		}
 
-		//Calculate offset to contain the moving speed.
+		//moving speed를 포함하기 위해 offset을 계산
 		int offset=int(double(arrowAnimation)*movingSpeed/10.0)%32;
 
 		drawLineWithArrow(posX+25,posY+25,x+25,y+25,placement,0,32,offset);
@@ -3394,10 +3395,10 @@ void LevelEditor::showConfigure(){
 }
 
 void LevelEditor::resize(){
-	//Call the resize method of the Game.
+	//Game의 resize 함수를 불러옴
 	Game::resize();
 
-	//Now update the placement surface.
+	//placement surface를 업데이트 시킴
 	if(placement)
 		SDL_FreeSurface(placement);
 	placement=SDL_CreateRGBSurface(SDL_SWSURFACE|SDL_SRCALPHA,SCREEN_WIDTH,SCREEN_HEIGHT,32,0x000000FF,0x0000FF00,0x00FF0000,0);
