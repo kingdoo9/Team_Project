@@ -1,3 +1,4 @@
+// 60142234 강승덕 소스 분석
 /*
  * Copyright (C) 2011-2012 Me and My Shadow
  *
@@ -35,64 +36,64 @@ class LevelPack{
 public:
 	//A level entry structure.
 	struct Level{
-		//The name of the level.
+		//level의 이름
 		string name;
-		//The filename of the level.
+		//level의 파일이름
 		string file;
-		
-		//Boolean if the level is locked.
+
+		//level이 잠겼는지 확인하는 Boolean
 		bool locked;
-		//Boolean if the level is won.
+		//level을 이겼는지 확인하는 Boolean
 		bool won;
-		
+
 		//Integer containing the number of ticks (40 = 1s) it took to finish the level.
-		//If there's no time the value will be -1.
+		//만약 time이 없다면 값은 -1
 		int time;
-		//Integer containing the target time to get a medal.
+		//medal을 얻는데까지 목적 시간을 가지고 있다.
 		int targetTime;
-		
-		//Integer containing the number of recordings used to finish the level.
-		//When not won the value is -1.
+
+		//level을 끝내기 위해 사용한 녹화의 개수를 가지고있다.
+		//이기지 못했다면 값은 -1
 		int recordings;
-		//Integer containing the target recordings to get a medal.
+		//medal을 얻기 위한 목적 녹화의 개수를 가지고있다.
 		int targetRecordings;
 
 		//MD5 of level node. :/
 		unsigned char md5Digest[16];
 	};
 private:
-	//Index of the current level.
+	//현재 level의 index
 	int currentLevel;
-	
-	//Boolean if the levels are loaded.
+
+	//level이 로드 되었는지의 Boolean
 	bool loaded;
 
-	//Vector containing the filenames of the levels.
+	//Vector는 level의 파일이름을 가지고 있다.
 	std::vector<Level> levels;
-	
-	//The file name of the level progress.
+
+	//level progress의 파일 이름
 	std::string levelProgressFile;
 
 public:
-	//The name of the levelpack.
+	//levelpack의 이름
 	std::string levelpackName;
-	//The location the levelpack is stored.
+	//Tlevelpack이 저장되어있는 위치
 	std::string levelpackPath;
-	//A description of the levelpack.
+	//levelpack의 서술
 	std::string levelpackDescription;
-	
-	//The text that will be displayed when the levels are finished.
+
+	//levels이 끝났을 때 text를 보여줌
 	std::string congratulationText;
-	
-	//The dictionaryManager of the levelpack, used to translate strings.
+
+	//문장을 번역하는데 사용되는 levelpack의 dictionaryManager
 	tinygettext::DictionaryManager* dictionaryManager;
-	
-	//Constructor.
+
+	//생성자.
 	LevelPack();
-	//Destructor.
+	//소멸자.
 	~LevelPack();
 
-	//gettext function
+	//gettext 함수
 	inline tinygettext::DictionaryManager* getDictionaryManager() const{
 		return dictionaryManager;
 	}
@@ -101,78 +102,78 @@ public:
 	//NOTE: This is called when changing the translation in the Options menu.
 	void updateLanguage();
 
-	//Adds a level to the levels.
-	//levelFileName: The filename of the level to add.
-	//level: The index of the level to add.
+	//levels에 level을 추가
+	//levelFileName: 추가를 위한 level의 파일 이름
+	//level: 추가를 위한 level의 index
 	void addLevel(const std::string& levelFileName,int levelno=-1);
-	//Removes a level from the levels.
-	//level: The index of the level to remove.
+	//levels에 있는 level을 삭제
+	//level: 삭제하기 위한 level의 index
 	void removeLevel(unsigned int level);
-	//Moves the level to a given index.
-	//level1: The level to move.
-	//level2: The destination.
+	//주어진 index로 level을 옮김
+	//level1: 옮겨질 level
+	//level2: 목적지
 	void moveLevel(unsigned int level1,unsigned int level2);
-	//Swaps two level.
+	//레벨을 바꿈
 	//level1: The first level to swap.
 	//level2: The second level to swap.
 	void swapLevel(unsigned int level1,unsigned int level2);
 
-	//Get the levelFile for a given level.
+	//주어진 level을 위한 levelFile을 얻음
 	//level: The level index to get the levelFileName from.
-	//Returns: String containing the levelFileName.
+	//Returns: levelFileName을 포함한 String
 	const std::string& getLevelFile(int level=-1);
-	//Get the levelpackPath of the levels.
-	//Returns: String containing the levelpackPath.
+	//thelevels의 levelpackPath를 얻음
+	//Returns: levelpackPath를 포함한 String
 	const std::string& getLevelpackPath();
-	//Get the levelName for a given level.
+	//주어진 level을 위한 levelName을 얻음
 	//level: The level index to get the levelName from.
-	//Returns: String containing the levelName.
+	//Returns: levelName를 포함한 String
 	const std::string& getLevelName(int level=-1);
-	//Sets the levelName for a given level.
+	//주어진 level을 위해 levelName을 설정
 	//level: The level index to get the levelName from.
-	//name: The new name of the level.
+	//name: level의 새로운 이름
 	void setLevelName(unsigned int level,const std::string& name);
-	//Get the MD5 for a given level.
+	//주어진 level을 위한 MD5를 얻음
 	//level: The level index.
-	//Returns: const unsigned char[16] containing the digest.
+	//Returns: digest를 포함한 상수형 unsigned char[16]
 	const unsigned char* getLevelMD5(int level=-1);
 
-	//get level's auto-save record path,
-	//using level's MD5, file name and other information.
+	//level의 자동 저장 기록 경로를 얻음
+	//level의 MD5, 파일 이름 그리고 다른 정보를 사용
 	void getLevelAutoSaveRecordPath(int level,std::string &bestTimeFilePath,std::string &bestRecordingFilePath,bool createPath);
 
-	//Set the currentLevel.
-	//level: The new current level.
+	//currentLevel 설정
+	//level: 새로운 current level.
 	void setCurrentLevel(unsigned int level);
-	//Get the currentLevel.
+	//currentLevel을 얻음
 	//Returns: The currentLevel.
 	inline int getCurrentLevel(){return currentLevel;}
-	//Get the levelCount.
+	//levelCount를 얻음
 	//Returns: The level count.
 	inline int getLevelCount(){return levels.size();}
-	
-	//Method that will return the requested level.
-	//level: The index of the level, default is the current level.
-	//Returns: Pointer to the requested level structure.
+
+	//요청된 level을 return시킬 함수
+	//level: level의 index  default값은 currentLevel
+	//Returns: 요청된 level 구조체의 Pointer
 	struct Level* getLevel(int level=-1);
-	
-	//Method that will reset any progress/statistics for a given level.
-	//level: The index of the level to reset, default is currentLevel.
+
+	//주어진 level에 대한 모든 progress/statistics를 reset시킬 함수
+	//level: level의 index  default값은 currentLevel
 	void resetLevel(int level=-1);
-	
-	//Check if a certain level is locked.
-	//level: The index of the level to check.
-	//Returns: True if the level is locked.
+
+	//level이 잠겨있는지 체크
+	//level: 체크를 위한 level의 index
+	//Returns: 만약 level이 잠겨있다면 true
 	bool getLocked(unsigned int level);
-	//Set a level locked or not.
+	//level이 잠긴지 아닌지 설정
 	//level: The level to (un)lock.
-	//locked: The new status of the level, default is unlocked (false).
+	//locked: level의 새로운 잠금 상태, default값은 잠금
 	void setLocked(unsigned int level,bool locked=false);
 
-	//Empties the levels.
+	//levles를 clear
 	void clear();
-	
-	
+
+
 	bool loadLevels(const std::string& levelListFile);
 	void loadProgress(const std::string& levelProgressFile);
 	void saveLevels(const std::string& levelListFile);
