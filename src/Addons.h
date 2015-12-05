@@ -1,4 +1,4 @@
-/*
+/*60142233 강민경
  * Copyright (C) 2011-2012 Me and My Shadow
  *
  * This file is part of Me and My Shadow.
@@ -30,63 +30,63 @@
 #include <SDL/SDL_mixer.h>
 #include <SDL/SDL_ttf.h>
 
-//The addons menu.
+//addons menu.
 class Addons: public GameState,public GUIEventCallback{
 private:
 	//An addon entry.
 	struct Addon{
-		//The name of the addon.
+		//addon 이름
 		string name;
-		//The type of addon. (Level, Levelpack, Theme)
+		//addon 타입(Level, Levelpack, Theme)
 		string type;
-		//The link to the addon file.
+		//Taddon file 링크
 		string file;
-		//The folder to place the addon in, only for themes and levelpacks.
+		//폴더는 테마와 levelpacks를 들면, 애드온을 배치합니다.
 		string folder;
-		//The name of the author.
+		//저자의 이름
 		string author;
 		
-		//The latest version of the addon.
+		//애드온의 최신 버전.
 		int version;
-		//The version that the user has installed, if installed.
+		//설치 한 경우 사용자가 설치 한 버전입니다.
 		int installedVersion;
 		
-		//Boolean if the addon is installed.
+		//애드온이 설치되어있는 경우 부울.
 		bool installed;
-		//Boolean if the addon is upToDate. (installedVersion==version)
+		//애드온이 최신 상태 인 경우 부울. (installedVersion == 버전)
 		bool upToDate;
 	};
 
 	//The title.
 	SDL_Surface* title;
 	
-	//Vector containing all the addons.
+	//모든 애드온을 포함하는 벡터.
 	std::vector<Addon>* addons;
 	
-	//File pointing to the addon file in the userpath.
+	//userpath에 애드온 파일을 가리키는 파일.
 	FILE* addon;
 	
-	//String that should contain the error when something fails.
+	//무언가가 실패 할 때 오류를 포함해야 문자열.
 	string error;
 	
-	//The type of addon that is currently selected.
+	//현재 선택된 애드온의 유형
 	string type;
-	//Pointer to the addon that is selected.
+	//선택 애드온의 포인터.
 	Addon* selected;
 	
-	//The list used for listing the addons.
+	//에드온 목록에 사용되는 목록입니다.
 	GUIListBox* list;
-	//The button that does install/uninstall.
+	//install/uninstall 버튼
 	GUIObject* actionButton;
-	//The button used for the updates
+	//업데이트에 사용되는 버튼
 	GUIObject* updateButton;
 	
 	//The possible actions for the action button.
-	//Note: Update was moved to an extra button.
+	//주 : 업데이트는 별도의 버튼으로 이동했다.
 	enum Action{
 		NONE, INSTALL, UNINSTALL
 	};
-	//The current action.
+	//현재의 액션.
 	Action action;
 public:
 	//Constructor.
@@ -94,39 +94,39 @@ public:
 	//Destructor.
 	~Addons();
 	
-	//Method that will create the GUI.
+	//GUI를 만드는 방법.
 	void createGUI();
 	
-	//Method that loads that downloads the addons list.
-	//file: Pointer to the file to download the list to.
-	//Returns: True if the file is downloaded successfuly.
+	// 애드온 목록을 다운로드 방법.
+// 파일 : 포인터 파일로 목록을 다운로드합니다.
+// 반환 값 : 파일이 성공적으로 다운되드되면 트루
 	bool getAddonsList(FILE* file);
 	//
 	void fillAddonList(std::vector<Addons::Addon> &list,TreeStorageNode &addons,TreeStorageNode &installed);
-	//Put all the addons of a given type in a vector.
-	//type: The type the addons must be.
-	//Returns: Vector containing the addons.
+	// 벡터에 주어진 유형의 모든 애드온을 넣습니다.
+	// 타입 : 애드온이 있어야하는 타입
+	// 반환 값 : 애드온을 포함하는 벡터.
 	std::vector<std::string> addonsToList(const string &type);
 	
-	//Method that will save the installed addons to the installed_addons file.
-	//Returns: True if the file is saved successfuly.
+	// installed_addons 파일에 설치된 애드온을 절약 할 수 방법.
+ // 반환 값 : 파일이 성공적으로 저장되면 트루
 	bool saveInstalledAddons();
 	
-	//Inherited from GameState.
+	//GameState에서 상속됩니다.
 	void handleEvents();
 	void logic();
 	void render();
 	void resize();
 	
-	//Method used for GUI event handling.
-	//name: The name of the callback.
-	//obj: Pointer to the GUIObject that caused the event.
-	//eventType: The type of event: click, change, etc..
+	// GUI 이벤트가 처리하기 위해 사용되는 방법.
+// 이름 : 콜백의 이름
+// OBJ : 이벤트를 발생시킨 GUIObject 포인터.
+// EVENTTYPE : 이벤트 유형 : 클릭, 변경, 등
 	void GUIEventCallback_OnEvent(std::string name,GUIObject* obj,int eventType);
 	
-	//Updates the text on the action button to the current action.
+	//현재의 액션에 액션 버튼의 텍스트를 업데이트합니다.
 	void updateActionButton();
-	//Switches enabled/disables of the update button
+	//업데이트 버튼이 활성화 스위치 / 비활성화
 	void updateUpdateButton();
 };
 #endif

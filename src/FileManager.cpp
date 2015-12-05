@@ -1,4 +1,4 @@
-/*
+/*60142233 강민경
  * Copyright (C) 2011-2012 Me and My Shadow
  *
  * This file is part of Me and My Shadow.
@@ -42,17 +42,17 @@ using namespace std;
 #include <dirent.h>
 #endif
 
-//Under Windows there's just one userpath.
+
 #ifdef WIN32
 string userPath,dataPath,appPath,exeName;
 #else
-//But on other platforms we make a difference between the userPath (config files) and the userDataPath (data files).
-//Finally there's the path for cache data userCachePath.
+//다른 플랫폼에서 userPath (설정 파일) 및 userDataPath (데이터 파일) 사이의 차이를 확인
+//캐시 데이터 userCachePath의 경로가있다.
 string userPath,userDataPath,userCachePath,dataPath,appPath,exeName;
 #endif
 
 bool configurePaths() {
-	//Get the appPath and the exeName.
+	//appPath과 EXENAME를 가져옵니다.
 	{
 		char s[4096];
 		int i,m;
@@ -72,108 +72,108 @@ bool configurePaths() {
 		exeName=s+i+1;
 	}
 	
-	//TODO: Check if the userpath is empty before setting userPath???
-	//Check if the userPath is empty.
+	//TODO : userpath이 userPath을 설정하기 전에 비어 있는지 확인
+	//userPath이 비어 있는지 확인합니다.
 	if(getUserPath().empty()){
 #ifdef WIN32
-		//Get the userPath.
+		//userPath를 가져옵니다.
 		char s[1024];
 		SHGetSpecialFolderPathA(NULL,s,CSIDL_PERSONAL,1);
 		userPath=s;
 		userPath+="\\My Games\\meandmyshadow\\";		
 #else
-		//Temp variable that is used to prevent NULL assignement.
+		//NULL 할당을 방지하는 데 사용되는 임시 변수.
 		char* env;
 		
-		//First get the $XDG_CONFIG_HOME env var.
+		//$XDG_CONFIG_HOME env var를 얻는다
 		env=getenv("XDG_CONFIG_HOME");
-		//If it's null set userPath to $HOME/.config/.
+		//그것이 $ HOME / .config /에 널 (null) 설정 userPath에 있다면.
 		if(env!=NULL){
 			userPath=env;
 		}else{
 			userPath=getenv("HOME");
 			userPath+="/.config";
 		}
-		//And add meandmyshadow to it.
+		//userPath에 meandmyshadow를 추가 할 수 있습니다.
 		userPath+="/meandmyshadow/";
 		
-		//Now get the $XDG_DATA_HOME env var.
+		//$XDG_DATA_HOME env var를 얻는다.
 		env=getenv("XDG_DATA_HOME");
-		//If it's null set userDataPath to $HOME/.local/share.
+		//$ HOME /.local/share에 널 (null) 설정 userDataPath이 있다면.
 		if(env!=NULL){
 			userDataPath=env;
 		}else{
 			userDataPath=getenv("HOME");
 			userDataPath+="/.local/share";
 		}
-		//And add meandmyshadow to it.
+		//userPath에 meandmyshadow를 추가
 		userDataPath+="/meandmyshadow/";
 		
-		//Now get the $XDG_CACHE_HOME env var.
+		//$XDG_CACHE_HOME env var를 얻는다.
 		env=getenv("XDG_CACHE_HOME");
-		//If it's null set userCachePath to $HOME/.cache.
+		//$ HOME / .cache에 널 (null) 설정 userCachePath이 있다면.
 		if(env!=NULL){
 			userCachePath=env;
 		}else{
 			userCachePath=getenv("HOME");
 			userCachePath+="/.cache";
 		}
-		//And add meandmyshadow to it.
+		//AuserPath에 meandmyshadow를 추가 할 수 있습니다.
 		userCachePath+="/meandmyshadow/";
 		
-		//Set env null.
+		//null 설정
 		env=NULL;
 #endif
 		
-		//Print the userPath.
+		//userPath을 출력.
 		cout<<"User preferences will be fetched from: "<<userPath<<endl;
 #ifndef WIN32
-		//In case of a non-Windows computer show the user data path.
+		//비 Windows 시스템의 경우에는 사용자 데이터의 경로를 나타낸다.
 		cout<<"User data will be fetched from: "<<userDataPath<<endl;
 #endif
 	}
 
 #ifdef WIN32
-	//Create the userPath folder and other subfolders.
+	//userPath 폴더와 다른 하위 폴더를 만듭니다.
 	createDirectory(userPath.c_str());
 	createDirectory((userPath+"levels").c_str());
 	createDirectory((userPath+"levelpacks").c_str());
 	createDirectory((userPath+"themes").c_str());
 	createDirectory((userPath+"progress").c_str());
 	createDirectory((userPath+"tmp").c_str());
-	//The records folder for recordings.
+	//record 폴더
 	createDirectory((userPath+"records").c_str());
 	createDirectory((userPath+"records\\autosave").c_str());
-	//And the custom folder inside the userpath.
+	//그리고 userpath 내부의 사용자 지정 폴더.
 	createDirectory((userPath+"custom").c_str());
 	createDirectory((userPath+"custom\\levels").c_str());
 	createDirectory((userPath+"custom\\levelpacks").c_str());
 #else
-	//Create the userPath.
+	// userPath 생성.
 	createDirectory(userPath.c_str());
 	createDirectory(userDataPath.c_str());
 	createDirectory(userCachePath.c_str());
-	//Also create other folders in the userpath.
+	//또한 userpath에 다른 폴더를 만들 수 있습니다.
 	createDirectory((userDataPath+"/levels").c_str());
 	createDirectory((userDataPath+"/levelpacks").c_str());
 	createDirectory((userDataPath+"/themes").c_str());
 	createDirectory((userDataPath+"/progress").c_str());
 	createDirectory((userCachePath+"/tmp").c_str());
-	//The records folder for recordings.
+	//record 폴더
 	createDirectory((userDataPath+"/records").c_str());
 	createDirectory((userDataPath+"/records/autosave").c_str());
-	//And the custom folder inside the userpath.
+	//그리고 userpath 내부의 사용자 지정 폴더.
 	createDirectory((userDataPath+"/custom").c_str());
 	createDirectory((userDataPath+"/custom/levels").c_str());
 	createDirectory((userDataPath+"/custom/levelpacks").c_str());
 #endif
 
-	//Get the dataPath by trying multiple relative locations.
+	//복수의 상대 위치를 시도하여 데이터 경로를 가져옵니다.
 	{
 		FILE *f;
 		string s;
 		while(true){
-			//try existing one
+			//시도
 			if(!dataPath.empty()){
 				s=dataPath+"font/knewave.ttf";
 				if((f=fopen(s.c_str(),"rb"))!=NULL){
@@ -218,11 +218,11 @@ bool configurePaths() {
 				break;
 			}
 #endif
-			//error: can't find file
+			//오류 : 파일을 찾을 수 없습니다
 			return false;
 		}
 
-		//Print the dataPath.
+		//데이터 경로를 인쇄합니다.
 		cout<<"Data files will be fetched from: "<<dataPath<<endl;
 	}
 	return true;
@@ -341,11 +341,11 @@ std::vector<std::string> enumAllDirs(std::string path,bool containsPath){
 		struct stat S_stat;
 		lstat(s1.c_str(),&S_stat);
 		if(S_ISDIR(S_stat.st_mode)){
-			//Skip hidden folders.
+			//숨겨진 폴더를 건너 뜁니다.
 			s1=string(pDirent->d_name);
 			if(s1.find('.')==0) continue;
 			
-			//Add result to vector.
+			//벡터에 결과를 추가합니다.
 			if(containsPath){
 				v.push_back(path+pDirent->d_name);
 			}else{
@@ -363,7 +363,7 @@ std::string processFileName(const std::string& s){
   
 	//FIXME: Do we still need those last three?
 	//REMARK: maybe 'return prefix+s;' is not needed (?)
-	// it causes some bugs such as can't save level progress
+	// 그러한 수준의 진행 상황을 저장할 수 없습니다 같은 몇 가지 버그가 발생합니다
 	if(s.compare(0,6,"%DATA%")==0){
 		if(s.size()>6 && (s[6]=='/' || s[6]=='\\')){
 			return dataPath+s.substr(7);
@@ -415,8 +415,8 @@ std::string fileNameFromPath(const std::string &path, const bool webURL){
 	if(webURL){
 		pos = path.find_last_of("/");
 	}else{
-		// NOTE: sometimes path separator in Windows can be '/',
-		// so we must check botn '\' and '/'
+		// 참고 : 때때로 Windows의 경로 구분은 '/'를 할 수있다,
+		// 그래서 우리는 '\'와 '/'를 확인해야한다 
 		pos = path.find_last_of("\\/");
 	}
 #else
@@ -437,8 +437,8 @@ std::string pathFromFileName(const std::string &filename){
 	// FIXME: '/' in string should be '/' not '\/',
 	// we don't need to escape it
 #ifdef WIN32
-	// NOTE: sometimes path separator in Windows can be '/',
-	// so we must check botn '\' and '/'
+	// 참고 : 때때로 Windows의 경로 구분은 '/'를 할 수있다,
+	//  그래서 우리는 '\'와 '/'를 확인해야한다 
 	size_t pos = filename.find_last_of("\\/");
 #else
 	size_t pos = filename.find_last_of("/");
@@ -458,14 +458,14 @@ bool downloadFile(const string &path, const string &destination) {
 	bool status=downloadFile(path,file);
 	fclose(file);
 	
-	//And return the status.
+	//그리고 상태를 반환합니다.
 	return status;
 }
 
 bool downloadFile(const string &path, FILE* destination) {
 	CURL* curl=curl_easy_init();
 
-	// proxy test (test only)
+	// 프록시 테스트 (테스트 전용)
 	string internetProxy = getSettings()->getValue("internet-proxy");
 	size_t pos = internetProxy.find_first_of(":");
 	if(pos!=string::npos){
@@ -489,9 +489,9 @@ size_t writeData(void *ptr, size_t size, size_t nmemb, void *stream){
 
 
 bool extractFile(const string &fileName, const string &destination) {
-	//Create the archive we're going to extract.
+	//우리가 추출하는 아카이브를 만듭니다.
 	archive* file=NULL;
-	//Create the destination we're going to extract to.
+	//우리가 추출하는 대상을 만듭니다.
 	archive* dest=NULL;
 	
 	file=archive_read_new();
@@ -500,13 +500,13 @@ bool extractFile(const string &fileName, const string &destination) {
 	
 	archive_read_support_format_zip(file);
 	
-	//Now read the archive.
+	//이제 아카이브를 읽는다.
 	if(archive_read_open_file(file,fileName.c_str(),10240)) {
 		cerr<<"Error while reading archive "+fileName<<endl;
 		return false;
 	}
 	
-	//Now write every entry to disk.
+	//이제 디스크에있는 모든 항목을 작성합니다.
 	int status;
 	archive_entry* entry=NULL;
 	while(true) {
@@ -535,7 +535,7 @@ bool extractFile(const string &fileName, const string &destination) {
 		}
 	}
 	
-	//Finally close the archive.
+	//마지막으로 아카이브를 닫습니다.
 	archive_read_close(file);
 	archive_read_finish(file);
 	return true;
@@ -565,33 +565,33 @@ bool removeDirectory(const char *path){
 	WIN32_FIND_DATAA f;
 	HANDLE h = FindFirstFileA((string(path)+"\\*").c_str(),&f);
 #else
-	//Open the directory that needs to be removed.
+	//제거 할 필요가있는 디렉토리를 엽니다.
 	DIR* d=opendir(path);
 #endif
-	//Get the path length
+	//경로 길이를 가져옵니다
 	size_t path_len = strlen(path);
-	//Boolean if the directory is emptied.
-	//True: succes		False: failure
-	//Default is true because if the directory is empty it will never enter the while loop, but we still have success.
+	//디렉토리가 비어있는 경우 부울.
+	//True: succees		False: failure
+	//디렉토리가 빈 상태 (empty)의 경우 while 루프를 입력하지 않습니다,하지만 성공을 가지고 있기 때문에 기본값은 true.
 	bool r = true;
 
 #ifdef WIN32
 	if(h!=NULL && h!=INVALID_HANDLE_VALUE) {
 #else
-	//Check if the directory exists.
+	//디렉토리가 존재하는지 확인합니다.
 	if(d) {
-		//Pointer to an entry of the directory.
+		//디렉토리 엔트리의 포인터.
 		struct dirent* p;
 #endif
 
 #ifdef WIN32
 		do{
 #else
-		//Loop the entries of the directory that needs to be removed as long as there's no error.
+		//오류가 없습니다 같은 제거 할 필요가있는 디렉토리의 항목들을 반복해라 
 		while(r && (p=readdir(d))) {
 #endif
 
-			/* Skip the names "." and ".." as we don't want to recurse on them. */
+			// Skip the names "." and ".." as we don't want to recurse on them.
 #ifdef WIN32
 			if (!strcmp(f.cFileName, ".") || !strcmp(f.cFileName, "..")) {
 #else
@@ -600,18 +600,18 @@ bool removeDirectory(const char *path){
 				//The filename is . or .. so we continue to the next entry.
 				continue;
 			} else {
-				//r2 tells if the entry is deleted.
-				//True: succes		False: failure
-				//Default is false.
+				//항목이 삭제 된 경우 R2
+				//True: succees		False: failure
+				//기본값은 false입니다.
 				bool r2 = false;
 				char* buf;
 				size_t len;
 
 #ifdef WIN32
-				//Get the length of the path + the directory entry name.
+				//경로 + 디렉토리 엔트리 이름의 길이를 가져옵니다.
 				len = path_len + strlen(f.cFileName) + 2; 
 #else
-				//Get the length of the path + the directory entry name.
+				//경로 + 디렉토리 엔트리 이름의 길이를 가져옵니다.
 				len = path_len + strlen(p->d_name) + 2; 
 #endif
 				buf = (char*) malloc(len);
@@ -630,10 +630,10 @@ bool removeDirectory(const char *path){
 					snprintf(buf, len, "%s/%s", path, p->d_name);
 
 					if(!stat(buf, &statbuf)){
-						//Check if the entry is a directory or a file.
+						//항목이 디렉토리 나 파일인지 확인합니다.
 						if (S_ISDIR(statbuf.st_mode)){
-							//We call ourself(removeDirectory) recursively.
-							//We return true on success.
+							//반복적으로 해결할 (removeDirectory)호출
+							//성공에 true를 돌려줍니다.
 							r2 = removeDirectory(buf);
 						}else{
 							//unlink() returns zero on succes so we set r2 to the unlink(buf)==0.
@@ -641,10 +641,10 @@ bool removeDirectory(const char *path){
 						}
 					}
 #endif
-					//Free the buf.
+					//buf free
 					free(buf);
 				}
-				//We set r to r2 since r2 contains the status of the latest deletion.
+				//R2는 최근 삭제의 상태를 포함하고 있기 때문에 R2로 R을 설정합니다.
 				r = r2;
 			}
 #ifdef WIN32
@@ -652,19 +652,19 @@ bool removeDirectory(const char *path){
 		FindClose(h);
 #else
 		}
-		//Close the directory.
+		//디렉토리를 닫습니다.
 		closedir(d);
 #endif
 	}
 	
-	//The while loop has ended, meaning we (tried) cleared the directory.
-	//If r is true, meaning no errors we can delete the directory.
+	//while 루프는 우리가 (시도) 의미, 종료는 디렉토리를 삭제.
+	//r은 오류를 의미한다면, r은 에러없음을 의미. 디렉토리를 삭제할 수 있습니다.
 	if(r){
-		//The return value of rmdir is 0 when it succeeded.
+		//이 때 RmDir을 성공의 반환 값은 0이다.
 		r = rmdir(path)==0;
 	}
 	
-	//Return the status.
+	//상태를 돌려줍니다.
 	return r;
 }
 
@@ -702,17 +702,17 @@ void copyData(archive* file, archive* dest) {
 }
 
 bool copyFile(const char* source,const char* dest){
-	//Open the source file.
+	//소스 파일을 엽니다.
 	ifstream fin(source,fstream::binary);
 	if(!fin)
 		return false;
 	
-	//Open the dest file.
+	//DEST 파일을 엽니다.
 	ofstream fout(dest,fstream::trunc|fstream::binary);
 	if(!fout)
 		return false;
 	
-	//Copy.
+	//복사
 	fout<<fin.rdbuf();
 	return true;
 }
@@ -722,12 +722,12 @@ bool removeFile(const char* file){
 }
 
 bool createFile(const char* file){
-	//Open the file with write permission.
+	//쓰기 권한이있는 파일을 엽니 다.
 	FILE* f=fopen(file,"wb");
 	
-	//Check if there are no problems.
+	//아무런 문제가없는 경우 확인합니다.
 	if(f){
-		//Close the file.
+		//파일닫기
 		fclose(f);
 		return true;
 	}else{

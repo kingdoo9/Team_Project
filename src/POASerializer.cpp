@@ -1,4 +1,5 @@
-/*
+/* 60142233 강민경
+
  * Copyright (C) 2011-2012 Me and My Shadow
  *
  * This file is part of Me and My Shadow.
@@ -22,11 +23,11 @@
 using namespace std;
 
 static void readString(std::istream& fin,std::string& string){
-	//This method is used for reading a string from an input stream.
-	//fin: The input stream to read from.
-	//string: String to place the result in.
+//이 메소드는 입력 스트림에서 문자열을 읽기 위해 사용된다.
+// 핀 : read 원의 입력 스트림.
+// 문자열 : 문자열에 결과를 배치한다.
 	
-	//The current character.
+	//현재 문자.
 	int c;
 	c=fin.get();
 	
@@ -49,22 +50,22 @@ static void readString(std::istream& fin,std::string& string){
 				}
 			}
 			
-			//Every other character can be put in the string.
+			//다른 모든 문자는 문자열에 넣을 수 있다.
 			string.push_back(c);
 		}
 	}else{
-		//There are no quotes around the string so we need to be carefull detecting if the string has ended.
+		//따옴표가 없어서 문장이 끝나는지 아닌지 주의깊게 검토할 필요가 있다.
 		do{
 			switch(c){
-			//Check for characters that mean the end of the string.
+			// 문자열의 끝을 의미하는 문자를 확인한다.
 			case EOF:
 			case ' ':
 			case '\r':
 			case '\n':
 			case '\t':
 				return;
-			//Check for characters that are part of the POA file format.
-			//If so we first unget one character to prevent problems parsing the rest of the file.
+			// POA 파일 형식의 일부 문자를 확인
+// If so we first unget one character to prevent problems parsing the rest of the file.
 			case ',':
 			case '=':
 			case '(':
@@ -75,27 +76,27 @@ static void readString(std::istream& fin,std::string& string){
 				fin.unget();
 				return;
 			default:
-				//In any other case the character is normal so we put it in the string.
+				//다른 경우 문자는 정상.문자열에 넣음
 				string.push_back(c);
 			}
 			
-			//Get the next character.
+			//다음 문자를 가져옴
 			c=fin.get();
 		}while(!fin.eof() & !fin.fail());
 	}
 }
 
 static void skipWhitespaces(std::istream& fin){
-	//This function will read from the input stream until there's something else than whitespaces.
-	//fin: The input stream to read from.
-	
-	//The current character.
+	//공백같은 무언가가 있을 때까지 이 함수는 입력 스트림에서 읽는다.
+	// 핀 : read 원의 입력 스트림.
+
+	// 현재의 문자.
 	int c;
 	while(!fin.eof() & !fin.fail()){
-		//Get the character.
+		// 문자를 가져옵니다.
 		c=fin.get();
 		
-		//Check if it's one of the whitespace characters.
+		//공백 문자 하나가 있는지 아닌지 확인합니다.
 		switch(c){
 		case EOF:
 		case ' ':
@@ -104,8 +105,8 @@ static void skipWhitespaces(std::istream& fin){
 		case '\t':
 			break;
 		default:
-			//Anything other means that the whitespaces have ended.
-			//Unget the last character and return.
+		// 다른 것들은 공백이 종료 한 것을 의미한다.
+ // Unget 마지막 문자 및 반환.
 			fin.unget();
 			return;
 		}
@@ -113,16 +114,16 @@ static void skipWhitespaces(std::istream& fin){
 }
 
 static void skipComment(std::istream& fin){
-	//This function will read from the input stream until the end of a line (also end of the comment).
-	//fin: The input stream to read from.
+	//라인의 끝 (또한 주석 끝)일때까지 이 함수는 입력 스트림에서 읽습니다.
+ // 핀 : read 원의 입력 스트림.
 	
-	//The current character.
+	//현재문자
 	int c;
 	while(!fin.eof() & !fin.fail()){
-		//Get the character.
+		//문자를 가져옴
 		c=fin.get();
 		
-		//Check if it's a new line (end of comment).
+		//이 새로운 라인 (주석의 끝)을 확인
 		if(c=='\r'||c=='\n'){
 			fin.unget();
 			break;
@@ -133,7 +134,7 @@ static void skipComment(std::istream& fin){
 bool POASerializer::readNode(std::istream& fin,ITreeStorageBuilder* objOut,bool loadSubNodeOnly){
 	//The current character.
 	int c;
-	//The current mode of reading.
+	//현재 읽기 모드.
 	//0=read name
 	//1=read attribute value
 	//2=read subnode value
@@ -141,44 +142,44 @@ bool POASerializer::readNode(std::istream& fin,ITreeStorageBuilder* objOut,bool 
 	//17=add subnode
 	int mode;
 
-	//Before reading make sure that the input stream isn't null.
+	//읽기 전에 입력 스트림이 null이 있는지 확인
 	if(!fin) return false;
 	
-	//Vector containing the stack of TreeStorageNodes.
+	//TreeStorageNodes의 스택을 포함하는 벡터.
 	vector<ITreeStorageBuilder*> stack;
-	//A vector for the names and a vector for the values.
+	//이름 벡터와 값에 대한 벡터.
 	vector<string> names,values;
 
-	//Check if we only need to load subNodes.
-	//If so then put the objOut as the first TreeStorageNode.
+	// 하위 노드를로드 할 필요가 있는지 확인한다.
+ // if : 첫 번째 TreeStorageNode로 objOut을 넣어합니다.
 	if(loadSubNodeOnly) stack.push_back(objOut);
 
-	//Loop through the files.
+	//파일을 통해 루프.
 	while(!fin.eof() && !fin.fail()){
-		//Get a character.
+		//문자를 가져옴
 		c=fin.get();
 		
-		//Check what it is and what to do with that character.
+		//어떤건지 그 문자와 어떤걸 할건지 확인
 		switch(c){
 		case EOF:
 		case ' ':
 		case '\r':
 		case '\n':
 		case '\t':
-			//We skip whitespaces.
+			//공백을 건너 뛴다
 			break;
 		case '#':
-			//A comment so skip it.
+			//코멘트는 스킵.
 			skipComment(fin);
 			break;
 		case '}':
-			//A closing bracket so do one step back in the stack.
-			//There must be a TreeStorageNode left if not return false.
+			// 닫는 대괄호는  스택안에서 한 단계를 수행
+	// false를 반환하지 않을 경우 TreeStorageNode 왼쪽이 있어야합니다.
 			if(stack.empty()) return false;
 			
-			//Remove the last entry of the stack.
+			//스택의 마지막 항목을 제거합니다.
 			stack.pop_back();
-			//Check if the stack is empty, if so than the reading of the node is done.
+			// if so than the reading of the node is done.스택이 비었는지 확인
 			if(stack.empty()) return true;
 			objOut=stack.back();
 			break;
@@ -187,49 +188,48 @@ bool POASerializer::readNode(std::istream& fin,ITreeStorageBuilder* objOut,bool 
 			fin.unget();
 			
 			{
-				//Clear the names and values vectors, start reading new names/values.
+				//, 이름과 값 벡터를 지우고 새로운 이름 / 값을 읽기 시작합니다.
 				names.clear();
 				values.clear();
 				
-				//Set the mode to the read name mode.
+				//이름 판독 모드로 모드를 설정.
 				mode=0;
 				
-				//Keep reading characters, until we break out the while loop or there's an error.
+				// while 루프를 중단 또는 오류가있을 때까지 문자를 읽고 보관
 				while(!fin.eof() & !fin.fail()){
-					//The string containing the name.
+					//이름이 포함 된 문자열입니다.
 					string s;
 					
-					//First skip the whiteSpaces.
+					//먼저 공백을 건너 뜁니다.
 					skipWhitespaces(fin);
-					//Now get the string.
+					//이제 문자열을 얻는다
 					readString(fin,s);
 					
-					//Check the mode.
+					//모드체크
 					switch(mode){
 					case 0:
-						//Mode is 0(read names) so put the string in the names vector.
+						//모드 (이름을 읽기) 0 ,이름 벡터에 문자열을 넣는다
 						names.push_back(s);
 						break;
 					case 1:
 					case 2:
-						//Mode is 1 or 2 so put the string in the values vector.
+						//모드 1 또는 2 ,값 벡터에 문자열을 넣는다
 						values.push_back(s);
 						break;
 					}
-					//Again skip whitespaces.
+					//다시 공백을 건너 뛴다
 					skipWhitespaces(fin);
 					
-					//Now read the next character.
+					//이제 다음 문자를 읽는다
 					c=fin.get();
 					switch(c){
 					case ',':
-						//A comma means one more name or value.
+						//쉼표는 또 하나의 이름이나 값을 의미
 						break;
 					case '=':
 						//An '=' can only occur after a name (mode=0).
 						if(mode==0){
-	  						//The next string will be a value so set mode to 1.
-							mode=1;
+	  						//다음 문자열은 1 모드값을 설정
 						}else{
 							//In any other case there's something wrong so return false.
 							return false;
@@ -238,7 +238,7 @@ bool POASerializer::readNode(std::istream& fin,ITreeStorageBuilder* objOut,bool 
 					case '(':
 						//An '(' can only occur after a name (mode=0).
 						if(mode==0){
-							//The next string will be a value of a block so set mode to 2.
+							//다음 문자열은 2 모드를 설정, 블록의 값이된다
 							mode=2;
 						}else{
 							//In any other case there's something wrong so return false.
@@ -248,7 +248,7 @@ bool POASerializer::readNode(std::istream& fin,ITreeStorageBuilder* objOut,bool 
 					case ')':
 						//A ')' can only occur after an attribute (mode=2).
 						if(mode==2){
-							//The next will be a new subNode so set mode to 17.
+							// 17 모드를 설정 새로운 하위 노드가 될것
 							mode=17;
 						}else{
 							//In any other case there's something wrong so return false.
@@ -267,32 +267,32 @@ bool POASerializer::readNode(std::istream& fin,ITreeStorageBuilder* objOut,bool 
 						break;
 					}
 					
-					//We only need to break out if the mode is 16(add attribute) or 17(add subnode)
+					//모드가 16 (추가 속성) 또는 17 (하위 노드를 추가 할) 경우  탈출해야함
 					if(mode>=16) break;
 				}
 				
-				//Check the mode.
+				//모드체크
 				switch(mode){
 				case 16:
-					//The mode is 16 so we need to change the names and values into attributes.
-					//The stack mustn't be empty.
+					// 모드는 16 ,속성에 이름과 값을 변경해야함
+				// 스택은 비워 둘 수 없다
 					if(stack.empty()) return false;
 					
-					//Make sure that the result TreeStorageNode isn't null.
+					//결과 TreeStorageNode이 null이 있는지 확인
 					if(objOut!=NULL){
-						//Check if the names vector is empty, if so add an empty name.
+						//이름벡터가 비어있는지 아닌지 확인, if so add an empty name.
 						if(names.empty()) names.push_back("");
 						
-						//Put an empty value for every valueless name.
+						//모든 그냥 이름을 빈 값을 넣는다
 						while(values.size()<names.size()) values.push_back("");
 						
-						//Now loop through the names.
+						//이제 이름을 통해 루프.
 						for(unsigned int i=0;i<names.size()-1;i++){
-							//Temp vector that will contain the values.
+							//값을 포함 온도 벡터.
 							vector<string> v;
 							v.push_back(values[i]);
 							
-							//And add the attribute.
+							//그리고 속성을 추가 할 수 있다
 							objOut->newAttribute(names[i],v);
 						}
 						
@@ -301,9 +301,9 @@ bool POASerializer::readNode(std::istream& fin,ITreeStorageBuilder* objOut,bool 
 					}
 					break;
 				case 17:
-					//The mode is 17 so we need to add a subNode.
+					//모드는 17 ,하위 노드를 추가 할 필요가있음
 					{
-						//Check if the names vector is empty, if so add an empty name.
+						//이름 벡터가 비어있는지,  빈 이름을 추가 할 경우인지 확인.
 						if(names.empty()) names.push_back("");
 						else if(names.size()>1){
 							if(stack.empty()) return false;
@@ -316,41 +316,41 @@ bool POASerializer::readNode(std::istream& fin,ITreeStorageBuilder* objOut,bool 
 							values.erase(values.begin(),values.begin()+(names.size()-1));
 						}
 						
-						//Create a new subNode.
+						//서브노드생성
 						ITreeStorageBuilder* objNew=NULL;
 						
-						//If the stack is empty the new subNode will be the result TreeStorageNode.
+						//스택이 비어 있으면 새로운 하위 노드는 TreeStorageNode
 						if(stack.empty()) objNew=objOut;
-						//If not the new subNode will be a subNode of the result TreeStorageNode.
+						//하지 않으면 것은 새로운 하위 노드는 결과 TreeStorageNode의 하위 노드가 될 것
 						else if(objOut!=NULL) objNew=objOut->newNode();
 						
-						//Add it to the stack.
+						//스택추가
 						stack.push_back(objNew);
 						if(objNew!=NULL){
-							//Add the name and the values.
+							//이름과 값추가
 							objNew->setName(names.back());
 							objNew->setValue(values);
 						}
 						objOut=objNew;
 
-						//Skip the whitespaces.
+						//공백 건너 뛰기.
 						skipWhitespaces(fin);
-						//And get the next character.
+						//그리고 다음 문자를 얻음
 						c=fin.get();
 						if(c!='{'){
 							//The character isn't a '{' meaning the block hasn't got a body.
 							fin.unget();
 							stack.pop_back();
 							
-							//Check if perhaps we're done, stack=empty.
+							//완료되었는지, 스택이 비어있는지 확인
 							if(stack.empty()) return true;
 							objOut=stack.back();
 						}
 					}
 					break;
 				default:
-					//The mode isn't 16 or 17 but still broke out the while loop.
-					//Something's wrong so return false.
+					// 모드는 16 또는 17이 아니라 여전히 while 루프를 끊었다.
+ // 뭔가 잘못 때문에 false를 반환
 					return false;
 				}
 			}
@@ -361,24 +361,24 @@ bool POASerializer::readNode(std::istream& fin,ITreeStorageBuilder* objOut,bool 
 }
 
 static void writeString(std::ostream& fout,std::string& s){
-	//This method will write a string.
-	//fout: The output stream to write to.
-	//s: The string to write.
-	
-	//new: check if the string is empty
+		//이 메소드는 문자열을 작성
+	// FOUT : 출력 스트림에 기록합
+	// S : 문자열 쓰기.
+
+	// 새로운 : 문자열이 비어 있는지 확인
 	if(s.empty()){
 		//because of the new changes of loader, we should output 2 quotes '""'
 		fout<<"\"\"";
 	}else
-	//Check if the string contains any special character that needs escaping.
+	//문자열이 탈출 필요한 모든 특수 문자가 포함되어 있는지 확인
 	if(s.find_first_of(" \r\n\t,=(){}#\"")!=string::npos){
 		//It does so we put '"' around them.
 		fout<<'\"';
 		
-		//The current character.
+		//현재 문자.
 		int c;
 		
-		//Loop through the characters.
+		//문자를 통해 루프.
 		for(unsigned int i=0;i<s.size();i++){
 			c=s[i];
 			
@@ -386,39 +386,39 @@ static void writeString(std::ostream& fout,std::string& s){
 			if(c=='\"'){
 				fout<<"\"\"";
 			}else{
-				//If it isn't we can just write away the character.
+				//그렇지 않은 경우, 우리는 단지 캐릭터를 얻어 작성할 수있다.
 				fout<<(char)c;
 			}
 		}
 		fout<<'\"';
 	}else{
-		//It doesn't contain any special characters so we can write it away.
+		//그것을 멀리 쓸 수 있도록 어떤 특수 문자가 포함되어 있지 않습니다.
 		fout<<s;
 	}
 }
 
 static void writeStringArray(std::ostream& fout,std::vector<std::string>& s){
-	//This method will write a away an array of strings.
-	//fout: The output stream to write to.
-	//s: Vector containing the strings to write.
-	
-	//Loop the strings.
+	//이 방법은 멀리 문자열 배열을 작성합니다.
+	// FOUT : 출력 스트림에 기록합니다.
+	// S : 쓸 수있는 문자열을 포함하는 벡터.
+
+	// 루프 문자열.
 	for(unsigned int i=0;i<s.size();i++){
 		//If it's the second or more there must be a ",".
 		if(i>0) fout<<',';
-		//Now write the string.
+		//문자열을 쓴다
 		writeString(fout,s[i]);
 	}
 }
 
 static void pWriteNode(ITreeStorageReader* obj,std::ostream& fout,int indent,bool saveSubNodeOnly){
-	//Write the TreeStorageNode to the given output stream.
-	//obj: The TreeStorageNode to write away.
-	//fout: The output stream to write to.
-	//indent: Integer containing the number of indentations are needed.
-	//saveSubNodeOnly: Boolean if only the subNodes need to be saved.
+	// 지정된 출력 스트림에 TreeStorageNode를 작성=
+// OBJ : TreeStorageNode 멀리 쓰기
+// FOUT : 출력 스트림에 기록
+// 들여 쓰기 : 들여 쓰기의 수를 포함하는 정수가 필요
+// saveSubNodeOnly : 만 하위 노드가 저장해야하는 경우 부울.
   
-	//Boolean if the node has subNodes.
+// 노드가 하위 노드가있는 경우 부울.
 	bool haveSubNodes=false;
 	void* lpUserData=NULL;
 	ITreeStorageReader* objSubNode=NULL;
@@ -439,7 +439,7 @@ static void pWriteNode(ITreeStorageReader* obj,std::ostream& fout,int indent,boo
 		fout<<')';
 		indent++;
 	}
-	//attributes
+	//특성
 	lpUserData=NULL;
 	for(;;){
 		s.clear();
@@ -454,7 +454,7 @@ static void pWriteNode(ITreeStorageReader* obj,std::ostream& fout,int indent,boo
 		writeStringArray(fout,v);
 		fout<<'\n';
 	}
-	//subnodes
+	//서브노드들
 	lpUserData=NULL;
 	for(;;){
 		lpUserData=obj->getNextNode(lpUserData,objSubNode);
@@ -477,7 +477,7 @@ static void pWriteNode(ITreeStorageReader* obj,std::ostream& fout,int indent,boo
 }
 
 void POASerializer::writeNode(ITreeStorageReader* obj,std::ostream& fout,bool writeHeader,bool saveSubNodeOnly){
-	//Make sure that the output stream isn't null.
+	//출력 스트림이 null이 있는지 확인합니다.
 	if(!fout) return;
 	
 	//It isn't so start writing the node.
