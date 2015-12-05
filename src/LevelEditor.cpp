@@ -1698,10 +1698,10 @@ void LevelEditor::onClickObject(GameObject* obj,bool selected){
 				case TYPE_MOVING_SHADOW_BLOCK:
 				case TYPE_MOVING_SPIKES:
 				{
-					//It's only valid when not linking a portal.
+					//portal 에 링크 되어있지 않을때 유효한 값을 가짐.
 					if(linkingTrigger->type==TYPE_PORTAL){
-						//You can't link a portal to moving blocks, etc.
-						//Stop linking and return.
+						//portal을 움직이는 블럭이나 다른 것들에 링크 할 수 없다.
+						//링크를 멈추고 반환.
 						linkingTrigger=NULL;
 						linking=false;
 						return;
@@ -1710,9 +1710,9 @@ void LevelEditor::onClickObject(GameObject* obj,bool selected){
 				}
 				case TYPE_PORTAL:
 				{
-					//Make sure that the linkingTrigger is also a portal.
+					//linkingTrigger 또한 portal 이어야 한다.
 					if(linkingTrigger->type!=TYPE_PORTAL){
-						//The linkingTrigger isn't a portal so stop linking and return.
+						//The linkingTrigger가 portal이 아니여서 링크를 멈추고 리턴.
 						linkingTrigger=NULL;
 						linking=false;
 						return;
@@ -1720,33 +1720,33 @@ void LevelEditor::onClickObject(GameObject* obj,bool selected){
 					break;
 				}
 				default:
-					//It isn't valid so stop linking and return.
+					//값이 유효하지 않아서 링크를 멈추고 리턴
 					linkingTrigger=NULL;
 					linking=false;
 					return;
 				break;
 			}
 
-			//Check if the linkingTrigger can handle multiple or only one link.
+			//linkingTrigger가 여러개의 링크를 다루고 있는지 또는 오직 하나만 가지고있는지 체크
 			switch(linkingTrigger->type){
 				case TYPE_PORTAL:
 				{
-					//Portals can only link to one so remove all existing links.
+					//Portals 은 오직 하나의 링크만 가질 수 있어서 모든 존재하는 링크를 지움
 					triggers[linkingTrigger].clear();
 					triggers[linkingTrigger].push_back(obj);
 					break;
 				}
 				default:
 				{
-					//The most can handle multiple links.
+					//대부분은 다중링크를 가질 수 있다.
 					triggers[linkingTrigger].push_back(obj);
 					break;
 				}
 			}
 
-			//Check if it's a portal.
+			//portal인지 확인.
 			if(linkingTrigger->type==TYPE_PORTAL){
-				//Portals need to get the id of the other instead of give it's own id.
+				//portals는 자기만의 id를 주는대신 다른것의 아이디를 필요로한다.
 				vector<pair<string,string> > objMap;
 				obj->getEditorData(objMap);
 				int m=objMap.size();
@@ -1758,7 +1758,7 @@ void LevelEditor::onClickObject(GameObject* obj,bool selected){
 					linkingTrigger->setEditorData(editorData);
 				}
 			}else{
-				//Give the object the same id as the trigger.
+				//trigger로서 같은아이디를 object에 준다.
 				vector<pair<string,string> > objMap;
 				linkingTrigger->getEditorData(objMap);
 				int m=objMap.size();
@@ -1780,7 +1780,7 @@ void LevelEditor::onClickObject(GameObject* obj,bool selected){
 
 	    //If we're moving add a movingposition.
 	    if(moving){
-			//Get the current mouse location.
+			//현재 마우스 좌표를 얻는다.
 			int x,y;
 			SDL_GetMouseState(&x,&y);
 			x+=camera.x;
@@ -1797,8 +1797,8 @@ void LevelEditor::onClickObject(GameObject* obj,bool selected){
 			x-=movingBlock->getBox().x;
 			y-=movingBlock->getBox().y;
 
-			//Calculate the length.
-			//First get the delta x and y.
+			//길이를 계산
+			//delta x 와 y 처음으로 얻음.
 			int dx,dy;
 			if(movingBlocks[movingBlock].empty()){
 				dx=x;
@@ -1813,21 +1813,21 @@ void LevelEditor::onClickObject(GameObject* obj,bool selected){
 			return;
 	    }
 
-	    //Now handle it as if the user pressed enter (show block properties dialog).
+			//그리고 user가 enter키를 누름으로서 다룬다. (블록의 속성을 보여준다.)
 	    onEnterObject(obj);
 	  }
 	  case SELECT:
 	  case ADD:
 	  {
-		//Check if object is already selected.
+		//object가 이미 선택되었는지 체크
 		if(!selected){
-			//First check if shift is pressed or not.
+			//shift키가 눌렸는지 아닌지 처음으로 체크
 			if(!pressedShift){
-				//Clear the selection.
+				//selection을 clear
 				selection.clear();
 			}
 
-			//Add the object to the selection.
+			//object를 selection에 추가
 			selection.push_back(obj);
 		}
 	    break;
@@ -1851,16 +1851,16 @@ void LevelEditor::onRightClickObject(GameObject* obj,bool selected){
 		if(moving || linking)
 			break;
 
-		//Check if it's a trigger.
+		//그것이 trigger 인지 확인
 		if(obj->type==TYPE_PORTAL || obj->type==TYPE_BUTTON || obj->type==TYPE_SWITCH){
-			//Set linking true.
+			//링크가 true인지 확인
 			linking=true;
 			linkingTrigger=obj;
 		}
 
-		//Check if it's a moving block.
+		//움직이는 블럭인지 확인
 		if(obj->type==TYPE_MOVING_BLOCK || obj->type==TYPE_MOVING_SHADOW_BLOCK || obj->type==TYPE_MOVING_SPIKES){
-			//Set moving true.
+			//움직임을 true로 설정
 			moving=true;
 			movingBlock=obj;
 		}
@@ -1874,13 +1874,13 @@ void LevelEditor::onRightClickObject(GameObject* obj,bool selected){
 			std::vector<GameObject*>::iterator it;
 			it=find(selection.begin(),selection.end(),obj);
 
-			//Remove the object from selection.
+			//selection으로부터 object를 지움
 			if(it!=selection.end()){
 				selection.erase(it);
 			}
 		}else{
-			//It wasn't a selected object so switch to configure mode.
-			//Check if it's the right type of object.
+			//그것이 선택된 object가 아니여서 configure 모드로 전환
+			//object가 맞는 타입인지 아닌지 체크
 			if(obj->type==TYPE_MOVING_BLOCK || obj->type==TYPE_MOVING_SHADOW_BLOCK || obj->type==TYPE_MOVING_SPIKES ||
 				obj->type==TYPE_PORTAL || obj->type==TYPE_BUTTON || obj->type==TYPE_SWITCH){
 				tool=CONFIGURE;
@@ -1899,16 +1899,16 @@ void LevelEditor::onClickVoid(int x,int y){
 	switch(tool){
 	  case SELECT:
 	  {
-	    //We need to clear the selection.
+	    //selection 을 clear
 	    selection.clear();
 	    break;
 	  }
 	  case ADD:
 	  {
-	      //We need to clear the selection.
+				//selection 을 clear
 	      selection.clear();
 
-	      //Now place an object.
+	      //object를 둔다.
 	      //Apply snap to grid.
 	      if(!pressedShift){
 			snapToGrid(&x,&y);
@@ -1921,7 +1921,7 @@ void LevelEditor::onClickVoid(int x,int y){
 	  }
 	  case CONFIGURE:
 	  {
-	      //We need to clear the selection.
+				//selection 을 clear
 	      selection.clear();
 
 	      //If we're linking we should stop, user abort.
@@ -1932,7 +1932,7 @@ void LevelEditor::onClickVoid(int x,int y){
 			return;
 	      }
 
-	      //If we're moving we should add a point.
+	      //움직이고 있다면 point를 추가한다.
 	      if(moving){
 			//Apply snap to grid.
 			if(!pressedShift){
@@ -1945,8 +1945,8 @@ void LevelEditor::onClickVoid(int x,int y){
 			x-=movingBlock->getBox().x;
 			y-=movingBlock->getBox().y;
 
-			//Calculate the length.
-			//First get the delta x and y.
+			//길이를 계산한다.
+			//delta x 와 y 처음으로 얻음.
 			int dx,dy;
 			if(movingBlocks[movingBlock].empty()){
 				dx=x;
@@ -1975,16 +1975,16 @@ void LevelEditor::onDragStart(int x,int y){
 	  case ADD:
 	  case CONFIGURE:
 	  {
-	    //We can drag the selection so check if the selection isn't empty.
+			//selection을 drag하고 그 selection이 비어있지 않은지 체크한다.
 	    if(!selection.empty()){
-		//The selection isn't empty so search the dragCenter.
-		//Create a mouse rectangle.
+		//selection이 비어있지 않아서 dragCenter를 검색한다.
+		//mouse rectangle을 만든다.
 		SDL_Rect mouse={x,y,0,0};
 
-		//Loop through the objects to check collision.
+		//충돌(collision)을 체크하기 위해 object를 loop돈다.
 		for(unsigned int o=0; o<selection.size(); o++){
 			if(checkCollision(selection[o]->getBox(),mouse)==true){
-				//We have collision so set the dragCenter.
+				//충돌이 나서 dragCenter을 설정
 				dragCenter=selection[o];
 				selectionDrag=true;
 			}
@@ -2001,17 +2001,17 @@ void LevelEditor::onDrag(int dx,int dy){
 	switch(tool){
 	  case REMOVE:
 	  {
-		//No matter what we delete the item the mouse is above.
-		//Get the current mouse location.
+		//item이 삭제 될지라도 마우스는 그 위에 있다.
+		//현재 마우스 좌표를 얻는다.
 		int x,y;
 		SDL_GetMouseState(&x,&y);
-		//Create the rectangle.
+		//사각형을 그린다.
 		SDL_Rect mouse={x+camera.x,y+camera.y,0,0};
 
-		//Loop through the objects to check collision.
+		//충돌(collision)을 체크하기 위해 object를 loop돈다.
 		for(unsigned int o=0; o<levelObjects.size(); o++){
 			if(checkCollision(levelObjects[o]->getBox(),mouse)==true){
-				//Remove the object.
+				//object를 삭제한다.
 				removeObject(levelObjects[o]);
 			}
 		}
@@ -2028,9 +2028,9 @@ void LevelEditor::onDrop(int x,int y){
 	  case ADD:
 	  case CONFIGURE:
 	  {
-	      //Check if the drag center isn't null.
+	      //drag center가 null이 아닌지 체크
 	      if(dragCenter==NULL) return;
-	      //The location of the dragCenter.
+	      //dragCenter의 좌표
 	      SDL_Rect r=dragCenter->getBox();
 	      //Apply snap to grid.
 	      if(!pressedShift){
@@ -2040,14 +2040,14 @@ void LevelEditor::onDrop(int x,int y){
 			y-=25;
 	      }
 
-	      //Loop through the selection.
+	      //selection을 loop돈다.
 	      for(unsigned int o=0; o<selection.size(); o++){
 			SDL_Rect r1=selection[o]->getBox();
-			//We need to place the object at his drop place.
+			//object 를  drop 장소에 둔다.
 			moveObject(selection[o],(r1.x-r.x)+x,(r1.y-r.y)+y);
 	      }
 
-	      //Make sure the dragCenter is null and set selectionDrag false.
+	      //dragCenter 가 null이고 selectionDrag가 false로 설정을 한다.
 	      dragCenter=NULL;
 	      selectionDrag=false;
 	      break;
@@ -2061,18 +2061,18 @@ void LevelEditor::onCameraMove(int dx,int dy){
 	switch(tool){
 	  case REMOVE:
 	  {
-		//Only delete when the left mouse button is pressed.
+		//오직 왼쪽 마우스 버튼이 눌렸을 때만 삭제를 한다.
 		if(pressedLeftMouse){
-			//Get the current mouse location.
+			//현재 마우스 좌표를 얻는다.
 			int x,y;
 			SDL_GetMouseState(&x,&y);
-			//Create the rectangle.
+			//사각형을 그린다.
 			SDL_Rect mouse={x+camera.x,y+camera.y,0,0};
 
-			//Loop through the objects to check collision.
+			//충돌(collision)을 체크하기 위해 object를 loop돈다.
 			for(unsigned int o=0; o<levelObjects.size(); o++){
 				if(checkCollision(levelObjects[o]->getBox(),mouse)==true){
-					//Remove the object.
+					//object를 삭제한다.
 					removeObject(levelObjects[o]);
 				}
 			}
@@ -2088,16 +2088,16 @@ void LevelEditor::onEnterObject(GameObject* obj){
 	switch(tool){
 	  case CONFIGURE:
 	  {
-	    //Check if the type is an moving block.
+	    //thpe이 움직이는 블럭인지 체크한다.
 	    if(obj->type==TYPE_MOVING_BLOCK || obj->type==TYPE_MOVING_SHADOW_BLOCK || obj->type==TYPE_MOVING_SPIKES){
-			//Open a message popup.
-			//First delete any existing gui.
+			//메시지를 popup한다.
+			//존재하는 모든 gui를 삭제
 			if(GUIObjectRoot){
 				delete GUIObjectRoot;
 				GUIObjectRoot=NULL;
 			}
 
-			//Get the properties.
+			//속성들을 얻는다.
 			vector<pair<string,string> > objMap;
 			obj->getEditorData(objMap);
 			int m=objMap.size();
@@ -2105,7 +2105,7 @@ void LevelEditor::onEnterObject(GameObject* obj){
 				//Set the object we configure.
 				configuredObject=obj;
 
-				//Check if the moving block has a path..
+				//moving block이 경로를 가지고있는지 체크한다.
 				string s1;
 				bool path=false;
 				if(!movingBlocks[obj].empty()){
@@ -2115,7 +2115,7 @@ void LevelEditor::onEnterObject(GameObject* obj){
 					s1=_("None");
 				}
 
-				//Now create the GUI.
+				//gui를 생성한다.
 				string s;
 				switch(obj->type){
 				  case TYPE_MOVING_BLOCK:
@@ -2177,16 +2177,16 @@ void LevelEditor::onEnterObject(GameObject* obj){
 			}
 	    }
 
-	    //Check which type of object it is.
+	    //object가 무슨 type인지 체크한다.
 	    if(obj->type==TYPE_NOTIFICATION_BLOCK){
 			//Open a message popup.
-			//First delete any existing gui.
+			//존재하는 모든 gui를 삭제
 			if(GUIObjectRoot){
 				delete GUIObjectRoot;
 				GUIObjectRoot=NULL;
 			}
 
-			//Get the properties.
+			//속성을 얻음
 			vector<pair<string,string> > objMap;
 			obj->getEditorData(objMap);
 			int m=objMap.size();
@@ -2194,7 +2194,7 @@ void LevelEditor::onEnterObject(GameObject* obj){
 				//Set the object we configure.
 				configuredObject=obj;
 
-				//Now create the GUI.
+				//GUI를 생성
 				GUIObject* root=new GUIObject((SCREEN_WIDTH-600)/2,(SCREEN_HEIGHT-250)/2,600,250,GUIObjectFrame,_("Notification block"));
 				GUIObject* obj;
 
@@ -2207,7 +2207,7 @@ void LevelEditor::onEnterObject(GameObject* obj){
 					tmp=tmp.replace(tmp.find("\\n"),2,"\n");
 				}
 				obj->caption=tmp.c_str();
-				//Set the textField.
+				//textField를 설정
 				objectProperty=obj;
 				root->childControls.push_back(obj);
 
@@ -2226,13 +2226,13 @@ void LevelEditor::onEnterObject(GameObject* obj){
 	    }
 	    if(obj->type==TYPE_CONVEYOR_BELT || obj->type==TYPE_SHADOW_CONVEYOR_BELT){
 			//Open a message popup.
-			//First delete any existing gui.
+			//존재하는 모든 gui를 삭제
 			if(GUIObjectRoot){
 				delete GUIObjectRoot;
 				GUIObjectRoot=NULL;
 			}
 
-			//Get the properties and check if
+			//속성들을 얻고 체크한다.
 			vector<pair<string,string> > objMap;
 			obj->getEditorData(objMap);
 			int m=objMap.size();
@@ -2281,7 +2281,7 @@ void LevelEditor::onEnterObject(GameObject* obj){
 
 	    if(obj->type==TYPE_PORTAL){
 			//Open a message popup.
-			//First delete any existing gui.
+			//존재하는 모든 gui 삭제
 			if(GUIObjectRoot){
 				delete GUIObjectRoot;
 				GUIObjectRoot=NULL;
@@ -2322,7 +2322,7 @@ void LevelEditor::onEnterObject(GameObject* obj){
 				root->childControls.push_back(label);
 				label->render(0,0,false);
 
-				//Check if there are targets defined.
+				//targets이 정의되어있는지 체크
 				if(target){
 					obj=new GUIObject(label->left+label->width,100,36,36,GUIObjectButton,"x");
 					obj->name="cfgPortalUnlink";
@@ -2352,13 +2352,13 @@ void LevelEditor::onEnterObject(GameObject* obj){
 
 	    if(obj->type==TYPE_BUTTON || obj->type==TYPE_SWITCH){
 			//Open a message popup.
-			//First delete any existing gui.
+			//존재하는 모든 gui 삭제
 			if(GUIObjectRoot){
 				delete GUIObjectRoot;
 				GUIObjectRoot=NULL;
 			}
 
-			//Get the properties and check if
+			//속성들을 얻어오고 체크함.
 			vector<pair<string,string> > objMap;
 			obj->getEditorData(objMap);
 			int m=objMap.size();
@@ -2397,7 +2397,7 @@ void LevelEditor::onEnterObject(GameObject* obj){
 				v.push_back(_("Toggle"));
 				(dynamic_cast<GUISingleLineListBox*>(obj))->item=v;
 
-				//Get the current behaviour.
+				//현재 행동을 얻음
 				if(objMap[1].second=="on"){
 					obj->value=0;
 				}else if(objMap[1].second=="off"){
@@ -2422,7 +2422,7 @@ void LevelEditor::onEnterObject(GameObject* obj){
 				obj->eventCallback=this;
 				root->childControls.push_back(obj);
 
-				//Check if there are targets defined.
+				//targets이 정의되어있는지 체크
 				if(targets){
 					obj=new GUIObject(label->left+label->width+40,100,36,36,GUIObjectButton,"x");
 					obj->name="cfgTriggerUnlink";
@@ -2445,13 +2445,13 @@ void LevelEditor::onEnterObject(GameObject* obj){
 			}
 	    }
 	    if(obj->type==TYPE_FRAGILE){
-			//First delete any existing gui.
+			//존재하는 모든 gui 삭제
 			if(GUIObjectRoot){
 				delete GUIObjectRoot;
 				GUIObjectRoot=NULL;
 			}
 
-			//Get the properties and check if it contains the state data.
+			//속성들을 얻고 state data를 포함하고 있는지 체크
 			vector<pair<string,string> > objMap;
 			obj->getEditorData(objMap);
 			int m=objMap.size();
@@ -2475,7 +2475,7 @@ void LevelEditor::onEnterObject(GameObject* obj){
 				v.push_back(_("Gone"));
 				(dynamic_cast<GUISingleLineListBox*>(obj))->item=v;
 
-				//Get the current state.
+				//현재 state를 얻음
 				obj->value=atoi(objMap[1].second.c_str());
 				objectProperty=obj;
 				root->childControls.push_back(obj);
@@ -2502,27 +2502,27 @@ void LevelEditor::onEnterObject(GameObject* obj){
 }
 
 void LevelEditor::addObject(GameObject* obj){
-    //Increase totalCollectables everytime we add a new collectable
+    //새로운 collectable type을 추가할 때마다 totalCollectables 을 1 증가시킴
 	if (obj->type==TYPE_COLLECTABLE) {
 		totalCollectables++;
 	}
 
-	//If it's a player or shadow start then we need to remove the previous one.
+	//player or shadow 가 시작했다면 이전 것을 삭제한다.
 	if(obj->type==TYPE_START_PLAYER || obj->type==TYPE_START_SHADOW){
-		//Loop through the levelObjects.
+		//levelObjects를 Loop
 		for(unsigned int o=0; o<levelObjects.size(); o++){
-			//Check if the type is the same.
+			//type이 같은지 체크
 			if(levelObjects[o]->type==obj->type){
 				removeObject(levelObjects[o]);
 			}
 		}
 	}
 
-	//Add it to the levelObjects.
+	//levelObjects에 추가
 	levelObjects.push_back(obj);
 
-	//Check if the object is inside the level dimensions, etc.
-	//Just call moveObject() to perform this.
+	//level dimensions나 다른것들에 object가 들어있는지 체크
+	//이것을 수행하기 위해 moveObject()함수를 부름
 	moveObject(obj,obj->getBox().x,obj->getBox().y);
 
 	//GameObject type specific stuff.
@@ -2531,11 +2531,11 @@ void LevelEditor::addObject(GameObject* obj){
 		case TYPE_SWITCH:
 		case TYPE_PORTAL:
 		{
-			//Add the object to the triggers.
+			//triggers에 object를 추가
 			vector<GameObject*> linked;
 			triggers[obj]=linked;
 
-			//Give it it's own id.
+			//자신만의 id를 줌
 			std::map<std::string,std::string> editorData;
 			char s[64];
 			sprintf(s,"%d",currentId);
@@ -2548,24 +2548,24 @@ void LevelEditor::addObject(GameObject* obj){
 		case TYPE_MOVING_SHADOW_BLOCK:
 		case TYPE_MOVING_SPIKES:
 		{
-			//Add the object to the moving blocks.
+			//moving blocks에 object 추가.
 			vector<MovingPosition> positions;
 			movingBlocks[obj]=positions;
 
-			//Get the editor data.
+			//editor data를 얻어옴
 			vector<pair<string,string> > objMap;
 			obj->getEditorData(objMap);
 
-			//Get the number of entries of the editor data.
+			//editor data의 모델 개수를 얻음
 			int m=objMap.size();
 
-			//Check if the editor data isn't empty.
+			//editor data가 비어있지 않은지 체크
 			if(m>0){
-				//Integer containing the positions.
+				//Integer는 좌표를 가지고 있다.
 				int pos=0;
 				int currentPos=0;
 
-				//Get the number of movingpositions.
+				//movingpositions의 개수를 얻음
 				pos=atoi(objMap[1].second.c_str());
 
 				while(currentPos<pos){
@@ -2573,16 +2573,16 @@ void LevelEditor::addObject(GameObject* obj){
 					int y=atoi(objMap[currentPos*3+5].second.c_str());
 					int t=atoi(objMap[currentPos*3+6].second.c_str());
 
-					//Create a new movingPosition.
+					//새로움 movingPosition을 만듦
 					MovingPosition position(x,y,t);
 					movingBlocks[obj].push_back(position);
 
-					//Increase currentPos by one.
+					//currentPos을 하나씩 증가시킴
 					currentPos++;
 				}
 			}
 
-			//Give it it's own id.
+			//자신만의 id를 줌
 			std::map<std::string,std::string> editorData;
 			char s[64];
 			sprintf(s,"%d",currentId);
