@@ -68,71 +68,70 @@ private:
 	// 만약 player가 그의 움직임을 녹화하면 boolean형
 	bool record;
 
-	// 
-	//The following variables are to store a state.
-	//Rectangle containing the players location.
+	// 따라오는 변수들은 상태에 저장한다.
+	// 사각형은 player의 위치를 저장한다.
 	SDL_Rect boxSaved;
-	//Boolean if the player is in the air.
+	// 만약 player들이 공중에 있으면 boolean형
 	bool inAirSaved;
-	//Boolean if the player is (going to) jump(ing).
+	// 만약 player들ㅇ 점프하면 boolean
 	bool isJumpSaved;
-	//Boolean if the player is (still) on the ground.
+	// 만약 player가 땅위에 있으면 boolean
 	bool onGroundSaved;
-	//Boolean if the player can move.
+	// 만약 player들이 움직일 수 있으면 boolean
 	bool canMoveSaved;
-	//Boolean if the player is holding the other (shadow).
+	// 만약 player가 잡은게 다른거면 boolean
 	bool holdingOtherSaved;
-	//The x velocity.
-	//NOTE: The x velocity is used to indicate that there's a state saved.
+	// x는 속도이다.
 	int xVelSaved;
-	//The y velocity.
+	// y는 속도이다.
 	int yVelSaved;
 
 protected:
-	//Rectangle containing the player's location.
+	// 사각형은 plyer의 위치는 포함한다.
 	SDL_Rect box;
 
-	//The x and y velocity.
+	// x와 y의 위치
 	int xVel, yVel;
-	//The base x and y velocity, used for standing on moving blocks.
+	// 기본 x와 y의 위치, 움직이는 블록위에 서있는것으로 사용된다.
 	int xVelBase, yVelBase;
 
-	//Sound played when the player jumps.
+	// player가 점프한때 소리가 실행된다.
 	Mix_Chunk* jumpSound;
-	//Sound played when the player dies.
+	// player가 죽을 때 소리가 실행된다.
 	Mix_Chunk* hitSound;
-	//Sound played when the saves a state.
+	// 상태가 저장될 때 소리가 실행된다.
 	Mix_Chunk* saveSound;
-	//Sound played when the player swaps.
+	// player들이 바뀔 때 소리가 실행된다.
 	Mix_Chunk* swapSound;
-	//Sound played when the player toggles a switch.
+	// player가 버튼이 눌릴 때 소리가 실행된다.
 	Mix_Chunk* toggleSound;
-	//The sound played when the player tries something that doesn't work.
-	//For example a broken portal or swapping the shadow into a shadow block.
+	// player들이 무언가를 시도하고 그게 실행안되면 소리가 난다.
 	Mix_Chunk* errorSound;
-	//Sound played when the player picks up a collectable.
+	// player들이 들어서 모으면 소리가 난다.
 	Mix_Chunk* collectSound;
 
+	// 만약 공중에 palyer들이 있으면 boolean
 	//Boolean if the player is in the air.
 	bool inAir;
-	//Boolean if the player is (going to) jump(ing).
+	// 만약 player들이 점프하면 boolean
 	bool isJump;
-	//Boolean if the player is (still) on the ground.
+	// 만약 player들이 땅위에 있으면 boolean
 	bool onGround;
-	//Boolean if the player can move.
+	// 만약 player들이 움직일 수 있으면 boolean
 	bool canMove;
-	//Boolean if the player is alive/
+	// 만약 player들이 움직이면 boolean
 	bool dead;
 
-	//The direction the player is walking, 0=right, 1=left.
+	// player들이 직진으로 걸으면 0=right, 1=left
 	int direction;
-	//Integer containing the state of the player.
+	// player의 상태에 저장되면 정수형이 포함한다.
 	int state;
-	//The time the player is in the air (jumping).
+	// player가 공중에 있는 시간
 	int jumpTime;
-	//Boolean if the player is in fact the shadow.
+	// 만약 player들이 그림자인지 사실 boolean
 	bool shadow;
 
+	// 게임 상태를가르키는 포인터
 	//Pointer to the Game state.
 	friend class Game;
 	Game* objParent;

@@ -980,28 +980,28 @@ void LevelEditor::handleEvents(){
 					}
 				}
 			}else{
-				//The selected button isn't a tool.
-				//Now check which button it is.
+				//선택된 버튼은 tool이 아닙니다.
+				//어떤 버튼이 어떤 것인지 체크
 				if(t==NUMBER_TOOLS){
 					playMode=true;
 					cameraSave.x=camera.x;
 					cameraSave.y=camera.y;
 
 					if(tool==CONFIGURE){
-						//Also stop linking or moving.
+						//연결과 움직임을 멈춤.
 						if(linking){
 							linking=false;
 							linkingTrigger=NULL;
 						}
 
 						if(moving){
-							//Write the path to the moving block.
+							//움직이는 블럭의 경로를 적음.
 							std::map<std::string,std::string> editorData;
 							char s[64], s0[64];
 
 							sprintf(s,"%d",int(movingBlocks[movingBlock].size()));
 							editorData["MovingPosCount"]=s;
-							//Loop through the positions.
+							//위치를 계속  loop 돈다.
 							for(unsigned int o=0;o<movingBlocks[movingBlock].size();o++){
 								sprintf(s0+1,"%d",o);
 								sprintf(s,"%d",movingBlocks[movingBlock][o].x);
@@ -1026,15 +1026,15 @@ void LevelEditor::handleEvents(){
 					levelSettings();
 				}
 				if(t==NUMBER_TOOLS+4){
-					//Go back to the level selection screen of Level Editor
+					//level에디터의 레벨 선택화면으로 돌아간다.
 					setNextState(STATE_LEVEL_EDIT_SELECT);
-					//Change the music back to menu music.
+					//음악은 menu 음악으로 바꾼다.
 					getMusicManager()->playMusic("menu");
 				}
 				if(t==NUMBER_TOOLS+3){
-					//Save current level
+					//현재 레벨을 저장
 					saveLevel(levelFile);
-					//And give feedback to the user.
+					//그리고 feedback을 유저에게 준다.
 					if(levelName.empty())
 						msgBox(tfm::format(_("Level \"%s\" saved"),fileNameFromPath(levelFile)),MsgBoxOKOnly,_("Saved"));
 					else
@@ -1045,7 +1045,7 @@ void LevelEditor::handleEvents(){
 			return;
 		}
 
-		//check if shift is pressed.
+		//shift 키가 눌렸는지 체크한다.
 		if(inputMgr.isKeyDownEvent(INPUTMGR_SHIFT)){
 			pressedShift=true;
 		}
@@ -1053,30 +1053,30 @@ void LevelEditor::handleEvents(){
 			pressedShift=false;
 		}
 
-		//Check if delete is pressed.
+		//delete키가 눌렸는지 체크한다.
 		if(event.type==SDL_KEYDOWN && event.key.keysym.sym==SDLK_DELETE){
 			if(!selection.empty()){
-				//Loop through the selected game objects.
+				//선택된 game object를 loop를 돈다.
 				 while(!selection.empty()){
-					//Remove the objects in the selection.
+					//선택된 object 를 지운다.
 					removeObject(selection[0]);
 				}
 
-				//And clear the selection vector.
+				//vector 선택(select) 변수를 지운다.
 				selection.clear();
 				dragCenter=NULL;
 				selectionDrag=false;
 			}
 		}
 
-		//Check for copy (Ctrl+c) or cut (Ctrl+x).
+		//복사키 Ctrl+c 또는 Ctrl+x 가 눌렸는지 체크
 		if(event.type==SDL_KEYDOWN && (event.key.keysym.sym==SDLK_c || event.key.keysym.sym==SDLK_x) && (event.key.keysym.mod & KMOD_CTRL)){
-			//Clear the current clipboard.
+			//현재 clipboard를 지운다.
 			clipboard.clear();
 
-			//Check if the selection isn't empty.
+			//선택이 비었는지 아닌지 체크한다.
 			if(!selection.empty()){
-				//Loop through the selection to find the left-top block.
+				//왼쪽 위 블럭을 찾기위해 loop를 돈다.
 				int x=selection[0]->getBox().x;
 				int y=selection[0]->getBox().y;
 				for(unsigned int o=1; o<selection.size(); o++){
@@ -1086,18 +1086,18 @@ void LevelEditor::handleEvents(){
 					}
 				}
 
-				//Loop through the selection for the actual copying.
+				//실제로 복사를 하기 위해  selection을 loop 돈다.
 				for(unsigned int o=0; o<selection.size(); o++){
-					//Get the editor data of the object.
+					//object의 editor data를 얻는다.
 					vector<pair<string,string> > obj;
 					selection[o]->getEditorData(obj);
 
-					//Loop through the editor data and convert it.
+					//editor data를 loop돌면서 그것을 변환시킨다.
 					map<string,string> objMap;
 					for(unsigned int i=0;i<obj.size();i++){
 						objMap[obj[i].first]=obj[i].second;
 					}
-					//Add some entries to the map.
+					//모델 들을 map에 추가시킨다.
 					char s[64];
 					sprintf(s,"%d",selection[o]->getBox().x-x);
 					objMap["x"]=s;
@@ -1106,25 +1106,25 @@ void LevelEditor::handleEvents(){
 					sprintf(s,"%d",selection[o]->type);
 					objMap["type"]=s;
 
-					//Overwrite the id to prevent triggers, portals, buttons, movingblocks, etc. from malfunctioning.
-					//We give an empty string as id, which is invalid and thus suitable.
+					//triggers, buttons, mobingblocks, etc등을 고장으로부터 막기위해 id를 덮어씌운다.
+					//적당하고 인식불가능한 id로서 빈 string 을 준다.
 					objMap["id"]="";
-					//Do the same for destination if the type is portal.
+					//타입이 portal이면 같은 방법으로 destination을 준다.
 					if(selection[o]->type==TYPE_PORTAL){
 						objMap["destination"]="";
 					}
 
-					//And add the map to the clipboard vector.
+					//clipboard vector를 map에 추가한다.
 					clipboard.push_back(objMap);
 
 					if(event.key.keysym.sym==SDLK_x){
-						//Cutting means deleting the game object.
+						//Ctrl + x 는 game object 를 삭제한다는 의미이다.
 						removeObject(selection[o]);
 						o--;
 					}
 				}
 
-				//Only clear the selection when Ctrl+x;
+				//Ctrl + x를 했을때만 selection은 clear 한다.
 				if(event.key.keysym.sym==SDLK_x){
 					selection.clear();
 					dragCenter=NULL;
@@ -1133,14 +1133,14 @@ void LevelEditor::handleEvents(){
 			}
 		}
 
-		//Check for paste (Ctrl+v).
+		//Ctrl+v를 눌렀는지 체크
 		if(event.type==SDL_KEYDOWN && event.key.keysym.sym==SDLK_v && (event.key.keysym.mod & KMOD_CTRL)){
-			//First make sure that the clipboard isn't empty.
+			//clipboard가 비었는지 첫번째 확인
 			if(!clipboard.empty()){
-				//Clear the current selection.
+				//현재 선택을 clear
 				selection.clear();
 
-				//Get the current mouse location.
+				//현재 마우스 위치를 얻는다.
 				int x,y;
 				SDL_GetMouseState(&x,&y);
 				x+=camera.x;
@@ -1155,12 +1155,13 @@ void LevelEditor::handleEvents(){
 				}
 
 				//Integers containing the diff of the x that occurs when placing a block outside the level size on the top or left.
+				// 맵의 size를 넘은 블럭이 있을 때  그 x y 값을 저장.
 				//We use it to compensate the corrupted x and y locations of the other clipboard blocks.
 				int diffX=0;
 				int diffY=0;
 
 
-				//Loop through the clipboard.
+				//clipboard 를 loop돈다.
 				for(unsigned int o=0;o<clipboard.size();o++){
 					Block* block=new Block(0,0,atoi(clipboard[o]["type"].c_str()),this);
 					block->setPosition(atoi(clipboard[o]["x"].c_str())+x+diffX,atoi(clipboard[o]["y"].c_str())+y+diffY);
@@ -1168,7 +1169,7 @@ void LevelEditor::handleEvents(){
 
 					if(block->getBox().x<0){
 						//A block on the left side of the level, meaning we need to shift everything.
-						//First calc the difference.
+						//첫번째 차이를 계산
 						diffX+=(0-(block->getBox().x));
 					}
 					if(block->getBox().y<0){
@@ -1177,38 +1178,38 @@ void LevelEditor::handleEvents(){
 						diffY+=(0-(block->getBox().y));
 					}
 
-					//And add the object using the addObject method.
+					//addObject 함수를 이용하여 object 추가
 					addObject(block);
 
-					//Also add the block to the selection.
+					//선택에  block을 추가.
 					selection.push_back(block);
 				}
 			}
 		}
 
-		//Check if the return button is pressed.
-		//If so run the configure tool.
+		//return 버튼이 눌렸는지 체크
+		// 만약 그렇다면 configure tool을 실행
 		if(event.type==SDL_KEYDOWN && event.key.keysym.sym==SDLK_RETURN){
 			//Get the current mouse location.
 			int x,y;
 			SDL_GetMouseState(&x,&y);
-			//Create the rectangle.
+			//사각형을 생성
 			SDL_Rect mouse={x+camera.x,y+camera.y,0,0};
 
-			//Loop through the selected game objects.
+			//선택된 gameobject를 loop
 			for(unsigned int o=0; o<levelObjects.size(); o++){
-				//Check for collision.
+				//충돌 체크
 				if(checkCollision(mouse,levelObjects[o]->getBox())){
 					tool=CONFIGURE;
-					//Invoke the onEnterObject.
+					//onEnterObject를 알려준다.
 					onEnterObject(levelObjects[o]);
-					//Break out of the for loop.
+					//loop 를 빠져나간다.
 					break;
 				}
 			}
 		}
 
-		//Check for the arrow keys, used for moving the camera when playMode=false.
+		//playMode=false일때 카메라 움직임을 위해서 방향키를 체크.
 		cameraXvel=0;
 		cameraYvel=0;
 		if(inputMgr.isKeyDown(INPUTMGR_RIGHT)){
@@ -1240,58 +1241,58 @@ void LevelEditor::handleEvents(){
 			}
 		}
 
-		//Check if the left mouse button is pressed/holded.
+		//마우스 왼쪽 버튼이 pressed 되었는지 holding 되었는지 체크.
 		if(event.type==SDL_MOUSEBUTTONDOWN && event.button.button==SDL_BUTTON_LEFT){
 			pressedLeftMouse=true;
 		}
 		if(event.type==SDL_MOUSEBUTTONUP && event.button.button==SDL_BUTTON_LEFT){
 			pressedLeftMouse=false;
 
-			//We also need to check if dragging is true.
+			//dragging 도 활성화 되었는지 확인한다.
 			if(dragging){
-				//Set dragging false and call the onDrop event.
+				//dragging 을 false로 설정하고 onDrop 이벤트를 부른다.
 				dragging=false;
 				int x,y;
 				SDL_GetMouseState(&x,&y);
-				//We call the drop event.
+				//drop 이벤트를 부른다.
 				onDrop(x+camera.x,y+camera.y);
 			}
 		}
 
-		//Check if the mouse is dragging.
+		//마우스가 dragging 되었는지 체크한다.
 		if(pressedLeftMouse && event.type==SDL_MOUSEMOTION){
 			if(abs(event.motion.xrel)+abs(event.motion.yrel)>=2){
-				//Check if this is the start of the dragging.
+				//dragging이 시작되었는지 체크
 				if(!dragging){
 					//The mouse is moved enough so let's set dragging true.
 					dragging=true;
-					//Get the current mouse location.
+					//현재 마우스 좌표를 얻는다.
 					int x,y;
 					SDL_GetMouseState(&x,&y);
-					//We call the dragStart event.
+					//dragstart 이벤트를 부른다.
 					onDragStart(x+camera.x,y+camera.y);
 				}else{
-					//Dragging was already true meaning we call onDrag() instead of onDragStart().
+					//Dragging 이 이미 true라는 말은 onDrag함수를 onDragStart함수 대신에 불렀다는 의미이다.
 					onDrag(event.motion.xrel,event.motion.yrel);
 				}
 			}
 		}
 
-		//Get the current mouse location.
+		//현재 마우스 위치를 받는다.
 		int x,y;
 		SDL_GetMouseState(&x,&y);
 		//Create the rectangle.
 		SDL_Rect mouse={x,y,0,0};
 
-		//Check if mouse is in the tool box
+		//마우스가 툴박스 안에 있는지 체크한다.
 		bool mouseInToolbox=(toolbox!=NULL && !playMode && tool==ADD && toolbox->visible
 			&& (toolbox->dragging || checkCollision(mouse,toolbox->getRect())));
 
-		//Check if we scroll up, meaning the currentType++;
+		//scroll 을 위로 올린것을 체크하고 이것은 currentType++을 의미한다.
 		if((event.type==SDL_MOUSEBUTTONDOWN && event.button.button==SDL_BUTTON_WHEELUP) || inputMgr.isKeyDownEvent(INPUTMGR_NEXT)){
 			switch(tool){
 			case ADD:
-				//Only change the current type when using the add tool.
+				//오직 add툴을 사용할때만 현재 타입을 바꾼다.
 				if(mouseInToolbox){
 					if((--toolbox->startRow)<0){
 						toolbox->startRow=toolbox->maxRow-1;
@@ -1304,25 +1305,25 @@ void LevelEditor::handleEvents(){
 				}
 				break;
 			case CONFIGURE:
-				//When in configure mode.
+				//configure 모드 일때
 				movingSpeed++;
-				//The movingspeed is capped at 100.
+				//움직임은 100으로 고정한다.
 				if(movingSpeed>100){
 					movingSpeed=100;
 				}
 				break;
 			default:
-				//When in other mode, just scrolling the map
+				//다른 모드일때 맵을 scrolling한다.
 				if(pressedShift) camera.x-=200;
 				else camera.y-=200;
 				break;
 			}
 		}
-		//Check if we scroll down, meaning the currentType--;
+		//스크롤을 아래로 내리는걸 체크하고, 이건 currentType--를 의미한다.
 		if((event.type==SDL_MOUSEBUTTONDOWN && event.button.button==SDL_BUTTON_WHEELDOWN) || inputMgr.isKeyDownEvent(INPUTMGR_PREVIOUS)){
 			switch(tool){
 			case ADD:
-				//Only change the current type when using the add tool.
+			//오직 add툴을 사용할때만 현재 타입을 바꾼다.
 				if(mouseInToolbox){
 					if((++toolbox->startRow)>=toolbox->maxRow){
 						toolbox->startRow=0;
@@ -1335,27 +1336,27 @@ void LevelEditor::handleEvents(){
 				}
 				break;
 			case CONFIGURE:
-				//When in configure mode.
+				//configure mode일 때
 				movingSpeed--;
 				if(movingSpeed<=0){
 					movingSpeed=1;
 				}
 				break;
 			default:
-				//When in other mode, just scrolling the map
+			//다른 모드일때 맵을 scrolling한다.
 				if(pressedShift) camera.x+=200;
 				else camera.y+=200;
 				break;
 			}
 		}
 
-		//Check if we should enter playMode.
+		//playMode로 들어가는것을 체크한다.
 		if(event.type==SDL_KEYDOWN && event.key.keysym.sym==SDLK_p){
 			playMode=true;
 			cameraSave.x=camera.x;
 			cameraSave.y=camera.y;
 		}
-		//Check for tool shortcuts.
+		//shortcuts 툴을 위한 체크
 		if(event.type==SDL_KEYDOWN && event.key.keysym.sym==SDLK_a){
 			tool=ADD;
 		}
@@ -1363,7 +1364,7 @@ void LevelEditor::handleEvents(){
 			tool=SELECT;
 		}
 		if(event.type==SDL_KEYDOWN && event.key.keysym.sym==SDLK_d){
-			//We clear the selection since that can't be used in the deletion tool.
+			//deletion tool에서 사용할 수 없게끔 하기 위해 selection을 clear한다.
 			selection.clear();
 			tool=REMOVE;
 		}
@@ -1371,11 +1372,11 @@ void LevelEditor::handleEvents(){
 			tool=CONFIGURE;
 		}
 
-		//Check for certain events.
+		//Check for certain events. => 확실한 이벤트를 체크한다.(?)
 
-		//First make sure the mouse isn't above the toolbar.
+		//마우스가 toolbar위에 있지 않는것을 첫번째로 확인한다.
 		if(checkCollision(mouse,toolbarRect)==false){
-			//Check if mouse is in the tool box
+			//마우스가 툴바 안에 있는지 확인한다.
 			if(mouseInToolbox){
 				toolbox->handleEvents();
 			}else{
@@ -1383,13 +1384,13 @@ void LevelEditor::handleEvents(){
 				mouse.x+=camera.x;
 				mouse.y+=camera.y;
 
-				//Boolean if there's a click event fired.
+				//클릭 이벤트가 끝났는지 아닌지 bool대수
 				bool clickEvent=false;
-				//Check if a mouse button is pressed.
+				//마우스 버튼이 눌렸는지 체크한다.
 				if(event.type==SDL_MOUSEBUTTONUP){
 					std::vector<GameObject*> clickObjects;
 
-					//Loop through the objects to check collision.
+					//object의 충돌에 대한  loop를 돈다.
 					for(unsigned int o=0; o<levelObjects.size(); o++){
 						if(checkCollision(levelObjects[o]->getBox(),mouse)==true){
 							clickObjects.push_back(levelObjects[o]);
@@ -1397,14 +1398,14 @@ void LevelEditor::handleEvents(){
 					}
 
 					if(clickObjects.size()==1){
-						//We have collision meaning that the mouse is above an object.
+						//여기서 충돌이란(collision) 마우스가 object 위에 있는 것을 의미한다.
 						std::vector<GameObject*>::iterator it;
 						it=find(selection.begin(),selection.end(),clickObjects[0]);
 
-						//Set event true since there's a click event.
+						//click 이벤트가 있을때 clickEvent를 true 시킨다.
 						clickEvent=true;
 
-						//Check if the clicked object is in the selection or not.
+						//클릭된 object가 selection된건지 아닌지 체크한다.
 						bool isSelected=(it!=selection.end());
 						if(event.button.button==SDL_BUTTON_LEFT){
 							onClickObject(clickObjects[0],isSelected);
@@ -1423,25 +1424,25 @@ void LevelEditor::handleEvents(){
 					}
 				}
 
-				//If event is false then we clicked on void.
+				//void를 클릭했다면 이벤트를 false시킴
 				if(!clickEvent){
 					if(event.type==SDL_MOUSEBUTTONUP){
 						if(event.button.button==SDL_BUTTON_LEFT){
-							//Left mouse button on void.
+							//void 위에서 왼쪽 마우스 버튼
 							onClickVoid(mouse.x,mouse.y);
 						}else if(event.button.button==SDL_BUTTON_RIGHT && tool==CONFIGURE){
-							//Stop linking.
+							//linking 을 멈춤
 							linking=false;
 							linkingTrigger=NULL;
 
-							//Write the path to the moving block.
+							//움직이는 블럭의 경로를 설정
 							if(moving){
 								std::map<std::string,std::string> editorData;
 								char s[64], s0[64];
 
 								sprintf(s,"%d",int(movingBlocks[movingBlock].size()));
 								editorData["MovingPosCount"]=s;
-								//Loop through the positions.
+								//지정된 좌표를 loop
 								for(unsigned int o=0;o<movingBlocks[movingBlock].size();o++){
 									sprintf(s0+1,"%d",o);
 									sprintf(s,"%d",movingBlocks[movingBlock][o].x);
@@ -1456,7 +1457,7 @@ void LevelEditor::handleEvents(){
 								}
 								movingBlock->setEditorData(editorData);
 
-								//Stop moving.
+								//움직임 멈춤
 								moving=false;
 								movingBlock=NULL;
 							}
@@ -1466,35 +1467,35 @@ void LevelEditor::handleEvents(){
 			}
 		}
 
-		//Check for backspace when moving to remove a movingposition.
+		//움직이고 있을때 movingposition을 지우기 위해 backspace키가 눌렸는지 체크
 		if(moving && event.type==SDL_KEYDOWN && event.key.keysym.sym==SDLK_BACKSPACE){
 			if(movingBlocks[movingBlock].size()>0){
 				movingBlocks[movingBlock].pop_back();
 			}
 		}
 
-		//Check for the tab key, level settings.
+		//tap키가 눌렸는지 체크, level settings.
 		if(inputMgr.isKeyDownEvent(INPUTMGR_TAB)){
-			//Show the levelSettings.
+			//levelSettings을 보여준다
 			levelSettings();
 		}
 
-		//Check if we should a new level. (Ctrl+n)
+		//새로운 level을 체크한다. (Ctrl+n)
 		if(event.type==SDL_KEYDOWN && event.key.keysym.sym==SDLK_n && (event.key.keysym.mod & KMOD_CTRL)){
 			reset();
 			//NOTE: We don't have anything to load from so we create an empty TreeStorageNode.
 			Game::loadLevelFromNode(new TreeStorageNode,"");
 
-			//Hide selection popup (if any)
+			//선택된것이 popup된것을 숨긴다. (어떠한 것이라도.)
 			if(selectionPopup!=NULL){
 				delete selectionPopup;
 				selectionPopup=NULL;
 			}
 		}
-		//Check if we should save the level (Ctrl+s) or save levelpack (Ctrl+Shift+s).
+		//Ctrl+s로 level을 저장하거나 Ctrl+Shift+s 키로 레벡팩을 저장하는지 체크
 		if(event.type==SDL_KEYDOWN && event.key.keysym.sym==SDLK_s && (event.key.keysym.mod & KMOD_CTRL)){
 			saveLevel(levelFile);
-			//And give feedback to the user.
+			//feedback 을 유저에게 준다.
 			if(levelName.empty())
 				msgBox(tfm::format(_("Level \"%s\" saved"),fileNameFromPath(levelFile)),MsgBoxOKOnly,_("Saved"));
 			else
@@ -1504,8 +1505,8 @@ void LevelEditor::handleEvents(){
 }
 
 void LevelEditor::levelSettings(){
-	//It isn't so open a popup asking for a name.
-	//First delete any existing gui.
+	//이름을 물어보는 popup창을 띄우지 않는다.
+	//모든 존재하는 gui를 최초로 전부 지운다.
 	if(GUIObjectRoot){
 		delete GUIObjectRoot;
 		GUIObjectRoot=NULL;
@@ -1527,7 +1528,7 @@ void LevelEditor::levelSettings(){
 	secondObjectProperty=obj;
 	root->childControls.push_back(obj);
 
-	//target time and recordings.
+	//목적 시간과 녹화
 	{
 		char c[32];
 
@@ -1555,7 +1556,7 @@ void LevelEditor::levelSettings(){
 	}
 
 
-	//Ok and cancel buttons.
+	//확인과 취소 버튼
 	obj=new GUIObject(root->width*0.3,300-44,-1,36,GUIObjectButton,_("OK"),0,true,true,GUIGravityCenter);
 	obj->name="lvlSettingsOK";
 	obj->eventCallback=this;
@@ -1569,13 +1570,13 @@ void LevelEditor::levelSettings(){
 }
 
 void LevelEditor::postLoad(){
-	//We need to find the triggers.
+	// triggers 를 찾는다.
 	for(unsigned int o=0;o<levelObjects.size();o++){
-		//Get the editor data.
+		//editor data를 얻는다.
 		vector<pair<string,string> > objMap;
 		levelObjects[o]->getEditorData(objMap);
 
-		//Check for the highest id.
+		//highest id.를 체크한다.
 		for(unsigned int i=0;i<objMap.size();i++){
 			if(objMap[i].first=="id"){
 				unsigned int id=atoi(objMap[i].second.c_str());
@@ -1589,14 +1590,14 @@ void LevelEditor::postLoad(){
 			case TYPE_BUTTON:
 			case TYPE_SWITCH:
 			{
-				//Add the object to the triggers vector.
+				//triggers vector 에 object를 추가한다.
 				vector<GameObject*> linked;
 				triggers[levelObjects[o]]=linked;
-				//Now loop through the levelObjects in search for objects with the same id.
+				//같은 id의 object를 찾기 위해 levelObjects를 loop돈다.
 				for(unsigned int oo=0;oo<levelObjects.size();oo++){
-					//Check if it isn't the same object but has the same id.
+					//같은 object가 아니지만 같은 id를 갖는 것을 체크한다.
 					if(o!=oo && (dynamic_cast<Block*>(levelObjects[o]))->id==(dynamic_cast<Block*>(levelObjects[oo]))->id){
-						//Add the object to the link vector of the trigger.
+						//trigger의 vector 링크에 object를 추가 한다.
 						triggers[levelObjects[o]].push_back(levelObjects[oo]);
 					}
 				}
@@ -1604,20 +1605,20 @@ void LevelEditor::postLoad(){
 			}
 			case TYPE_PORTAL:
 			{
-				//Add the object to the triggers vector.
+				//triggers vector에 object를 추가한다.
 				vector<GameObject*> linked;
 				triggers[levelObjects[o]]=linked;
 
-				//If the destination is empty we return.
+				//destination이 비었으면 return해준다.
 				if((dynamic_cast<Block*>(levelObjects[o]))->destination.empty()){
 					break;
 				}
 
-				//Now loop through the levelObjects in search for objects with the same id as destination.
+				//목적지로서 같은 id의 object를 찾기 위해 levelObjects를 loop돈다.
 				for(unsigned int oo=0;oo<levelObjects.size();oo++){
-					//Check if it isn't the same object but has the same id.
+					//같은 object가 아니지만 같은 id를 갖는 것을 체크한다.
 					if(o!=oo && (dynamic_cast<Block*>(levelObjects[o]))->destination==(dynamic_cast<Block*>(levelObjects[oo]))->id){
-						//Add the object to the link vector of the trigger.
+						//trigger의 vector 링크에 object를 추가 한다.
 						triggers[levelObjects[o]].push_back(levelObjects[oo]);
 					}
 				}
@@ -1627,20 +1628,20 @@ void LevelEditor::postLoad(){
 			case TYPE_MOVING_SHADOW_BLOCK:
 			case TYPE_MOVING_SPIKES:
 			{
-				//Add the object to the movingBlocks vector.
+				//movingBlocks vector에 object를 추가한다.
 				vector<MovingPosition> positions;
 				movingBlocks[levelObjects[o]]=positions;
 
-				//Get the number of entries of the editor data.
+				//the editor data 모델의 개수를 얻는다.
 				int m=objMap.size();
 
-				//Check if the editor data isn't empty.
+				//editor data가 비어있지 않는지 체크한다.
 				if(m>0){
-					//Integer containing the positions.
+					//Integer 는 위치를 포함하고있다.
 					int pos=0;
 					int currentPos=0;
 
-					//Get the number of movingpositions.
+					//movingpositions의 개수를 얻는다.
 					pos=atoi(objMap[1].second.c_str());
 
 					while(currentPos<pos){
@@ -1648,11 +1649,11 @@ void LevelEditor::postLoad(){
 						int y=atoi(objMap[currentPos*3+5].second.c_str());
 						int t=atoi(objMap[currentPos*3+6].second.c_str());
 
-						//Create a new movingPosition.
+						//새로운 movingPosition을 만든다.
 						MovingPosition position(x,y,t);
 						movingBlocks[levelObjects[o]].push_back(position);
 
-						//Increase currentPos by one.
+						//currentPos를 하나씩 증가시킨다.
 						currentPos++;
 					}
 				}
@@ -1666,14 +1667,14 @@ void LevelEditor::postLoad(){
 }
 
 void LevelEditor::snapToGrid(int* x,int* y){
-	//Check if the x location is negative.
+	//x좌표가 음수값인지 체크한다.
 	if(*x<0){
 		*x=-((abs(*x-50)/50)*50);
 	}else{
 		*x=(*x/50)*50;
 	}
 
-	//Now the y location.
+	//y좌표도 체크한다.
 	if(*y<0){
 		*y=-((abs(*y-50)/50)*50);
 	}else{
@@ -1683,13 +1684,13 @@ void LevelEditor::snapToGrid(int* x,int* y){
 
 void LevelEditor::onClickObject(GameObject* obj,bool selected){
 	switch(tool){
-	  //NOTE: We put CONFIGURE above ADD and SELECT to use the same method of selection.
-	  //Meaning there's no break at the end of CONFIGURE.
+	  //NOTE:같은 selection함수를 사용하기 위해서 ADD와 SELECT에 CONFIGURE을 두었다
+	  //CONFIGURE의 끝에 break가 없다는 것을 의미한다.
 	  case CONFIGURE:
 	  {
-	    //Check if we are linking.
+	    //링크 되었는지 체크한다.
 	    if(linking){
-			//Check if the obj is valid to link to.
+			//obj 가 link된 값인지 체크한다.
 			switch(obj->type){
 				case TYPE_CONVEYOR_BELT:
 				case TYPE_SHADOW_CONVEYOR_BELT:
