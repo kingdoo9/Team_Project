@@ -1,3 +1,4 @@
+// 60142234 강승덕 소스 분석
 /*
  * Copyright (C) 2012 Me and My Shadow
  *
@@ -31,67 +32,67 @@
 #include <vector>
 #include <string>
 
-//This is the LevelEditSelect state, here you can select levelpacks and levels.
+//이 파일은 LevelEditSelect 상태 파일입니다. 여기서 levelpacks과 level을 선택할 수 있습니다.
 class LevelEditSelect :public LevelSelect{
 private:
-	//Pointer to the GUIObjectRoot of the levelselect main gui.
+	//levelselect 메인 Gui의 GUIObjectRoot의 포인터
 	GUIObject* levelEditGUIObjectRoot;
-  
-	//Pointer to the new levelpack textfield.
+
+	//새로운 levelpack 텍스트 필드의 포인터
 	GUIObject* levelpackName;
-	
-	//Pointer to the remove levelpack button.
+
+	//levelpack button을 지우기 위한 포인터
 	GUIObject* propertiesPack;
-	//Pointer to the remove levelpack button.
+	//levelpack button을 지우기 위한 포인터
 	GUIObject* removePack;
-	
-	//Pointer to the move map button.
+
+	//map button을 움직이기 위한 포인터
 	GUIObject* move;
-	//Pointer to the remove map button.
+	//map button을 지우기 위한 포인터
 	GUIObject* remove;
-	//Pointer to the edit map button.
+	//map button을 편집하기 위한 포인터
 	GUIObject* edit;
-	
-	//String that contains the name of the current levelpack.
+
+	//현재 levelpack의 이름을 포함하고 있는 String
 	std::string packName;
-	
-	//Method that will create the GUI elements.
-	//initial: Boolean if it is the first time the gui is created.
+
+	//GUI elements를 생성할 함수
+	//initial: 최초로 GUI가 생성되는지 아닌지의 Boolean 변수
 	void createGUI(bool initial);
-	
-	//Method that should be called when changing the current levelpack in an abnormal way.
+
+	//비정상적인 방법에서 현재 levelpack을 바꿀 때 불러오는 함수
 	void changePack();
-	
-	//This method will show a popup with levelpack specific settings.
-	//newPack: Boolean if it's a new levelpack.
+
+	//levelpack의 구체적인 설정을 popup으로 보여줄 함수
+	//newPack: 새로운 levelpack인지 아닌지의 Boolean 변수
 	void packProperties(bool newPack);
-	
-	//This method will show an add level dialog.
+
+	//추가 level dialog를 보여줄 함수
 	void addLevel();
-	
-	//This method will show an move level dialog.
+
+	//level dialog의 변화를 보여줄 함수
 	void moveLevel();
 public:
-	//Constructor.
+	//생성자
 	LevelEditSelect();
-	//Destructor.
+	//소멸자
 	~LevelEditSelect();
-	
-	//Inherited from LevelSelect.
-	//change: Boolean if the levelpack changed, if not we only have to rearrange the numbers.
+
+	//LevelSelect에서 가져옴
+	//change: levelpack이 바뀌었는지 아닌지의 Boolean 변수, 만약 아니라면 수를 재배열 해야 한다.
 	void refresh(bool change=true);
 	void selectNumber(unsigned int number,bool selected);
-	
-	//Inherited from GameState.
+
+	//GameState에서 가져옴
 	void render();
-	
-	//Inherited from GameState.
+
+	//GameState에서 가져옴
 	void resize();
 
-	//Inherited from LevelSelect.
+	//LevelSelect에서 가져옴
 	void renderTooltip(unsigned int number,int dy);
-	
-	//GUI events will be handled here.
+
+	//GUI 이벤트는 여기서 다룰 것이다.
 	void GUIEventCallback_OnEvent(std::string name,GUIObject* obj,int eventType);
 };
 
