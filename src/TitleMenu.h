@@ -23,124 +23,125 @@
 #include <SDL/SDL.h>
 #include "GameState.h"
 
-//Included for the Options menu.
+// option메뉴를 포함한다.
 #include "GUIObject.h"
 #include "GUIListBox.h"
 #include "GUISlider.h"
 
 
-//The Main menu.
+// 메인메뉴
 class Menu : public GameState{
 private:
-	//The title of the main menu.
+	// 메인메뉴의 티이틀
 	SDL_Surface* title;
-	
-	//Array containg pointers to the five main menu entries.
-	//The last two are the '>' and '<' characters.
+
+	// 포인터가 가르킨다섯 메인메뉴인자를 포함하는 배열
+	// 마지막 두개는 '>'  '<' 문자
 	SDL_Surface* entries[7];
 
-	//The icon for the credits menu.
+	// 생성 메뉴의 아이콘
 	SDL_Surface* creditsIcon;
-	
-	//Integer used for animations.
+
+	// 정수형은 애니메이션을 위해 사용딘다.
 	int animation;
 public:
-	//Constructor.
+	// 생성자
 	Menu();
-	//Destructor.
+	// 생성자 파괴
 	~Menu();
 
-	//Inherited from GameState.
+	// GameState 로부터 상속받는다.
 	void handleEvents();
 	void logic();
 	void render();
 	void resize();
 };
 
-//The Options menu.
+// 옵션메뉴
 class Options : public GameState, private GUIEventCallback{
 private:
-	//The title of the options menu.
+	// 옵션메뉴의 제목
 	SDL_Surface* title;
 
-	//Slider used to set the music volume
+	// Slider는 음악볼륨을 설정하는데 사용된다.
 	GUISlider* musicSlider;
-	//Slider used to set the sound volume
+	// Slider는 소리크기를 설정하는데 사용된다.
 	GUISlider* soundSlider;
-	
-	//The jump sound used as reference to configure sound volume.
+
+
+	// configure 소리 크리고 점프소리가참조에  사용된다.
 	Mix_Chunk* jumpSound;
-	//Integer to keep track of the time passed since last playing the test sound.
+	// 정수형은 시간의 트랙을 보존한다. 넘긴다. 이후로 테스트 사운드의 마지막 플레이를
 	int lastJumpSound;
-	
-	//ListBox containing the themes the user can choose out.
+
+	// ListBox가 포함한 테마를 사용자는 골라낼 수 있다.
 	GUISingleLineListBox* theme;
-	
-	//Map containing the locations the themes are stored.
-	//The key is the name of the theme and the value the path.
+
+	// Map은 테마가 저장된 위치를 포함한다.
+	// 키는 테마의 이름이고, path의 값이다.
 	std::map<std::string,std::string> themeLocations;
-	
-	//Available languages
+
+	// 이용가능한 언어
 	GUISingleLineListBox* langs;
 	std::vector<std::string> langValues;
-	
-	//Resolution list
+
+	// 해결 목록
 	GUISingleLineListBox* resolutions;
-	
-	//GUI events are handled here.
-	//name: The name of the element that invoked the event.
-	//obj: Pointer to the object that invoked the event.
-	//eventType: Integer containing the type of event.
+
+	// GUI 이벤트를 여기서 조정할 수 있다.
+	// NAME : 구성요소의 이름이 사건을 포함한다.
+	// OBJ : event를 포함하는 객체를 가르킨다.
+	// eventType : 사건을 포함하는 정수형
 	void GUIEventCallback_OnEvent(std::string name,GUIObject* obj,int eventType);
 
 public:
-	//Constructor.
+	// 생성자
 	Options();
-	//Destructor.
+	// 생성자 파괴
 	~Options();
-	
-	//Method that will create the GUI for the options menu.
+
+	// option메뉴를 위해 gui를 생성하는 메소드
 	void createGUI();
-	
-	//Inherited from GameState.
+
+	// gamestate를 상속받는다.
 	void handleEvents();
 	void logic();
 	void render();
 	void resize();
 };
 
-//A very simple structure for resolutions
+// 해결의 가장 심플한 구조체
 struct _res{
 	int w,h;
 };
 
-//The Credits menu.
+// 메뉴생성
 class Credits : public GameState, private GUIEventCallback{
 private:
-	//The title of the credits menu.
+	// 메뉴생성의 제목
 	SDL_Surface* title;
 	SDL_Surface* creditsText;
-	
-	//The scrollbars
+
+	// 스크롤바
 	GUIScrollBar* scrollbarH;
 	GUIScrollBar* scrollbarV;
-	
-	//GUI events are handled here.
-	//name: The name of the element that invoked the event.
-	//obj: Pointer to the object that invoked the event.
-	//eventType: Integer containing the type of event.
+
+	// GUI 이벤트를 여기서 조정한다.
+	// name : 이벤트가 깨어난 구성요서의 이름
+	// OBJ : 사건을 포함하는 객체의 포인터
+	// eventType : EVENT타입을 포함하는 정수형
 	void GUIEventCallback_OnEvent(std::string name,GUIObject* obj,int eventType);
-	
+
 public:
-	//Constructor.
+	// 생성자
 	Credits();
-	//Destructor.
+	// 파괴자
 	~Credits();
-	
-	//Method that will create the GUI for the options menu.
+
+	// 옵션메뉴의 GUI를 생성하는 메소드
 	void createGUI();
-	
-	//Inherited from GameState.
+
+	// GameState로부터 상속받는다.
 	void handleEvents();
 	void logic();
 	void render();
