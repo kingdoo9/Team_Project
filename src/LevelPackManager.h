@@ -1,3 +1,4 @@
+// 60142234 강승덕 소스 분석
 /*
  * Copyright (C) 2012 Me and My Shadow
  *
@@ -27,54 +28,54 @@
 #include <map>
 #include <vector>
 
-//Class for loading and managing levelpacks.
+//levelpacks를 관리하고 불러오는 클래스
 class LevelPackManager{
 public:
-	//Constructor.
+	//생성자.
 	LevelPackManager(){}
-	//Destructor.
+	//소멸자.
 	~LevelPackManager();
-	
-	//Load a levelpack and add it to the map.
-	//name: The name of the levelpack files.
+
+	//levelpack을 불러오고 map에 추가시킨다.
+	//name: levelpack 파일의 name
 	void loadLevelPack(std::string name);
-	
-	//Insert a levelpack in the LevelPackManager.
-	//levelpack: Pointer to the levelpack to add.
+
+	//levelpack을 levelpackManager에 넣는다.
+	//levelpack: levelpack을 추가하는 pointer
 	void addLevelPack(LevelPack* levelpack);
-	
-	//Removes a levelpack from the LevelPackManager.
-	//name: The name of the levelpack to remove.
+
+	//levelPackManager으로부터 온 levelpack을 지운다.
+	//name: 지울 levelpack의 이름
 	void removeLevelPack(std::string name);
-	
-	//Method that will return a levelpack.
-	//name: The name of the levelpack.
-	//Returns: Pointer to the requested levelpack.
+
+	//levelpack을 반환시킬 함수
+	//name: levelpack의 이름
+	//Returns: 요청된 levelpack의 이름
 	LevelPack* getLevelPack(std::string name);
-	
-	//Method that will return a vector containing all (or a subset) of the levelpacks.
-	//type: The list type, default is ALL_PACKS.
+
+	//levelpacks의 모든것을 포함하는 vector를 return시키는 함수
+	//type: list type이다 기본값은 ALL_Packs다.
 	std::vector<std::string> enumLevelPacks(int type=ALL_PACKS);
 
-	//Method that will update the translation of the levelpacks.
-	//NOTE: This is called when changing the language in the Options menu.
+	//levelpacks의 변화를 update 시켜줄 함수
+	//NOTE:Options menu의 언어를 바꿀때 나타나는 변화를 업데이트 시켜준다.
 	void updateLanguage();
-	
-	//Destroys the levelpacks.
+
+	//levelpacks을 destroy해줌.
 	void destroy();
-	
-	//Enumeration containing the different types of levelpack lists.
+
+	//levelpack lists의 다른타입을 포함하는 enum 변수
 	enum LevelPackLists
 	{
-		//This list contains every levelpack.
+		//모든 levelpack을 포함하는 lists
 		ALL_PACKS,
-		//This list contains all the custom levelpacks (and Levels).
+		//모든 custom levelpacks(또는 level)를 포함하는 lists
 		CUSTOM_PACKS
-		
+
 	};
 private:
-	//Map containing the levelpacks.
-	//The key is the name of the levelpack and the value is a pointer to the levelpack.
+	//levelpack을 포함하는 map.
+	//key는 levelpack의 name을 포함하고 levelpack의 포인터 값을 가진다.
 	std::map<std::string,LevelPack*> levelpacks;
 };
 
