@@ -111,7 +111,6 @@ protected:
 	Mix_Chunk* collectSound;
 
 	// 만약 공중에 palyer들이 있으면 boolean
-	//Boolean if the player is in the air.
 	bool inAir;
 	// 만약 player들이 점프하면 boolean
 	bool isJump;
@@ -132,113 +131,110 @@ protected:
 	bool shadow;
 
 	// 게임 상태를가르키는 포인터
-	//Pointer to the Game state.
 	friend class Game;
 	Game* objParent;
 
-	//Boolean if the downkey is pressed.
+	// 만약 아래키가 눌리면 boolean
 	bool downKeyPressed;
-	//Boolean if the space keu is pressed.
+	// 만약 스페이스키가 눌리면 boolean
 	bool spaceKeyPressed;
-	//Pointer to the object that is currently been stand on by the player.
-	//This is always a valid pointer.
+	// 객체를 가르기고 플레이어 옆에 서있다.
+	// 이것은 항상 유효한 포인터
 	GameObject* objCurrentStand;
-	//Pointer to the object the player stood last on.
-	//NOTE: This is a weak reference only.
+	// 플레이어가 서있을때 객체를 가르킨다.
 	GameObject* objLastStand;
-	//Pointer to the teleporter the player last took.
-	//NOTE: This is a weak reference only.
+	// 플레이어가 마지막으로 탄 텔레포트를 가르킨다.
 	GameObject* objLastTeleport;
-	//Pointer to the notification block the player is in front of.
-	//This is always a valid pointer.
+	// 플레이어가 앞에있는 알림창을 가르킨다.
+	// 이것은 항상 유효한 값이다.
 	GameObject* objNotificationBlock;
-	//Pointer to the shadow block the player is in front of.
-	//This is always a valid pointer.
+	// 플레이어가 앞에있으면 그림자 블록을 가르킨다.
+	// 이것은 항상 유효한 값이다.
 	GameObject* objShadowBlock;
 
 public:
 
-	//X and y location where the player starts and gets when reseted.
+	// x와 y는 플레이어가 시작하고 리셋됐을때 있는곳에 위치한다.
 	int fx, fy;
-	//The appearance of the player.
+	// 플레이어가 나타난다.
 	ThemeCharacterInstance appearance;
-	//Boolean if the player is holding the other.
+	// 만약 플레이어가 다른것을 잡으면 boolean
 	bool holdingOther;
 
-	//Constructor.
-	//objParent: Pointer to the Game state.
+
+	// 생성자
+	// objParent : 게임상태를 가르킨다.
 	Player(Game* objParent);
-	//Destructor.
+	// 생성자 파괴
 	~Player();
 
-	//Method used to set the position of the player.
-	//x: The new x location of the player.
-	//y: The new y location of the player.
+	// 플레이어의 상태를 설정하는데 사용하는 메소드
+	// x:플레이어가 위치한 새로운 x
+	// 플레이어가 위치한 새로운 y
 	void setPosition(int x,int y);
 
-	//Method used to handle (key) input.
-	//shadow: Pointer to the shadow used for recording/calling.
+	// 입력을 다루든데 사용하는 메소드
+	// shadow :  그림자는 녹화나 부르는데 포인터사용
 	void handleInput(class Shadow* shadow);
-	//Method used to do the movement of the player.
-	//levelObjects: Array containing the levelObjects, used to check collision.
+	// 플레이어의 움직임을 하는데 사용하는 메소드
+	// levelObjects : LevelObject를 포함한 배열 충돌을 체크하는데 사용
 	void move(std::vector<GameObject*> &levelObjects);
-	//Method used to check if the player can jump and executes the jump.
+	//  만약 플레이어가 점프할수있고 점프가 확실하다면 체크하는데 사용하는 메소드
 	void jump();
 
-	//This method will render the player to the screen.
+	// 이 메소드는 플레이어가 화면에 나오도록 만든다
 	void show();
-	//Method that stores the actions if the player is recording.
+	// 만약 플레이어가 녹화하면 그 행동을 저장하는 메소드
 	void shadowSetState();
 
-	//Method that will reset the state to 0.
+	// 상태를 0으로 하는 메소드
 	virtual void stateReset();
 
-	//This method checks the player against the other to see if they stand on eachother.
-	//other: The shadow or the player.
+	// 만약 그들이 서로 서있으면 플레이어를 반대해서각각 보여지게하는 메소드
+	// OTHER : 그림자나 플레이어
 	void otherCheck(class Player* other);
 
-	//Method that will ease the camera so that the player is in the center.
+	// 카메라를 용이하게 해서 플레이어가 가운데 있게 하는 메소드
 	void setMyCamera();
-	//This method will reset the player to it's initial position.
-	//save: Boolean if the saved state should also be deleted.
+	// 이것은 플레이어를 시작 위치로 리셋시키는 메소드
+	// SAVE : 만약 저장한 상태가 지워지면 BOOLEAN
 	void reset(bool save);
-	//Method used to retrieve the current location of the player.
-	//Returns: SDL_Rect containing the player's location.
+	// 플레이어의 현재위치는 되찾아오는데 사용하는 메소드
+	// returns : SDL_Rect 은 플레이어의 현재 위치를 포함한다.
 	SDL_Rect getBox();
 
-	//This method will
+
 	void shadowGiveState(class Shadow* shadow);
 
-	//Method that will save the current state.
-	//NOTE: The special <name>Saved variables will be used.
+	// 현재 상태를 저장하는 메소드
 	virtual void saveState();
-	//Method that will retrieve the last saved state.
-	//If there is none it will reset the player.
+	// 마지막 저장한 상태를 되찾아오는 메소드
+	// 만약 거기 아무것도 없으면 플레이어를 리셋한다.
 	virtual void loadState();
-	//Method that checks if the player can save the state.
-	//Returns: True if the player can save his state.
+	// 만약 플레이어가 저장가능한 상태이면 체크하는 메소드
+	// returns : 만약 플레이어가 그의 상태를 저장할 수 있으면 참
 	virtual bool canSaveState();
-	//Method that checks if the player can load a state.
-	//Returns: True if the player can load a state.
+	// 만약 플레이어가 상태를 불러올 수 있으면 체크하는 메소드
+	// RETURNS : 	만약 플레이거가 상태를 불러올 수 있으면 참
 	virtual bool canLoadState();
-	//Method that will swap the state of the player with the other.
-	//other: The player or the shadow.
+	// 플레이어와 다른것의 상태를 바꾸는 메소드
+	// other : 플레이어나 그림자
 	void swapState(Player* other);
 
-	//Check if this player is in fact the shadow.
-	//Returns: True if this is the shadow.
+	// 만약 이 플레이어가 그림자안에 있으면 체크
+	// returns : 만약  이게 그림자면 참이다.
 	inline bool isShadow(){
 		return shadow;
 	}
 
-	//Let the player die when he falls of or hits spikes.
-	//animation: Boolean if the death animation should be played, default is true.
+	// 만약 플레이어가 떨어지거나 그가 때리면 플에이어가 죽게한다.
+	// animation : 만약 죽는 화면이 실행되면 boolean .
 	void die(bool animation=true);
 
-	//Check if currently it's play from record file.
+	// 만약 현재 녹음파일로부터 실행되면 체크
 	bool isPlayFromRecord();
 
-	//get the game record object.
+	// 녹음객체로부터 헤임을 한다.
 	std::vector<int>* getRecord();
 
 #ifdef RECORD_FILE_DEBUG
@@ -246,11 +242,11 @@ public:
 	std::vector<SDL_Rect>& playerPosition();
 #endif
 
-	//play the record.
+	// 녹음을 실행한다.
 	void playRecord();
 
 private:
-	//The space key is down. call this function from handleInput and another function.
+	// 스페이스 키가 눌리면 handleInput함수와 또다른 함수를 불러온다.
 	void spaceKeyDown(class Shadow* shadow);
 };
 
