@@ -1,3 +1,4 @@
+// 60142234 강승덕 소스 분석
 /*
  * Copyright (C) 2011-2012 Me and My Shadow
  *
@@ -31,50 +32,50 @@
 #include <vector>
 #include <string>
 
-//This is the LevelSelect state, here you can select levelpacks and levels.
+//이 파일을 LevelSelect 상태파일이다. levels와 levelpacks 을 선택 할 수 있다
 class LevelPlaySelect : public LevelSelect{
 private:
-	//Pointer to the play button, it is only shown when a level is selected.
+	//level이 선택되었을때만 play button의 포인터를 보여준다.
 	GUIObject* play;
-	
-	//Image of a play icon used as button to start replays.
+
+	//repalys를 시작할 버튼으로 사용할 play icon이미지
 	SDL_Surface* playButtonImage;
-	
-	//Image containing the time icon.
+
+	//time icon을 포함하는 이미지
 	SDL_Surface* timeIcon;
-	//Image containing the recordings icon.
+	//recordings icon을 포함하는 이미지
 	SDL_Surface* recordingsIcon;
-	
-	//Method that will create the GUI elements.
-	//initial: Boolean if it is the first time the gui is created.
+
+	//GUI leements를 생성할 함수
+	//initial: 최초로 gui가 생성되었는지 확인하는 Boolean
 	void createGUI(bool initial);
-	
-	//display level info.
+
+	//level info를 보여줌
 	void displayLevelInfo(int number);
 
-	//Check where and if the mouse clicked on a number.
-	//If so it will start the level.
+	//마우스가 어느 숫자위를 클릭하는지 체크함
+	//만약 그렇다면 level을 시작함
 	void checkMouse();
 public:
-	//Constructor.
+	//생성자.
 	LevelPlaySelect();
-	//Destructor.
+	//소멸자.
 	~LevelPlaySelect();
 
-	//Inherited from LevelSelect.
+	//LevelSelect에서 가져옴
 	void refresh(bool change=true);
 	void selectNumber(unsigned int number,bool selected);
-	
-	//Inherited from GameState.
+
+	//GameState에서 가져옴
 	void render();
-	
-	//Inherited from GameState.
+
+	//GameState에서 가져옴
 	void resize();
 
-	//Inherited from LevelSelect.
+	//LevelSelect에서 가져옴
 	void renderTooltip(unsigned int number,int dy);
-	
-	//GUI events will be handled here.
+
+	//GUI 이벤트는 여기서 다룸.
 	void GUIEventCallback_OnEvent(std::string name,GUIObject* obj,int eventType);
 };
 
