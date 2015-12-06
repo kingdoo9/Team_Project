@@ -37,7 +37,8 @@
 //움직이는 블럭을 위한 클래스
 class MovingPosition{
 public:
-	//Integer containing the relative time used to store in the level.
+	//level에서 저장하는 상대적 time을 가지고 있는 Integer변수
+	//level에 저장될
 	int time;
 	// x 위치
 	int x;
@@ -103,14 +104,14 @@ private:
 	//네모난 선택 마크
 	SDL_Surface* selectionMark;
 
-	//Surface used for drawing transparent selection/dragging.
+	//selection/dragging 을 그리기위해 사용하는 Surface
 	SDL_Surface* placement;
 
-	//A circle at the location of moving positions in configure mode.
+	//configure 모드에서 움직이는 위치의 좌표에 원을 그림.
 	SDL_Surface* movingMark;
 
 
-	//The current type of block to place in Add mode.
+	//Add 모드에서 블럭울 두기 위한 현재 블럭 type
 	int currentType;
 
 	//shift 키가 눌렸는지 확인하는 bool변수
@@ -123,15 +124,15 @@ private:
 	//카메라 x,y축 속도
 	int cameraXvel;
 	int cameraYvel;
-	//SDL_Rect used to store the camera's location when entering playMode.
+	//playMode에 들어갈 때 카메라의 좌표를 저장하는 변수
 	SDL_Rect cameraSave;
 
 	//선택된 것이 드래그 되었는지 확인하는 bool 함수
 	bool selectionDrag;
-	//Pointer to the gameobject that's the center of the drag.
+	//drag의 가운데 있는 gameobject의 포인터
 	GameObject* dragCenter;
 
-	//Integer containing a unique id.
+	//특별한 id를 가지고있는 변수
 	//Everytime a new id is needed it will increase by one.
 	unsigned int currentId;
 
@@ -158,19 +159,19 @@ private:
 	//The clipboard.
 	vector<map<string,string> > clipboard;
 
-	//Pointer to a GUIObject for a property of the object.
+	//object의 속성을 위한 GUIObject의 포인터
 	//Only used in the configure tool.
 	GUIObject* objectProperty;
-	//Pointer to a GUIObject for a property of the object.
+	//object의 속성을 위한 GUIObject의 포인터
 	//Only used in the configure tool.
 	GUIObject* secondObjectProperty;
-	//Pointer to the object that is being configured.
+	//configured된 object의 포인터
 	GameObject* configuredObject;
 
 	//레벨테마를 포함하는 스트링
 	std::string levelTheme;
 
-	//Integer containing the button of which a tool tip should be shown.
+	//보여준 tool tip 버튼을 포함하는 integer 변수
 	int tooltip;
 
 	//GUI 이벤트 핸들링이 이루어지는 장소
@@ -182,9 +183,9 @@ private:
 	//level을 저장하는 함수 filename은 저장할 이름.
 	void saveLevel(string fileName);
 
-	//Method used to convert a given x and y to snap to grid.
-	//x: Pointer to the x location.
-	//y: Pointer to the y location.
+	//격자에 맞게 주어진 x와 y를 변환시키는데 사용되는 함수
+	//x: x위치의 포인터
+	//y: y위치의 포인터
 	void snapToGrid(int* x,int* y);
 
 public:
@@ -203,7 +204,7 @@ public:
 	static const int editorTileOrder[EDITOR_ORDER_MAX];
 
 protected:
-	//Inherits the function loadLevelFromNode from Game class.
+	//Game 클래스로부터 loadLevelFromNode 기능을 가져옴.
 	virtual void loadLevelFromNode(TreeStorageNode* obj, const std::string& fileName);
 
 public:
@@ -267,7 +268,7 @@ public:
 	//dy: The relative y distance the camera moved.
 	void onCameraMove(int dx,int dy);
 	//물체위에서 enter 키가 눌렸을때 알려주는 함수.
-	//obj: Pointer to the GameObject entered above.
+	//obj: 엔터키가 눌려진 GameObject의 포인터
 	void onEnterObject(GameObject* obj);
 
 	//레벨에 오브직트를 추가할때 알려주는 함수
@@ -278,7 +279,7 @@ public:
 	//x: The new x location of the GameObject.
 	//y: The new y location of the GameObject.
 	void moveObject(GameObject* obj,int x,int y);
-	//게임 오브젝트를 삭제할때 나오는 함수 
+	//게임 오브젝트를 삭제할때 나오는 함수
 	//obj: Pointer to the gameobject to remove.
 	void removeObject(GameObject* obj);
 };
