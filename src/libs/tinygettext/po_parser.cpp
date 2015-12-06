@@ -1,3 +1,4 @@
+// 코드 분석자 : 60142270 남채린 
 //  tinygettext - A gettext replacement that works directly on .po files
 //  Copyright (C) 2009 Ingo Ruhnke <grumbel@gmx.de>
 //
@@ -74,6 +75,7 @@ POParser::error(const std::string& msg)
   log_error << filename << ":" << line_number << ": error: " << msg  << ": " << current_line << std::endl;
 
   // Try to recover from an error by searching for start of another entry
+  // 다른 항목의 시작을 연구하는데 있어 하나의 에러로부터 다시 덮도록 노력해라 
   do
     next_line();
   while(!eof && !is_empty_line());
@@ -189,7 +191,7 @@ POParser::get_string(unsigned int skip)
       }
       else
       {
-        // skip space
+        // skip space 넘어감 
       }
 
       skip += 1;
@@ -304,7 +306,7 @@ POParser::is_empty_line()
     return true;
   }
   else if (current_line[0] == '#')
-  { // handle comments as empty lines
+  { // handle comments as empty lines 빈 라인에 코멘트를 다루다 
     if (current_line.size() == 1 || (current_line.size() >= 2 && isspace(current_line[1])))
       return true;
     else
@@ -356,7 +358,7 @@ POParser::parse()
       {
         if (current_line.size() >= 2 && current_line[1] == ',')
         {
-          // FIXME: Rather simplistic hunt for fuzzy flag
+          // FIXME: Rather simplistic hunt for fuzzy flag 퍼지 플래그를 위한 오히력 단순한 사냥 
           if (current_line.find("fuzzy", 2) != std::string::npos)
             fuzzy = true;
         }

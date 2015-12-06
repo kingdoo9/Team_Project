@@ -1,3 +1,4 @@
+// 코드 분석자 : 60142270 남채린 
 //  tinygettext - A gettext replacement that works directly on .po files
 //  Copyright (C) 2006 Ingo Ruhnke <grumbel@gmx.de>
 //
@@ -72,7 +73,7 @@ Dictionary::translate_plural(const Entries& dict, const std::string& msgid, cons
     if (!msgstrs[n].empty())
       return msgstrs[n];
     else
-      if (count == 1) // default to english rules
+      if (count == 1) // default to english rules 
         return msgid;
       else
         return msgid_plural;
