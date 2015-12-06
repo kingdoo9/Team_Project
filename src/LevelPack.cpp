@@ -1,3 +1,4 @@
+// 60142234 강승덕 소스 분석
 /*
  * Copyright (C) 2011-2012 Me and My Shadow
  *
@@ -31,12 +32,12 @@
 using namespace std;
 
 LevelPack::LevelPack():currentLevel(0),loaded(false),levels(){
-	//We need to set the pointer to the dictionaryManager to NULL.
+	//Pointer dictionaryManager을 null로 설정한다.
 	dictionaryManager=NULL;
 }
 
 LevelPack::~LevelPack(){
-	//We call clear, since that already takes care of the deletion, including the dictionaryManager.
+	//dictionaryManager을 포함하여 이미 삭제를 관리하고있어서 celar함수를 불러온다.
 	clear();
 }
 
@@ -48,8 +49,8 @@ void LevelPack::clear(){
 	levelpackPath.clear();
 	levelProgressFile.clear();
 	congratulationText.clear();
-	
-	//Also delte the dictionaryManager if it isn't null.
+
+	//만약 null이 아니라면 dictionaryManager를 삭제함
 	if(dictionaryManager){
 		delete dictionaryManager;
 		dictionaryManager=NULL;
@@ -57,28 +58,28 @@ void LevelPack::clear(){
 }
 
 bool LevelPack::loadLevels(const std::string& levelListFile){
-	//We're going to load a new levellist so first clean any existing levels.
+	//우선 먼저 있었던 levels를 모두 없애고 새로운 levellist를 불러올 것이다.
 	clear();
 
-	//If the levelListFile is empty we have nothing to load so we return false.
+	//levelListFile이 비어있다면 아무것도 불러오지 않은것이고 false를 return한다.
 	if(levelListFile.empty()){
 		cerr<<"ERROR: No levellist file given."<<endl;
 		return false;
 	}
-	
-	//Process the levelListFile, create a new string since lecelListFile is constant.
+
+	//LevelListFile의 과정, LevelListFile이 문장이기때문에 새로운 String을 만든다.
 	string levelListNew=levelListFile;
 	levelpackPath=pathFromFileName(levelListNew);
 
-	//Create two input streams, one for the levellist file and one for the levelprogress.
+	//두개의 stream을 받아온다. 하나는 Levellistfile에 쓰일 것이고 다른 하나는 levelProgress에 쓰인다.
 	ifstream level(levelListNew.c_str());
-	
+
 	if(!level){
 		cerr<<"ERROR: Can't load level list "<<levelListNew<<endl;
 		return false;
 	}
-	
-	//Load the level list file.
+
+	//level list 을 불러온다.
 	TreeStorageNode obj;
 	{
 		POASerializer objSerializer;
@@ -87,14 +88,14 @@ bool LevelPack::loadLevels(const std::string& levelListFile){
 			return false;
 		}
 	}
-	
-	//Check if there are translations for the levels.
+
+	//levels에 대한 변화가 있는지 체크
 	{
-		//Try to open the locale folder in the levelpack to detect if there are translations for the levelpack.
+		//levelpack이 변화가 있는지 감지하기 위해 local 폴더에 있는 levelpack을 열어본다.
 		vector<string> v;
 		v=enumAllDirs(pathFromFileName(levelListNew),false);
 		if(std::find(v.begin(),v.end(),"locale")!=v.end()){
-			//Folder is present so configure the levelDictionaryManager.
+			//폴더는 levelDictionaryManager를 나타낸다.
 			dictionaryManager=new tinygettext::DictionaryManager();
 			dictionaryManager->add_directory(pathFromFileName(levelListNew)+"locale/");
 			dictionaryManager->set_charset("UTF-8");
@@ -103,36 +104,36 @@ bool LevelPack::loadLevels(const std::string& levelListFile){
 			dictionaryManager=NULL;
 		}
 	}
-	
-	//Look for the name.
+
+	//name을 본다.
 	{
 		vector<string> &v=obj.attributes["name"];
 		if(!v.empty()){
 			levelpackName=v[0];
 		}else{
-			//Name is not defined so take the folder name.
+			//Name이 정의되지 않아서 폴더 name을 가져온다.
 			levelpackName=pathFromFileName(levelListFile);
-			//Remove the last character '/'
+			//마지막 문자 '/'를 지운다.
 			levelpackName=levelpackName.substr(0,levelpackName.size()-1);
 			levelpackName=fileNameFromPath(levelpackName);
 		}
 	}
-	
-	//Look for the description.
+
+	//description변수를 살펴보자.
 	{
 		vector<string> &v=obj.attributes["description"];
 		if(!v.empty())
 			levelpackDescription=v[0];
 	}
-	
-	//Look for the congratulation text.
+
+	//congratulation text를 살펴보자.
 	{
 		vector<string> &v=obj.attributes["congratulations"];
 		if(!v.empty())
 			congratulationText=v[0];
 	}
-	
-	//Loop through the level list entries.
+
+	//level list 속을 Loop 돈다.
 	for(unsigned int i=0;i<obj.subNodes.size();i++){
 		TreeStorageNode* obj1=obj.subNodes[i];
 		if(obj1==NULL)
@@ -142,63 +143,63 @@ bool LevelPack::loadLevels(const std::string& levelListFile){
 			level.file=obj1->value[0];
 			level.targetTime=0;
 			level.targetRecordings=0;
-			
-			//Open the level file to retrieve the name and target time/recordings.
+
+			//name과 목적 time/recordings를 불러오기 위해 levelfile을 염
 			TreeStorageNode obj;
 			POASerializer objSerializer;
 			if(objSerializer.loadNodeFromFile((levelpackPath+level.file).c_str(),&obj,true)){
-				//Calc the MD5 FIRST because query obj.attributes will modify internal structure.
+				//obj.attributes라는 질의문이 내부 구조를 바꿀것이므로 MD5를 계산한다.
 				obj.name.clear();
 				obj.calcMD5(level.md5Digest);
 
-				//Get the name of the level.
+				//level의 name을 얻는다.
 				vector<string>& v=obj.attributes["name"];
 				if(!v.empty())
 					level.name=v[0];
-				//If the name is empty then we set it to the file name.
+				//만약 name이 비어있다면 filename을 설정해준다.
 				if(level.name.empty())
 					level.name=fileNameFromPath(level.file);
-				
-				//Get the target time of the level.
+
+				//level의 목적 time을 얻는다.
 				v=obj.attributes["time"];
 				if(!v.empty())
 					level.targetTime=atoi(v[0].c_str());
 				else
 					level.targetTime=-1;
-				//Get the target recordings of the level.
+				//level의 목적 recordings를 얻는다.
 				v=obj.attributes["recordings"];
 				if(!v.empty())
 					level.targetRecordings=atoi(v[0].c_str());
 				else
 					level.targetRecordings=-1;
 			}
-			
-			//The default for locked is true, unless it's the first one.
+
+			//그것이 최초가 아니라면 Locked을 true로 설정.
 			level.locked=!levels.empty();
 			level.won=false;
 			level.time=-1;
 			level.recordings=-1;
-			
-			//Add the level to the levels.
+
+			//levels에 level을 추가한다.
 			levels.push_back(level);
 		}
 	}
-	
+
 	loaded=true;
 	return true;
 }
 
 void LevelPack::loadProgress(const std::string& levelProgressFile){
-	//Open the levelProgress file.
+	//levelProgress 파일을 연다.
 	ifstream levelProgress;
 	if(!levelProgressFile.empty()){
 		this->levelProgressFile=levelProgressFile;
 		levelProgress.open(processFileName(this->levelProgressFile).c_str());
 	}
-	
-	//Check if the file exists.
+
+	//file이 존재하는지 체크한다.
 	if(levelProgress){
-		//Now load the progress/statistics.
+		//progress/statistics을 불러온다.
 		TreeStorageNode obj;
 		{
 			POASerializer objSerializer;
@@ -206,14 +207,14 @@ void LevelPack::loadProgress(const std::string& levelProgressFile){
 				cerr<<"ERROR: Invalid file format of level progress file."<<endl;
 			}
 		}
-		
-		//Loop through the entries.
+
+		//entries를 Loop 돈다.
 		for(unsigned int i=0;i<obj.subNodes.size();i++){
 			TreeStorageNode* obj1=obj.subNodes[i];
 			if(obj1==NULL)
 				continue;
 			if(obj1->value.size()>=1 && obj1->name=="level"){
-				//We've found an entry for a level, now search the correct level.
+				//level을 위한 entry를 찾고 적합한 level을 검색한다.
 				Level* level=NULL;
 				for(unsigned int o=0;o<levels.size();o++){
 					if(obj1->value[0]==levels[o].file){
@@ -221,12 +222,12 @@ void LevelPack::loadProgress(const std::string& levelProgressFile){
 						break;
 					}
 				}
-				
-				//Check if we found the level.
+
+				//level을 찾았는지 체크한다.
 				if(!level)
 					continue;
-				
-				//Get the progress/statistics.
+
+				//progress/statistics를 얻는다.
 				for(map<string,vector<string> >::iterator i=obj1->attributes.begin();i!=obj1->attributes.end();++i){
 					if(i->first=="locked"){
 					level->locked=(i->second[0]=="1");
@@ -247,29 +248,29 @@ void LevelPack::loadProgress(const std::string& levelProgressFile){
 }
 
 void LevelPack::saveLevels(const std::string& levelListFile){
-	//Get the fileName.
+	//fileName을 얻는다.
 	string levelListNew=processFileName(levelListFile);
-	//Open an output stream.
+	//output stream을 연다.
 	ofstream level(levelListNew.c_str());
 
-	//Check if we can use the file.
+	//사용 할 수 있는 file인지 체크한다.
 	if(!level){
 		cerr<<"ERROR: Can't save level list "<<levelListNew<<endl;
 		return;
 	}
-	
-	//Storage node that will contain the data that should be written.
+
+	//쓰여진 data를 포함할 node를 저장한다.
 	TreeStorageNode obj;
 
-	//Make sure that there's a description.
+	//description을 확실하게함.
 	if(!levelpackDescription.empty())
 		obj.attributes["description"].push_back(levelpackDescription);
-	
-	//Make sure that there's a congratulation text.
+
+	//congratulation text을 다시 설정.
 	if(!congratulationText.empty())
 		obj.attributes["congratulations"].push_back(congratulationText);
 
-	//Add the levels to the file.
+	//file의 level을 추가한다.
 	for(unsigned int i=0;i<levels.size();i++){
 		TreeStorageNode* obj1=new TreeStorageNode;
 		obj1->name="levelfile";
@@ -289,7 +290,7 @@ void LevelPack::updateLanguage() {
 }
 
 void LevelPack::addLevel(const string& levelFileName,int levelno){
-	//Fill in the details.
+	//세부 사항을 채운다.
 	Level level;
 	if(!levelpackPath.empty() && levelFileName.compare(0,levelpackPath.length(),levelpackPath)==0){
 		level.file=fileNameFromPath(levelFileName);
@@ -298,49 +299,50 @@ void LevelPack::addLevel(const string& levelFileName,int levelno){
 	}
 	level.targetTime=0;
 	level.targetRecordings=0;
-	
-	//Get the name of the level.
+
+	//level의 name을 얻음
 	TreeStorageNode obj;
 	POASerializer objSerializer;
 	if(objSerializer.loadNodeFromFile(levelFileName.c_str(),&obj,true)){
-		//Calc the MD5 FIRST because query obj.attributes will modify internal structure.
+		//obj.attributes라는 질의문이 내부 구조를 바꿀것이므로 MD5를 계산한다.
 		obj.name.clear();
 		obj.calcMD5(level.md5Digest);
 
-		//Get the name of the level.
+		//level의 이름을 얻는다.
 		vector<string>& v=obj.attributes["name"];
 		if(!v.empty())
 			level.name=v[0];
 		//If the name is empty then we set it to the file name.
+		//name이 비어있다면 file name에 그것을 설정한다.
 		if(level.name.empty())
 			level.name=fileNameFromPath(levelFileName);
-		
-		//Get the target time of the level.
+
+		//level의 목적 time을 얻어옴
 		v=obj.attributes["time"];
 		if(!v.empty())
 			level.targetTime=atoi(v[0].c_str());
 		else
 			level.targetTime=-1;
-		//Get the target recordings of the level.
+		//level의 목적 recordings을 얻어옴
 		v=obj.attributes["recordings"];
 		if(!v.empty())
 			level.targetRecordings=atoi(v[0].c_str());
 		else
 			level.targetRecordings=-1;
 	}
-	//Set if it should be locked or not.
+	//Locked인지 아닌지를 설정한다.
 	level.won=false;
 	level.time=-1;
 	level.recordings=-1;
 	level.locked=levels.empty()?false:true;
-	
-	//Check if the level should be at the end or somewhere in the middle.
+
+	//level이 끝에 있거나 중간 어딘가에 있는지 체크한다.
 	if(levelno<0 || levelno>=int(levels.size())){
 		levels.push_back(level);
 	}else{
 		levels.insert(levels.begin()+levelno,level);
 	}
-	
+
 	//NOTE: We set loaded to true.
 	loaded=true;
 }
@@ -352,7 +354,7 @@ void LevelPack::moveLevel(unsigned int level1,unsigned int level2){
 		return;
 	if(level1==level2)
 		return;
-	
+
 	levels.insert(levels.begin()+level2,levels[level1]);
 	if(level2<=level1)
 		levels.erase(levels.begin()+level1+1);
@@ -361,30 +363,30 @@ void LevelPack::moveLevel(unsigned int level1,unsigned int level2){
 }
 
 void LevelPack::saveLevelProgress(){
-	//Check if the levels are loaded and a progress file is given.
+	//level이 로드되었고 progress file이 주어졌는지 체크
 	if(!loaded || levelProgressFile.empty())
 		return;
-	
-	//Open the progress file.
+
+	//progress file을 연다.
 	ofstream levelProgress(processFileName(levelProgressFile).c_str());
 	if(!levelProgress)
 		return;
-	
-	//Open an output stream.
+
+	//output stream을 연다.
 	TreeStorageNode node;
-	
-	//Loop through the levels.
+
+	//levels을 Loop
 	for(unsigned int o=0;o<levels.size();o++){
 		TreeStorageNode* obj=new TreeStorageNode;
 		node.subNodes.push_back(obj);
-		
+
 		char s[64];
-		
-		//Set the name of the node.
+
+		//node의 이름을 설정
 		obj->name="level";
 		obj->value.push_back(levels[o].file);
-		
-		//Set the values.
+
+		//값을 설정
 		obj->attributes["locked"].push_back(levels[o].locked?"1":"0");
 		obj->attributes["won"].push_back(levels[o].won?"1":"0");
 		sprintf(s,"%d",levels[o].time);
@@ -392,9 +394,9 @@ void LevelPack::saveLevelProgress(){
 		sprintf(s,"%d",levels[o].recordings);
 		obj->attributes["recordings"].push_back(s);
 	}
-	
-	
-	//Create a POASerializer and write away the leve node.
+
+
+	//POASerializer을 생성하고 level node를 적는다.
 	POASerializer objSerializer;
 	objSerializer.writeNode(&node,levelProgress,true,true);
 }
@@ -418,7 +420,7 @@ void LevelPack::getLevelAutoSaveRecordPath(int level,std::string &bestTimeFilePa
 	bestTimeFilePath.clear();
 	bestRecordingFilePath.clear();
 
-	//get level pack path.
+	//level pack 경로를 얻는다.
 	string levelpackPath=LevelPack::levelpackPath;
 	string s=levels[level].file;
 
@@ -441,7 +443,7 @@ void LevelPack::getLevelAutoSaveRecordPath(int level,std::string &bestTimeFilePa
 		if(lps!=string::npos) s=s.substr(lps+1);
 	}
 
-	//check if it's custom level
+	//custom level인지 아닌지 체크
 	{
 		string path="%USER%/records/autosave/";
 		if(!levelpackPath.empty()){
@@ -453,17 +455,17 @@ void LevelPack::getLevelAutoSaveRecordPath(int level,std::string &bestTimeFilePa
 		s=path+s;
 	}
 
-	//calculate MD5
+	//MD5 계산
 	s+='-';
 	s+=Md5::toString(levels[level].md5Digest);
 
-	//over
+	//끝
 	bestTimeFilePath=s+"-best-time.mnmsrec";
 	bestRecordingFilePath=s+"-best-recordings.mnmsrec";
 }
 
 void LevelPack::setLevelName(unsigned int level,const std::string& name){
-	if(level<levels.size()) 
+	if(level<levels.size())
 		levels[level].name=name;
 }
 
@@ -486,8 +488,8 @@ struct LevelPack::Level* LevelPack::getLevel(int level){
 void LevelPack::resetLevel(int level){
 	if(level<0)
 		level=currentLevel;
-	
-	//Set back to default.
+
+	//default값으로 다시 설정.
 	levels[level].locked=(level!=0);
 	levels[level].won=false;
 	levels[level].time=-1;

@@ -1,4 +1,5 @@
-/*
+/* 60142233 강민경
+
  * Copyright (C) 2011-2012 Me and My Shadow
  *
  * This file is part of Me and My Shadow.
@@ -27,56 +28,55 @@
 #include <fstream>
 #include <ctime>
 
-//The Settings class is used for loading/saving the config file and keeping track of the settings.
+//설정 클래스 구성 파일을 저장하고 설정을 추적 / 로딩을 위해 사용된다.
 class Settings{
 private:
-	//The name of the settingsfile.
+	//settingsfile의 이름입니다.
 	const std::string fileName;
 	
-	//Map containing all the settings.
-	//The key is the name of the setting.
+	//모든 설정을 포함하는지도.
+ // 키 설정의 이름이다.
 	std::map<std::string,std::string> settings;
 	
-	//Method that will create the config file.
+	//설정 파일을 만드는 방법
 	void createFile();
-	//Parse a given line and, if valid, add it to the settings map.
-	//line: The line to parse.
+	// 주어진 줄을 구문 분석하고, 유효한 경우, 설정지도에 추가합니다.
+ // 라인 : 라인이 구문 분석합니다.
 	void parseLine(const std::string &line);
-	//Validates a given line. (Check if it contains a '=')
-	//line: The line to validate.
-	//Returns: True if the line is valid.
+	// 주어진 라인을 확인합니다. (이 포함되어 있는지 확인 '=')
+	// 라인 : 라인의 유효성을 검사합니다.
+	// 반환 값 : 라인이 유효한 경우는 true.
 	bool validLine(const std::string &line);
-	//Remove comments from a given line.
-	//Comments start with '#' and continues to the end of the line.
-	//line: The line to uncomment.
+	주어진 행에서 주석을 제거 //.
+ // 주석이 '#'으로 시작 라인의 끝까지 계속된다.
+ // 라인 : 라인의 주석을 해제합니다.
 	void unComment(std::string &line);
-	//Checks if the line is empty.
-	//line: The line to check.
-	//Returns: True if the line is emtpy.
+	//체크 라인이 비어있는 경우 확인
+ // 라인 : 라인을 확인합니다.
+ // 반환 값 : 라인이 emtpy 경우는 true.
 	bool empty(const std::string &line);
 public:
 	//Constructor.
-	//fileName: The name of the file to use.
+	//파일 이름 : 파일의 이름을 사용합니다.
 	Settings(std::string fileName);
 	
-	//This method will open the settings file and walk through it line for line.
+	//이 방법은 설정 파일을 열고,  라인 라인을 통해 안내합니다.
 	void parseFile();
-	//This method will write the settings in the map to the settings file.
+	//이 방법은 설정 파일에 맵의 설정을 기록합니다.
 	void save();
 	
-	//Gets the value that belongs to a given key.
-	//key: The name of teh setting.
-	//Returns: The value if the key exists and an empty string if the key doesn't exist.
+
 	std::string getValue(const std::string &key);
-	//Gets the value, as a bool, that belongs to a given key.
-	//key: The name of teh setting.
-	//Returns: The (bool)value if the key exists and false if the key doesn't exist.
+	// 저장된 키에 속하는 부울을 값으로 가져옴
+	// 키 : TEH 설정의 이름입니다. 
+	// Returns: The (bool)value if the key exists and false if the key doesn't exist.
 	bool getBoolValue(const std::string &key);
 	
-	//This will set the value of a given key.
-	//Note: If the key doesn't exist it won't be set. //FIXME: If the key doesn't exist why not create it?
-	//key: The key of the setting to change.
-	//value: The new value of the key.
+	// 이는 주어진 키의 값을 설정한다.
+ //주의 : 키가 존재하지 않는 경우는 설정되지 않을 것이다. //FIXME: If the key doesn't exist why not create it?
+
+ // 키 설정의 키를 변경합니다.
+ // 값 : 키의 새로운 값.
 	void setValue(const std::string &key, const std::string &value);
 };
 

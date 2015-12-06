@@ -1,4 +1,5 @@
-/*
+/* 60142233 강민경
+
  * Copyright (C) 2011-2012 Me and My Shadow
  *
  * This file is part of Me and My Shadow.
@@ -22,22 +23,22 @@
 
 #include "ITreeSerializer.h"
 
-//This class is used for reading/writing of TreeStorageNodes to/from POAformat-files.
+//이 클래스는 POAformat - files의 to/from, / TreeStorageNodes의 읽기 / 쓰기에 사용됩니다.
 class POASerializer:public ITreeSerializer{
 public:
-	//This method will read the inputstream and parses it.
-	//The result will be placed in a TreeStorageNode.
-	//fin: The input stream which will be read from.
-	//objOut: The TreeStorageNode the result will be put in.
-	//loadSubNodesOnly: Boolean if only the subNodes need to be loaded.
-	//Returns: true if the reading and parsing succeeded.
+	//이 메소드는 InputStream를 읽고 구문 분석합니다.
+// 결과는 TreeStorageNode에 배치됩니다.
+// 핀 :읽을 수 있는  입력 스트림.
+// objOut :  TreeStorageNode 결과가 입력될것
+// loadSubNodesOnly : 하위 노드를로드 할 필요가있는 경우 부울.
+// 반환 값 : 읽기와 분석이 성공하는 경우는 true.
 	virtual bool readNode(std::istream& fin,ITreeStorageBuilder* objOut,bool loadSubNodesOnly=false);
 	
-	//This method will write a TreeStorageNode to a outputstream.
-	//obj: The TreeStorageNode to save.
-	//fout: The output stream which will be writen to.
-	//saveSubNodesOnly: Boolean if only the subNodes need to be saved.
-	//Returns: true if the writing succeeded.
+	//이 메소드는 OutputStream에 TreeStorageNode를 작성합니다.
+// OBJ : TreeStorageNode 저장합니다.
+// FOUT : 입력될 출력 스트림.
+// saveSubNodesOnly :하위 노드가 저장해야하는 경우 부울.
+ // 반환 값 : 쓰기가 성공했을 경우는 true.
 	virtual void writeNode(ITreeStorageReader* obj,std::ostream& fout,bool bWriteHeader=true,bool saveSubNodeOnly=false);
 };
 #endif

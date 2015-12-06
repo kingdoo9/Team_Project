@@ -1,4 +1,5 @@
-/*
+/* 60142233 강민경
+
  * Copyright (C) 2011-2012 Me and My Shadow
  *
  * This file is part of Me and My Shadow.
@@ -41,50 +42,50 @@ Block::Block(int x,int y,int type,Game* parent):
 	loop(true),
 	editorFlags(0)
 {
-	//First set the location and size of the box.
-	//The default size is 50x50.
+	// 첫 번째 상자의 위치와 크기를 설정합니다.
+	// 기본 크기는 50 × 50이다.
 	box.x=x;
 	box.y=y;
 	box.w=50;
 	box.h=50;
 
-	//Also set the
+	//설정
 	boxBase.x=x;
 	boxBase.y=y;
 
-	//Set the type.
+	//타입설정
 	this->type=type;
 
-	//Some types need type specific code.
+	//일부 유형의 특정 코드를 필요로함
 	if(type==TYPE_START_PLAYER){
-		//This is the player start so set the player here.
-		//We center the player, the player is 23px wide.
+		//여기에 플레이어를 설정, 시작 플레이어입니다.
+	// 우리는 플레이어 중심, 플레이어 23px 넓이
 		parent->player.setPosition(box.x+(box.w-23)/2,box.y);
 		parent->player.fx=box.x+(box.w-23)/2;
 		parent->player.fy=box.y;
 	}else if(type==TYPE_START_SHADOW){
-		//This is the shadow start so set the shadow here.
-		//We center the shadow, the shadow is 23px wide.
+		//여기에 그림자를 설정, 시작 그림자입니다.
+		// 우리는 그림자를 중심으로, 그림자 23px 넓이
 		parent->shadow.setPosition(box.x+(box.w-23)/2,box.y);
 		parent->shadow.fx=box.x+(box.w-23)/2;
 		parent->shadow.fy=box.y;
 	}
 
-	//And load the appearance.
+	//그리고 모양을 로드합니다.
 	objThemes.getBlock(type)->createInstance(&appearance);
 }
 
 Block::~Block(){}
 
 void Block::show(){
-	//Check if the block is visible.
+	//블록이 표시되어 있는지 확인합니다.
 	if(checkCollision(camera,box)==true || (stateID==STATE_LEVEL_EDITOR && checkCollision(camera,boxBase)==true)){
 		SDL_Rect r={0,0,50,50};
 
-		//What we need to draw depends on the type of block.
+		//그릴 필요가 있는것은 블록의 종류에 따라 다름
 		switch(type){
 		case TYPE_CHECKPOINT:
-			//Check if the checkpoint is last used.
+			//체크 포인트가 마지막으로 사용되어 있는지 확인합니다.
 			if(parent!=NULL && parent->objLastCheckPoint==this){
 				if(!temp) appearance.changeState("activated");
 				temp=1;
@@ -113,12 +114,12 @@ void Block::show(){
 			break;
 		}
 
-		//Always draw the base.
+		//기본을 그립니다.
 		appearance.drawState("base", screen, boxBase.x - camera.x, boxBase.y - camera.y);
-		//Now draw normal.
+		//normal을 그립니다
 		appearance.draw(screen, box.x - camera.x, box.y - camera.y);
 
-		//Some types need to draw something on top of the base/default.
+		//일부 유형은 상단에 base/default를 그릴 필요가 있습니다
 		switch(type){
 		case TYPE_BUTTON:
 			if(flags&4){
@@ -208,7 +209,7 @@ void Block::loadState(){
 }
 
 void Block::reset(bool save){
-	//We need to reset so we clear the temp and saves.
+	//다시 할 필요가 있어서 temp를 지우고 저장합니다.
 	if(save){
 		temp=tempSave=xSave=ySave=0;
 		flags=flagsSave=editorFlags;
@@ -226,11 +227,11 @@ void Block::reset(bool save){
 		break;
 	}
 
-	//Also reset the appearance.
+	//또한 모양을 다시 설정합니다.
 	appearance.resetAnimation(save);
 	appearance.changeState("default");
 
-	//If it's a fragile block we need to update the appearance.
+	//이 깨지기 쉬운 블록의 경우 우리는 모양을 업데이트 해야합니다.
 	switch(type){
 	case TYPE_FRAGILE:
 		{
@@ -256,7 +257,7 @@ void Block::playAnimation(int flags){
 }
 
 void Block::onEvent(int eventType){
-	//Event handling.
+	//이벤트 핸들링
 	switch(eventType){
 	case GameObjectEvent_PlayerWalkOn:
 		switch(type){
@@ -361,10 +362,10 @@ int Block::queryProperties(int propertyType,Player* obj){
 }
 
 void Block::getEditorData(std::vector<std::pair<std::string,std::string> >& obj){
-	//Every block has an id.
+	//모든 블록은 ID가 있다
 	obj.push_back(pair<string,string>("id",id));
 
-	//Block specific properties.
+	//특정 속성을 차단합니다.
 	switch(type){
 	case TYPE_MOVING_BLOCK:
 	case TYPE_MOVING_SHADOW_BLOCK:
@@ -443,23 +444,23 @@ void Block::getEditorData(std::vector<std::pair<std::string,std::string> >& obj)
 }
 
 void Block::setEditorData(std::map<std::string,std::string>& obj){
-	//Iterator used to check if the map contains certain entries.
+	//Iterator는 지도가 특정 항목이 포함되어 있는지 확인하는 데 사용됩니다.
 	map<string,string>::iterator it;
 
-	//Check if the data contains the id block.
+	//데이터가 ID 블록이 포함되어 있는지 확인합니다.
 	it=obj.find("id");
 	if(it!=obj.end()){
-		//Set the id of the block.
+		//블록의 ID를 설정합니다.
 		id=obj["id"];
 	}
 
-	//Block specific properties.
+	//특정 속성을 차단합니다.
 	switch(type){
 	case TYPE_MOVING_BLOCK:
 	case TYPE_MOVING_SHADOW_BLOCK:
 	case TYPE_MOVING_SPIKES:
 		{
-			//Make sure that the editor data contains MovingPosCount.
+			//에디터 데이터가 MovingPosCount를 포함하는지 확인합니다.
 			it=obj.find("MovingPosCount");
 			if(it!=obj.end()){
 				char s0[64];
@@ -479,7 +480,7 @@ void Block::setEditorData(std::map<std::string,std::string>& obj){
 				}
 			}
 
-			//Check if the disabled key is in the data.
+			//disable 키가 데이터에 있는지 확인합니다.
 			it=obj.find("disabled");
 			if(it!=obj.end()){
 				string s=obj["disabled"];
@@ -488,7 +489,7 @@ void Block::setEditorData(std::map<std::string,std::string>& obj){
 				flags=flagsSave=editorFlags;
 			}
 
-			//Check if the loop key is in the data.
+			//루프 키가 데이터에 있는지 확인합니다.
 			it=obj.find("loop");
 			if(it!=obj.end()){
 				string s=obj["loop"];
@@ -502,13 +503,13 @@ void Block::setEditorData(std::map<std::string,std::string>& obj){
 	case TYPE_CONVEYOR_BELT:
 	case TYPE_SHADOW_CONVEYOR_BELT:
 		{
-			//Check if there's a speed key in the editor data.
+			//에디터 데이터 속도 키가 있는지 확인합니다.
 			it=obj.find("speed");
 			if(it!=obj.end()){
 				dx=atoi(obj["speed"].c_str());
 			}
 
-			//Check if the disabled key is in the data.
+			//disable 키가 데이터에 있는지 확인합니다.
 			it=obj.find("disabled");
 			if(it!=obj.end()){
 				string s=obj["disabled"];
@@ -520,7 +521,7 @@ void Block::setEditorData(std::map<std::string,std::string>& obj){
 		break;
 	case TYPE_PORTAL:
 		{
-			//Check if the automatic key is in the data.
+			//자동 키가 데이터에 있는지 확인합니다.
 			it=obj.find("automatic");
 			if(it!=obj.end()){
 				string s=obj["automatic"];
@@ -529,7 +530,7 @@ void Block::setEditorData(std::map<std::string,std::string>& obj){
 				flags=flagsSave=editorFlags;
 			}
 
-			//Check if the destination key is in the data.
+			//destination 키가 데이터에 있는지 확인합니다.
 			it=obj.find("destination");
 			if(it!=obj.end()){
 				destination=obj["destination"];
@@ -539,7 +540,7 @@ void Block::setEditorData(std::map<std::string,std::string>& obj){
 	case TYPE_BUTTON:
 	case TYPE_SWITCH:
 		{
-			//Check if the behaviour key is in the data.
+			//behaviour 키가 데이터에 있는지 확인합니다.
 			it=obj.find("behaviour");
 			if(it!=obj.end()){
 				string s=obj["behaviour"];
@@ -552,7 +553,7 @@ void Block::setEditorData(std::map<std::string,std::string>& obj){
 		break;
 	case TYPE_NOTIFICATION_BLOCK:
 		{
-			//Check if the message key is in the data.
+			//메시지 키가 데이터에 있는지 확인합니다.
 			it=obj.find("message");
 			if(it!=obj.end()){
 				message=obj["message"];
@@ -565,7 +566,7 @@ void Block::setEditorData(std::map<std::string,std::string>& obj){
 		break;
 	case TYPE_FRAGILE:
 		{
-			//Check if the status is in the data.
+			//state가 데이터에 있는지 확인합니다.
 			it=obj.find("state");
 			if(it!=obj.end()){
 				editorFlags=atoi(obj["state"].c_str());
@@ -618,8 +619,8 @@ void Block::move(){
 					box.y=newY;
 					return;
 				}else if(t==(int)r1.w){
-					//If the time is the time of the movingPosition then set it equal to the location.
-					//We do this to prevent a slight edge between normal blocks and moving blocks.
+					// 시간 movingPosition의 시간이면 위치가 동일하게 설정.
+					// 우리는 일반 블록과 이동 블록 사이에 약간의 가장자리를 방지하기 위해 이 작업을 수행.
 					int newX=boxBase.x+r1.x;
 					int newY=boxBase.y+r1.y;
 					dx=newX-box.x;
@@ -632,7 +633,7 @@ void Block::move(){
 				r0.x=r1.x;
 				r0.y=r1.y;
 			}
-			//Only reset the stuff when we're looping.
+			//반복하는 경우에만 물건을 다시 설정합니다.
 			if(loop){
 				temp=0;
 				if(!movingPos.empty() && movingPos.back().x==0 && movingPos.back().y==0){
@@ -650,7 +651,7 @@ void Block::move(){
 			if((flags^new_flags)&4){
 				flags=(flags&~4)|new_flags;
 				if(parent && (new_flags || (flags&3)==0)){
-					//Make sure that id isn't empty.
+					//ID가 비어 있지 않은지 확인
 					if(!id.empty()){
 						parent->broadcastObjectEvent(0x10000|(flags&3),-1,id.c_str());
 					}else{

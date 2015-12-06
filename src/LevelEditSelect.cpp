@@ -1,3 +1,4 @@
+// 60142234 강승덕  소스 분석
 /*
  * Copyright (C) 2012 Me and My Shadow
  *
@@ -66,7 +67,7 @@ void LevelEditSelect::createGUI(bool initial){
 	}
 
 	if(!initial){
-		//Remove the previous buttons.
+		//이전 bottons을 지움
 		for(int i=0;i<GUIObjectRoot->childControls.size();i++){
 			if(GUIObjectRoot->childControls[i]->type==GUIObjectButton && GUIObjectRoot->childControls[i]->caption!=_("Back")){
 				delete GUIObjectRoot->childControls[i];
@@ -76,7 +77,7 @@ void LevelEditSelect::createGUI(bool initial){
 		}
 	}
 
-	//Create the six buttons at the bottom of the screen.
+	//화면 아래쪽에 여섯개의 bottons를 만듦
 	GUIObject* obj=new GUIObject(SCREEN_WIDTH*0.02,SCREEN_HEIGHT-120,-1,32,GUIObjectButton,_("New Levelpack"));
 	obj->name="cmdNewLvlpack";
 	obj->eventCallback=this;
@@ -96,7 +97,7 @@ void LevelEditSelect::createGUI(bool initial){
 	move->name="cmdMoveMap";
 	move->eventCallback=this;
 	//NOTE: Set enabled equal to the inverse of initial.
-	//When resizing the window initial will be false and therefor the move button can stay enabled.
+	//윈도우창의 크기를 변경했을 때 initial변수는 false가 되고 그대신에 move button은 활성화를 유지할 수 있다.
 	move->enabled=false;
 	GUIObjectRoot->childControls.push_back(move);
 
@@ -110,7 +111,7 @@ void LevelEditSelect::createGUI(bool initial){
 	edit->eventCallback=this;
 	GUIObjectRoot->childControls.push_back(edit);
 
-	//Now update widgets and then check if they overlap
+	//widgets 업데이트 하고 겹치는지 체크한다.
 	GUIObjectRoot->render(0,0,false);
 	if(propertiesPack->left-propertiesPack->gravityX < obj->left+obj->width ||
 	   propertiesPack->left-propertiesPack->gravityX+propertiesPack->width > removePack->left-removePack->gravityX){
@@ -178,19 +179,19 @@ void LevelEditSelect::createGUI(bool initial){
 void LevelEditSelect::changePack(){
 	packName=levelpacks->item[levelpacks->value];
 	if(packName=="Custom Levels"){
-		//Disable some levelpack buttons.
+		//몇가지 levelpack buttons을 비활성화
 		propertiesPack->enabled=false;
 		removePack->enabled=false;
 	}else{
-		//Enable some levelpack buttons.
+		//몇가지 levelpack buttons을 활성화
 		propertiesPack->enabled=true;
 		removePack->enabled=true;
 	}
 
-	//Set last levelpack.
+	//마지막 levelpack을 설정
 	getSettings()->setValue("lastlevelpack",packName);
 
-	//Now let levels point to the right pack.
+	//levels이 오른쪽 pack을 가리키도록 한다.
 	levels=getLevelPackManager()->getLevelPack(packName);
 }
 
@@ -235,7 +236,7 @@ void LevelEditSelect::packProperties(bool newPack){
 	obj->eventCallback=this;
 	root->childControls.push_back(obj);
 
-	//Create the gui overlay.
+	// gui overlay를 생성
 	GUIOverlay* overlay=new GUIOverlay(root);
 
 	if(newPack){
@@ -266,7 +267,7 @@ void LevelEditSelect::addLevel(){
 	obj->eventCallback=this;
 	root->childControls.push_back(obj);
 
-	//Dim the screen using the tempSurface.
+	//화면의 어두운 부분을 임시장소로(tempSurface) 사용
 	GUIOverlay* overlay=new GUIOverlay(root);
 }
 
@@ -301,7 +302,7 @@ void LevelEditSelect::moveLevel(){
 	obj->eventCallback=this;
 	root->childControls.push_back(obj);
 
-	//Create the gui overlay.
+	// gui overlay를 생성
 	GUIOverlay* overlay=new GUIOverlay(root);
 }
 
@@ -311,12 +312,12 @@ void LevelEditSelect::refresh(bool change){
 	if(change){
 		numbers.clear();
 
-		//clear the selected level
+		//선택된 level을 clear
 		if(selectedNumber!=NULL){
 			selectedNumber=NULL;
 		}
 
-		//Disable the level specific buttons.
+		//level specific buttons을 비활성화
 		move->enabled=false;
 		remove->enabled=false;
 		edit->enabled=false;
@@ -352,7 +353,7 @@ void LevelEditSelect::selectNumber(unsigned int number,bool selected){
 		levels->setCurrentLevel(number);
 		setNextState(STATE_LEVEL_EDITOR);
 
-		//Pick music from the current music list.
+		//현재 music list에서 music을 고른다.
 		getMusicManager()->pickMusic();
 	}else{
 		if(number==numbers.size()-1){
@@ -360,8 +361,8 @@ void LevelEditSelect::selectNumber(unsigned int number,bool selected){
 		}else if(number>=0 && number<numbers.size()){
 			selectedNumber=&numbers[number];
 
-			//Enable the level specific buttons.
-			//NOTE: We check if 'remove levelpack' is enabled, if not then it's the Levels levelpack.
+			//level specific buttons을 활성화
+			//NOTE: 'remove levelpack' 이 활성화 되었는지 체크한다. if not then it's the Levels levelpack.
 			if(removePack->enabled)
 				move->enabled=true;
 			remove->enabled=true;
@@ -371,15 +372,15 @@ void LevelEditSelect::selectNumber(unsigned int number,bool selected){
 }
 
 void LevelEditSelect::render(){
-	//Let the levelselect render.
+	//levelselect 를 render한다.
 	LevelSelect::render();
 }
 
 void LevelEditSelect::resize(){
-	//Let the levelselect resize.
+	//levelselect 창을 크기 조절한다.
 	LevelSelect::resize();
 
-	//Create the GUI.
+	//GUI 생성
 	createGUI(false);
 
 	//NOTE: This is a workaround for buttons failing when resizing.
@@ -397,24 +398,24 @@ void LevelEditSelect::renderTooltip(unsigned int number,int dy){
 	SDL_Surface* name;
 
 	if(number==(unsigned)levels->getLevelCount()){
-		//Render the name of the level.
+		//level의 이름을 render
 		name=TTF_RenderUTF8_Blended(fontText,_("Add level"),fg);
 	}else{
-		//Render the name of the level.
+		//level의 이름을 render
 		name=TTF_RenderUTF8_Blended(fontText,_C(levels->getDictionaryManager(),levels->getLevelName(number)),fg);
 	}
 
-	//Check if name isn't null.
+	//name이 null이 아님을 체크
 	if(name==NULL)
 		return;
 
-	//Now draw a square the size of the three texts combined.
+	//세가지 texts를 조합한 크기 만큼 정사각형을 그린다.
 	SDL_Rect r=numbers[number].box;
 	r.y-=dy*64;
 	r.w=name->w;
 	r.h=name->h;
 
-	//Make sure the tooltip doesn't go outside the window.
+	//tooltip이 윈도우창 밖으로 나가지 않음을 확실히 해둔다.
 	if(r.y>SCREEN_HEIGHT-200){
 		r.y-=name->h+4;
 	}else{
@@ -423,14 +424,14 @@ void LevelEditSelect::renderTooltip(unsigned int number,int dy){
 	if(r.x+r.w>SCREEN_WIDTH-50)
 		r.x=SCREEN_WIDTH-50-r.w;
 
-	//Draw a rectange
+	//사각형을 그린다.
 	Uint32 color=0xFFFFFF00|240;
 	drawGUIBox(r.x-5,r.y-5,r.w+10,r.h+10,screen,color);
 
-	//Calc the position to draw.
+	//그리기 위해 위치를 계산한다.
 	SDL_Rect r2=r;
 
-	//Now we render the name if the surface isn't null.
+	//그리고 surface 가 null이 아니면 name을 render한다.
 	if(name!=NULL){
 		//Draw the name.
 		SDL_BlitSurface(name,NULL,screen,&r2);
@@ -443,41 +444,41 @@ void LevelEditSelect::renderTooltip(unsigned int number,int dy){
 void LevelEditSelect::GUIEventCallback_OnEvent(std::string name,GUIObject* obj,int eventType){
 	//NOTE: We check for the levelpack change to enable/disable some levelpack buttons.
 	if(name=="cmdLvlPack"){
-		//We call changepack and return to prevent the LevelSelect to undo what we did.
+		//levelSelect가 했던것을 되돌리는 것을 막기위해 changepack을 호출하고 return시킨다.
 		changePack();
 		refresh();
 		return;
 	}
 
-	//Let the level select handle his GUI events.
+	//level select 에서 자신과 관련된 GUI 이벤트를 다룸
 	LevelSelect::GUIEventCallback_OnEvent(name,obj,eventType);
 
-	//Check for the edit button.
+	//edit button을 체크
 	if(name=="cmdNewLvlpack"){
-		//Create a new pack.
+		//새로운 pack을 만듦
 		packProperties(true);
 	}else if(name=="cmdLvlpackProp"){
-		//Show the pack properties.
+		//pack 속성을 보여줌
 		packProperties(false);
 	}else if(name=="cmdRmLvlpack"){
-		//Show an "are you sure" message.
+		//"are you sure" 이란 메시지를 보여줌
 		if(msgBox(_("Are you sure?"),MsgBoxYesNo,_("Remove prompt"))==MsgBoxYes){
-			//Remove the directory.
+			//directory를 삭제함
 			if(!removeDirectory(levels->levelpackPath.c_str())){
 				cerr<<"ERROR: Unable to remove levelpack directory "<<levels->levelpackPath<<endl;
 			}
 
-			//Remove it from the vector (levelpack list).
+			//vector(levelpack list) 에서 삭제함
 			vector<string>::iterator it;
 			it=find(levelpacks->item.begin(),levelpacks->item.end(),packName);
 			if(it!=levelpacks->item.end()){
 				levelpacks->item.erase(it);
 			}
 
-			//Remove it from the levelpackManager.
+			//levelpackManager에서 삭제함
 			getLevelPackManager()->removeLevelPack(packName);
 
-			//And call changePack.
+			//changePack함수를 부름
 			levelpacks->value=levelpacks->item.size()-1;
 			changePack();
 			refresh();
@@ -502,7 +503,7 @@ void LevelEditSelect::GUIEventCallback_OnEvent(std::string name,GUIObject* obj,i
 				levels->removeLevel(selectedNumber->getNumber());
 			}
 
-			//And refresh the selection screen.
+			//selection 창을 새로고침
 			refresh();
 		}
 	}else if(name=="cmdEdit"){
@@ -510,25 +511,25 @@ void LevelEditSelect::GUIEventCallback_OnEvent(std::string name,GUIObject* obj,i
 			levels->setCurrentLevel(selectedNumber->getNumber());
 			setNextState(STATE_LEVEL_EDITOR);
 
-			//Pick music from the current music list.
+			//현재 music list에서 music을 고른다.
 			getMusicManager()->pickMusic();
 		}
 	}
 
-	//Check for levelpack properties events.
+	//levelpack 속성 이벤트를 체크한다.
 	if(name=="cfgOK"){
-		//Now loop throught the children of the GUIObjectRoot in search of the fields.
+		//필드를 찾기 위해 GUIObjectRoot의 자식들을 Loop 돈다.
 		for(unsigned int i=0;i<GUIObjectRoot->childControls.size();i++){
 			if(GUIObjectRoot->childControls[i]->name=="LvlpackName"){
-				//Check if the name changed.
+				//name이 바뀌었는지 체크한다.
 				if(packName!=GUIObjectRoot->childControls[i]->caption){
-					//Delete the old one.
+					//오래된것을 지운다.
 					if(!packName.empty()){
 						if(!renameDirectory((getUserPath(USER_DATA)+"custom/levelpacks/"+packName).c_str(),(getUserPath(USER_DATA)+"custom/levelpacks/"+GUIObjectRoot->childControls[i]->caption).c_str())){
 							cerr<<"ERROR: Unable to move levelpack directory "<<(getUserPath(USER_DATA)+"custom/levelpacks/"+packName)<<" to "<<(getUserPath(USER_DATA)+"custom/levelpacks/"+GUIObjectRoot->childControls[i]->caption)<<endl;
 						}
 
-						//Remove the old one from the levelpack manager.
+						//Rlevelpack manager에서 오래된 것을 지운다.
 						getLevelPackManager()->removeLevelPack(packName);
 
 						//And the levelpack list.
@@ -540,11 +541,11 @@ void LevelEditSelect::GUIEventCallback_OnEvent(std::string name,GUIObject* obj,i
 								levelpacks->value=levelpacks->item.size()-1;
 						}
 					}else{
-						//It's a new levelpack so we need to change the levels array.
+						//새로운 levelpack이기 때문에 levels의 배열을 바꾸어야 한다.
 						LevelPack* pack=new LevelPack;
 						levels=pack;
 
-						//Now create the dirs.
+						//그리고 dirs을 만든다.
 						if(!createDirectory((getUserPath(USER_DATA)+"custom/levelpacks/"+GUIObjectRoot->childControls[i]->caption).c_str())){
 							cerr<<"ERROR: Unable to create levelpack directory "<<(getUserPath(USER_DATA)+"custom/levelpacks/"+GUIObjectRoot->childControls[i]->caption)<<endl;
 						}
@@ -552,17 +553,17 @@ void LevelEditSelect::GUIEventCallback_OnEvent(std::string name,GUIObject* obj,i
 							cerr<<"ERROR: Unable to create levelpack file "<<(getUserPath(USER_DATA)+"custom/levelpacks/"+GUIObjectRoot->childControls[i]->caption+"/levels.lst")<<endl;
 						}
 					}
-					//And set the new name.
+					//새로운 name을 설정한다.
 					packName=GUIObjectRoot->childControls[i]->caption;
 					levels->levelpackName=packName;
 					levels->levelpackPath=(getUserPath(USER_DATA)+"custom/levelpacks/"+packName+"/");
 
-					//Also add the levelpack location
+					//levelpack의 위치를 추가한다.
 					getLevelPackManager()->addLevelPack(levels);
 					levelpacks->item.push_back(GUIObjectRoot->childControls[i]->caption);
 					levelpacks->value=levelpacks->item.size()-1;
 
-					//And call changePack.
+					//changePack함수를 부른다.
 					changePack();
 				}
 			}
@@ -573,36 +574,36 @@ void LevelEditSelect::GUIEventCallback_OnEvent(std::string name,GUIObject* obj,i
 				levels->congratulationText=GUIObjectRoot->childControls[i]->caption;
 			}
 		}
-		//Refresh the leveleditselect to show the correct information.
+		//올바른 정보를 보여주기 위해 leveleditselect를 새로고침
 		refresh();
 
-		//Save the configuration.
+		//설정(configuration) 저장
 		levels->saveLevels(getUserPath(USER_DATA)+"custom/levelpacks/"+packName+"/levels.lst");
 		getSettings()->setValue("lastlevelpack",packName);
 
-		//Clear the gui.
+		//gui를 clear함
 		if(GUIObjectRoot){
 			delete GUIObjectRoot;
 			GUIObjectRoot=NULL;
 		}
 	}else if(name=="cfgCancel"){
-		//Check if packName is empty, if so it was a new levelpack and we need to revert to an existing one.
+		//packName이 비어있는지 체크하고 만약 그렇다면 이것은 새로운 levelpack이었고 이미 있었던 것으로 되돌아가야 한다.
 		if(packName.empty()){
 			packName=levelpacks->item[levelpacks->value];
 			changePack();
 		}
 
-		//Clear the gui.
+		//gui를 clear함
 		if(GUIObjectRoot){
 			delete GUIObjectRoot;
 			GUIObjectRoot=NULL;
 		}
 	}
 
-	//Check for add level events.
+	//추가 level이벤트를 체크한다.
 	if(name=="cfgAddOK"){
-		//Check if the file name isn't null.
-		//Now loop throught the children of the GUIObjectRoot in search of the fields.
+		//file name 이 null이 아님을 체크한다.
+		//fields를 찾기 위해서 GUIObjectRoot의 자식들을 Loop돈다.
 		for(unsigned int i=0;i<GUIObjectRoot->childControls.size();i++){
 			if(GUIObjectRoot->childControls[i]->name=="LvlFile"){
 				if(GUIObjectRoot->childControls[i]->caption.empty()){
@@ -611,20 +612,20 @@ void LevelEditSelect::GUIEventCallback_OnEvent(std::string name,GUIObject* obj,i
 				}else{
 					string tmp_caption = GUIObjectRoot->childControls[i]->caption;
 
-					//Replace all spaces with a underline.
+					//모든 공간을 _(underLine)으로 대체한다.
 					size_t j;
 					for(;(j=tmp_caption.find(" "))!=string::npos;){
 						tmp_caption.replace(j,1,"_");
 					}
 
-					//If there isn't ".map" extension add it.
+					//".map"이 없다면 추가한다.
 					size_t found=tmp_caption.find_first_of(".");
 					if(found!=string::npos)
 						tmp_caption.replace(tmp_caption.begin()+found+1,tmp_caption.end(),"map");
 					else if (tmp_caption.substr(found+1)!="map")
 						tmp_caption.append(".map");
 
-					/* Create path and file in it */
+					/* 경로를 만들고 파일을 그 안에 둔다.*/
 					string path=(levels->levelpackPath+"/"+tmp_caption);
 					if(packName=="Custom Levels"){
 						path=(getUserPath(USER_DATA)+"/custom/levels/"+tmp_caption);
@@ -634,16 +635,16 @@ void LevelEditSelect::GUIEventCallback_OnEvent(std::string name,GUIObject* obj,i
 					FILE* f;
 					f=fopen(path.c_str(),"rb");
 
-					//Check if it exists.
+					//있는지 체크한다.
 					if(f){
-						//Close the file.
+						//file을 닫는다.
 						fclose(f);
 
-						//Let the currentState render once to prevent multiple GUI overlapping and prevent the screen from going black.
+						//화면이 검게 변하거나 여러 GUI가 겹치는것을 막기위해 한번만 currentState를 render한다.
 						currentState->render();
 						levelEditGUIObjectRoot->render();
 
-						//Notify the user.
+						//user에게 알린다.
 						msgBox(("The file "+tmp_caption+" already exists.").c_str(),MsgBoxOKOnly,"Error");
 						return;
 					}
@@ -656,7 +657,7 @@ void LevelEditSelect::GUIEventCallback_OnEvent(std::string name,GUIObject* obj,i
 						levels->saveLevels(getUserPath(USER_DATA)+"custom/levelpacks/"+packName+"/levels.lst");
 					refresh();
 
-					//Clear the gui.
+					//gui를 clear함
 					if(GUIObjectRoot){
 						delete GUIObjectRoot;
 						GUIObjectRoot=NULL;
@@ -666,17 +667,17 @@ void LevelEditSelect::GUIEventCallback_OnEvent(std::string name,GUIObject* obj,i
 			}
 		}
 	}else if(name=="cfgAddCancel"){
-		//Clear the gui.
+		//gui를 clear함
 		if(GUIObjectRoot){
 			delete GUIObjectRoot;
 			GUIObjectRoot=NULL;
 		}
 	}
 
-	//Check for move level events.
+	//move level 이벤트를 체크함
 	if(name=="cfgMoveOK"){
-		//Check if the entered level number is valid.
-		//Now loop throught the children of the GUIObjectRoot in search of the fields.
+		//들어가는 level의 숫자가 유효한지 체크한다.
+		//fields를 찾기 위해서 GUIObjectRoot의 자식들을 Loop돈다.
 		int level=0;
 		int placement=0;
 		for(unsigned int i=0;i<GUIObjectRoot->childControls.size();i++){
@@ -692,35 +693,35 @@ void LevelEditSelect::GUIEventCallback_OnEvent(std::string name,GUIObject* obj,i
 			}
 		}
 
-		//Now we execute the swap/move.
-		//Check for the place before.
+		//그리고 swap/move를 실행한다.
+		//이전에 두었는지 체크한다.
 		if(placement==0){
-			//We place the selected level before the entered level.
+			//level에 들어가기 전에 선택된 level을 둔다
 			levels->moveLevel(selectedNumber->getNumber(),level-1);
 		}else if(placement==1){
-			//We place the selected level after the entered level.
+			//level에 들어간 후 선택된 level을 둔다.
 			if(level<selectedNumber->getNumber())
 				levels->moveLevel(selectedNumber->getNumber(),level);
 			else
 				levels->moveLevel(selectedNumber->getNumber(),level+1);
 		}else if(placement==2){
-			//We swap the selected level with the entered level.
+			//들어가진 level과 선택된 level을 바꾼다.
 			levels->swapLevel(selectedNumber->getNumber(),level-1);
 		}
 
-		//And save the change.
+		//변화를 저장한다.
 		if(packName!="Custom Levels")
 			levels->saveLevels(getUserPath(USER_DATA)+"custom/levelpacks/"+packName+"/levels.lst");
 
 		refresh();
 
-		//Clear the gui.
+		//gui를 clear함
 		if(GUIObjectRoot){
 			delete GUIObjectRoot;
 			GUIObjectRoot=NULL;
 		}
 	}else if(name=="cfgMoveCancel"){
-		//Clear the gui.
+		//gui를 clear함
 		if(GUIObjectRoot){
 			delete GUIObjectRoot;
 			GUIObjectRoot=NULL;

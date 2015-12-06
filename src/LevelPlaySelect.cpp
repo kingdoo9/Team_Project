@@ -1,3 +1,4 @@
+// 60142234 강승덕 소스 분석
 /*
  * Copyright (C) 2011-2012 Me and My Shadow
  *
@@ -42,15 +43,15 @@ static string levelDescription,levelMedal2,levelMedal3,levelTime,levelRecs;
 static string bestTimeFilePath,bestRecordingFilePath;
 
 LevelPlaySelect::LevelPlaySelect():LevelSelect(_("Select Level")){
-	//Load the play button if needed.
+	//필요하다면 play bottons를 로드시킴
 	playButtonImage=loadImage(getDataPath()+"gfx/playbutton.png");
 	timeIcon=loadImage(getDataPath()+"gfx/time.png");
 	recordingsIcon=loadImage(getDataPath()+"gfx/recordings.png");
-	
-	//Create the gui.
+
+	//gui를 생성시킴
 	createGUI(true);
-	
-	//Show level list
+
+	//level list를 보여줌
 	refresh();
 }
 
@@ -61,7 +62,7 @@ LevelPlaySelect::~LevelPlaySelect(){
 }
 
 void LevelPlaySelect::createGUI(bool initial){
-	//Create the play button.
+	//play button을 생성
 	if(initial){
 		play=new GUIObject(SCREEN_WIDTH-240,SCREEN_HEIGHT-60,240,32,GUIObjectButton,_("Play"));
 	}else{
@@ -79,27 +80,27 @@ void LevelPlaySelect::refresh(bool change){
 	int m=levels->getLevelCount();
 	numbers.clear();
 
-	//clear the selected level
+	//selected level을 clear함
 	if(selectedNumber!=NULL){
 		delete selectedNumber;
 		selectedNumber=NULL;
 	}
-	//Recreate the non selected number.
+	//선택되지 않은 number을 재생성함.
 	selectedNumber=new Number();
 	SDL_Rect box={40,SCREEN_HEIGHT-130,50,50};
 	selectedNumber->init(" ",box);
 	selectedNumber->setLocked(true);
-	
+
 	levelDescription=_("Choose a level");
 	levelMedal2=string(_("Time:"));
 	levelMedal3=string(_("Recordings:"));
 	levelTime=string("- / -");
 	levelRecs=string("- / -");
-	
+
 	bestTimeFilePath.clear();
-	bestRecordingFilePath.clear();	
-	
-	//Disable the play button.
+	bestRecordingFilePath.clear();
+
+	//play button 비활성화
 	play->enabled=false;
 
 	for(int n=0; n<m; n++){
@@ -137,21 +138,21 @@ void LevelPlaySelect::selectNumber(unsigned int number,bool selected){
 	if(selected){
 		levels->setCurrentLevel(number);
 		setNextState(STATE_GAME);
-		
-		//Pick music from the current music list.
+
+		//현재 music list 에서 music을 고른다.
 		getMusicManager()->pickMusic();
 	}else{
 		displayLevelInfo(number);
 	}
 }
 
-void LevelPlaySelect::checkMouse(){  
+void LevelPlaySelect::checkMouse(){
 	int x,y;
-	
-	//Get the current mouse location.
+
+	//현재 마우스 좌표를 얻음
 	SDL_GetMouseState(&x,&y);
-	
-	//Check if we should replay the record.
+
+	//record를 replay하는지 체크함.
 	if(selectedNumber!=NULL){
 		SDL_Rect mouse={x,y,0,0};
 		if(!bestTimeFilePath.empty()){
@@ -160,8 +161,8 @@ void LevelPlaySelect::checkMouse(){
 				Game::recordFile=bestTimeFilePath;
 				levels->setCurrentLevel(selectedNumber->getNumber());
 				setNextState(STATE_GAME);
-				
-				//Pick music from the current music list.
+
+				//현재 music list 에서 music을 고른다.
 				getMusicManager()->pickMusic();
 				return;
 			}
@@ -172,20 +173,20 @@ void LevelPlaySelect::checkMouse(){
 				Game::recordFile=bestRecordingFilePath;
 				levels->setCurrentLevel(selectedNumber->getNumber());
 				setNextState(STATE_GAME);
-				
-				//Pick music from the current music list.
+
+				//현재 music list 에서 music을 고른다.
 				getMusicManager()->pickMusic();
 				return;
 			}
 		}
 	}
-	
-	//Call the base method from the super class.
+
+	//super class로부터 온 기본함수를 qnfma
 	LevelSelect::checkMouse();
 }
 
 void LevelPlaySelect::displayLevelInfo(int number){
-	//Update currently selected level
+	//현재 선택된 level을 update
 	if(selectedNumber==NULL){
 		selectedNumber=new Number();
 	}
@@ -193,10 +194,10 @@ void LevelPlaySelect::displayLevelInfo(int number){
 	selectedNumber->init(number,box);
 	selectedNumber->setLocked(false);
 
-	//Show level description
+	//level description을 보여준다.
 	levelDescription=levels->getLevelName(number);
 
-	//Show level medal
+	//level medal을 보여준다.
 	int medal=levels->getLevel(number)->won;
 	int time=levels->getLevel(number)->time;
 	int targetTime=levels->getLevel(number)->targetTime;
@@ -214,11 +215,11 @@ void LevelPlaySelect::displayLevelInfo(int number){
 		}
 	}
 	selectedNumber->setMedal(medal);
-	
-	//Show best time and recordings
+
+	//최고의 time 과 recordings을 보여줌.
 	if(medal){
 		char s[64];
-		
+
 		if(time>0)
 			if(targetTime>0)
 				sprintf(s,"%-.2fs / %-.2fs",time/40.0f,targetTime/40.0f);
@@ -240,11 +241,11 @@ void LevelPlaySelect::displayLevelInfo(int number){
 		levelTime=string("- / -");
 		levelRecs=string("- / -");
 	}
-	
-	//Show the play button.
+
+	//play button을 보여줌
 	play->enabled=true;
-	
-	//Check if there is auto record file
+
+	//자동적으로 file이 기록되었는지 확인.
 	levels->getLevelAutoSaveRecordPath(number,bestTimeFilePath,bestRecordingFilePath,false);
 	if(!bestTimeFilePath.empty()){
 		FILE *f;
@@ -267,12 +268,12 @@ void LevelPlaySelect::displayLevelInfo(int number){
 }
 
 void LevelPlaySelect::render(){
-	//First let the levelselect render.
+	//levelselect 를 render 시킴
 	LevelSelect::render();
-	
+
 	int x,y,dy=0,m=levels->getLevelCount();
-	
-	//Get the current mouse location.
+
+	//현재 마우스 좌표를 얻음
 	SDL_GetMouseState(&x,&y);
 
 	if(levelScrollBar)
@@ -281,76 +282,76 @@ void LevelPlaySelect::render(){
 	if(m>dy*LEVELS_PER_ROW+LEVELS_DISPLAYED_IN_SCREEN)
 		m=dy*LEVELS_PER_ROW+LEVELS_DISPLAYED_IN_SCREEN;
 	y+=dy*64;
-	
+
 	SDL_Rect mouse={x,y,0,0};
-	
-	//Show currently selected level (if any)
+
+	//현재 선택된 level을 보여줌 (어떤 것이라도)
 	if(selectedNumber!=NULL){
 		selectedNumber->show(0);
-		
+
 		SDL_Color fg={0,0,0};
 		SDL_Surface* bm;
-		
+
 		if(!levelDescription.empty()){
 			bm=TTF_RenderUTF8_Blended(fontText,_C(levels->getDictionaryManager(),levelDescription.c_str()),fg);
 			applySurface(100,SCREEN_HEIGHT-130+(50-bm->h)/2,bm,screen,NULL);
 			SDL_FreeSurface(bm);
 		}
-		
-		//Only show the replay if the level is completed (won).
+
+		//오직 level이 완료(이김)되야 repaly를 보여줌
 		if(selectedNumber->getNumber()>=0 && selectedNumber->getNumber()<levels->getLevelCount()) {
 			if(levels->getLevel(selectedNumber->getNumber())->won){
 				if(!bestTimeFilePath.empty()){
 					SDL_Rect r={0,0,32,32};
 					SDL_Rect box={SCREEN_WIDTH-420,SCREEN_HEIGHT-130,372,32};
-					
+
 					if(checkCollision(box,mouse)){
 						r.x=32;
 						SDL_FillRect(screen,&box,0xFFCCCCCC);
 					}
-					
+
 					applySurface(SCREEN_WIDTH-80,SCREEN_HEIGHT-130,playButtonImage,screen,&r);
 				}
-				
+
 				if(!bestRecordingFilePath.empty()){
 					SDL_Rect r={0,0,32,32};
 					SDL_Rect box={SCREEN_WIDTH-420,SCREEN_HEIGHT-98,372,32};
-					
+
 					if(checkCollision(box,mouse)){
 						r.x=32;
 						SDL_FillRect(screen,&box,0xFFCCCCCC);
 					}
-					
+
 					applySurface(SCREEN_WIDTH-80,SCREEN_HEIGHT-98,playButtonImage,screen,&r);
 				}
 			}
 		}
-		
+
 		if(!levelMedal2.empty()){
-			//Draw the icon.
+			//icon을 그림
 			applySurface(SCREEN_WIDTH-405,SCREEN_HEIGHT-130+3,timeIcon,screen,NULL);
-			
-			//Now draw the text (title).
+
+			//text (title)을 draw 시킴
 			bm=TTF_RenderUTF8_Blended(fontText,levelMedal2.c_str(),fg);
 			applySurface(SCREEN_WIDTH-380,SCREEN_HEIGHT-130+3,bm,screen,NULL);
 			SDL_FreeSurface(bm);
-			
-			//Now draw the second text (value).
+
+			//두번째 text (value)을 draw 시킴
 			bm=TTF_RenderUTF8_Blended(fontText,levelTime.c_str(),fg);
 			applySurface(SCREEN_WIDTH-bm->w-80,SCREEN_HEIGHT-130+3,bm,screen,NULL);
 			SDL_FreeSurface(bm);
 		}
 
 		if(!levelMedal3.empty()){
-			//Draw the icon.
+			//icon을 그림
 			applySurface(SCREEN_WIDTH-405,SCREEN_HEIGHT-98+(6)/2,recordingsIcon,screen,NULL);
-			
-			//Now draw the text (title).
+
+			//text (title)을 draw 시킴
 			bm=TTF_RenderUTF8_Blended(fontText,levelMedal3.c_str(),fg);
 			applySurface(SCREEN_WIDTH-380,SCREEN_HEIGHT-98+(32-bm->h)/2,bm,screen,NULL);
 			SDL_FreeSurface(bm);
-			
-			//Now draw the second text (value).
+
+			//두번째 text (value)을 draw 시킴
 			bm=TTF_RenderUTF8_Blended(fontText,levelRecs.c_str(),fg);
 			applySurface(SCREEN_WIDTH-bm->w-80,SCREEN_HEIGHT-98+(32-bm->h)/2,bm,screen,NULL);
 			SDL_FreeSurface(bm);
@@ -361,26 +362,26 @@ void LevelPlaySelect::render(){
 void LevelPlaySelect::renderTooltip(unsigned int number,int dy){
 	SDL_Color fg={0,0,0};
 	char s[64];
-	
-	//Render the name of the level.
+
+	// level의 name을 render 시킴
 	SDL_Surface* name=TTF_RenderUTF8_Blended(fontText,_C(levels->getDictionaryManager(),levels->getLevelName(number)),fg);
 	SDL_Surface* time=NULL;
 	SDL_Surface* recordings=NULL;
-	
-	//The time it took.
+
+	//걸린 시간.
 	if(levels->getLevel(number)->time>0){
 		sprintf(s,"%-.2fs",levels->getLevel(number)->time/40.0f);
 		time=TTF_RenderUTF8_Blended(fontText,s,fg);
 	}
-	
-	//The number of recordings it took.
+
+	//사용한 recordings키의 개수
 	if(levels->getLevel(number)->recordings>=0){
 		sprintf(s,"%d",levels->getLevel(number)->recordings);
 		recordings=TTF_RenderUTF8_Blended(fontText,s,fg);
 	}
-	
-	
-	//Now draw a square the size of the three texts combined.
+
+
+	//세개의  texts를 조함한 크기만큼 사각형을 draw한다.
 	SDL_Rect r=numbers[number].box;
 	r.y-=dy*64;
 	if(time!=NULL && recordings!=NULL){
@@ -390,8 +391,8 @@ void LevelPlaySelect::renderTooltip(unsigned int number,int dy){
 		r.w=name->w;
 		r.h=name->h;
 	}
-	
-	//Make sure the tooltip doesn't go outside the window.
+
+	//tooltip이 윈도우 창 밖으로 가지 않음을 확실히 한다.
 	if(r.y>SCREEN_HEIGHT-200){
 		r.y-=name->h+4;
 	}else{
@@ -399,20 +400,21 @@ void LevelPlaySelect::renderTooltip(unsigned int number,int dy){
 	}
 	if(r.x+r.w>SCREEN_WIDTH-50)
 		r.x=SCREEN_WIDTH-50-r.w;
-	
-	//Draw a rectange
+
+	//사각형을 그린다.
 	Uint32 color=0xFFFFFF00|240;
 	drawGUIBox(r.x-5,r.y-5,r.w+10,r.h+10,screen,color);
-	
-	//Calc the position to draw.
+
+	//그릴 위치를 계산 한다.
 	SDL_Rect r2=r;
-	
+
 	//Now we render the name if the surface isn't null.
+	//surface가 null이 아니라면 name을 render한다.
 	if(name!=NULL){
-		//Draw the name.
+		//name을 그린다.
 		SDL_BlitSurface(name,NULL,screen,&r2);
 	}
-	//Increase the height to leave a gap between name and stats.
+	//hight를 증가시킨다 name과 stats 사이의 간격을 줄이기 위해서
 	r2.y+=30;
 	if(time!=NULL){
 		//Now draw the time.
@@ -422,37 +424,37 @@ void LevelPlaySelect::renderTooltip(unsigned int number,int dy){
 		r2.x+=time->w+15;
 	}
 	if(recordings!=NULL){
-		//Now draw the recordings.
+		//recordings을 draw 시킴
 		applySurface(r2.x,r2.y,recordingsIcon,screen,NULL);
 		r2.x+=25;
 		SDL_BlitSurface(recordings,NULL,screen,&r2);
 	}
-	
-	//And free the surfaces.
+
+	//surfaces를 free시켜줌
 	SDL_FreeSurface(name);
 	SDL_FreeSurface(time);
-	SDL_FreeSurface(recordings); 
+	SDL_FreeSurface(recordings);
 }
 
 void LevelPlaySelect::resize(){
 	//Let the LevelSelect do his stuff.
 	LevelSelect::resize();
-	
-	//Now create our gui again.
+
+	//gui를 다시 그림
 	createGUI(false);
 }
 
 void LevelPlaySelect::GUIEventCallback_OnEvent(std::string name,GUIObject* obj,int eventType){
-	//Let the level select handle his GUI events.
+	//level select 에 관련된 gui 이벤트를 다룸.
 	LevelSelect::GUIEventCallback_OnEvent(name,obj,eventType);
-	
-	//Check for the play button.
+
+	//playbutton을 체크함.
 	if(name=="cmdPlay"){
 		if(selectedNumber!=NULL){
 			levels->setCurrentLevel(selectedNumber->getNumber());
 			setNextState(STATE_GAME);
-			
-			//Pick music from the current music list.
+
+			//현재 music list에서 music을 고름.
 			getMusicManager()->pickMusic();
 		}
 	}

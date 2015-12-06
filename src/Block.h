@@ -1,4 +1,4 @@
-/*
+/*60142233 강민경
  * Copyright (C) 2011-2012 Me and My Shadow
  *
  * This file is part of Me and My Shadow.
@@ -30,46 +30,46 @@ class Game;
 
 class Block: public GameObject{
 private:
-	//The Appearance of the block.
+	//블록의 모양.
 	ThemeBlockInstance appearance;
 		
-	//Integer that a block can use for all sorts of things.
+	//블록 사물의 모든 종류에 사용 할 수있는 정수.
 	int temp;
-	//The save for temp when the state of the block is saved.
+	//블록의 상태가 저장 될 때 온도에 대한 저장변수.
 	int tempSave;
 	
 	//flags:
-	//moving object 0x1=disabled
+	//객체 0x1로 이동 = 비활성화
 	//button bit0-1=behavior 0x4=pressed
 	//switch bit0-1=behavior
 	int flags;
-	//The save for flags when the state of the block is saved.
+	//블록의 상태가 저장 될 때 플래그에 대해 저장.
 	int flagsSave;
 
-	//Following is for moving blocks.
-	//The starting place for moving blocks.
+	//다음 블록을 이동합니다.
+	//블록을 이동하기위한 출발점.
 	SDL_Rect boxBase;
-	//Vector containing the poisitions of the moving block.
+	//이동 블록의 위치를 포함하는 벡터.
 	std::vector<SDL_Rect> movingPos;
 	int dx;
 	int xSave;
 	int dy;
 	int ySave;
-	//Boolean if the moving block loops his movement.
-	//Default value is true.
+	//이동 블록이 그의 움직임을 반복하는 경우 부울.
+	//기본값은 True
 	bool loop;
 	
-	//Flags of the block for the editor.
-	//moving object 0x1=disabled
-	//portal 0x1=automatic
-	//fragile =state
+	// 에디터 블록의 깃발.
+	// 이동 객체 0x1 = 비활성화
+	// 포털 0x1 = 자동
+	// fragile = state
 	int editorFlags;
 public:
-	//The id of the block.
+	//블록의 ID
 	std::string id;
-	//String containing the id of the destination for portals.
+	//포털의 대상의 ID를 포함하는 문자열
 	std::string destination;
-	//String containing the message of the notification block.
+	//통지 메시지의 블록을 포함하는 문자열.
 	std::string message;
 	
 	//Constructor.
@@ -80,26 +80,26 @@ public:
 	//Desturctor.
 	~Block();
 
-	//Method used to draw the block.
+	//블록을 그리는 데 사용하는 방법
 	void show();
 
-	//Returns the box of a given type.
-	//boxType: The type of box that should be returned.
-	//See GameObjects.h for the types.
-	//Returns: The box.
+	// 지정된 형태의 박스를 돌려줌
+	// boxType : 반환되는 상자의 유형
+	// 유형 GameObjects.h를 참조
+	// 반환 값 : 상자.
 	virtual SDL_Rect getBox(int boxType=BoxType_Current);
 	
-	//Method used to set the location of the block.
-	//It will set the base box x and y location.
+	// 메소드 블록의 위치를 설정하는데 사용.
+	// 이건 베이스 박스 x 및 y 위치를 설정한다.
 	//x: The new x location.
 	//y: The new y location.
 	virtual void setPosition(int x,int y);
 	
-	//Save the state of the block so we can load it later on.
+	// 나중에 로드 할 수있는 블록의 상태를 저장
 	virtual void saveState();
-	//Load the saved state of the block so.
+	// 블록의 저장된 상태를로드
 	virtual void loadState();
-	//Reset the block.
+	//블록을 재설정
 	//save: Boolean if the saved state should also be deleted.
 	virtual void reset(bool save);
 	
@@ -107,26 +107,27 @@ public:
 	//flags: TODO???
 	virtual void playAnimation(int flags);
 	
-	//Method called when there's an event.
-	//eventType: The type of event.
-	//See GameObjects.h for the eventtypes.
+	// 이벤트가있을 때 호출되는 메서드.
+	 // EVENTTYPE : 이벤트 유형
+	 // eventtypes에 대한 GameObjects.h를 참조
 	virtual void onEvent(int eventType);
 	
-	//Method used to retrieve a property from the block.
-	//propertyType: The type of property requested.
-	//See GameObjects.h for the properties.
-	//obj: Pointer to the player.
-	//Returns: Integer containing the value of the property.
+	// 블록의 속성을 검색하는 데 사용되는 방법
+	 // propertyType : 요청 된 속성의 유형
+	 // GameObjects.h를 참조하십시오.
+	 // OBJ : 플레이어의 포인터.
+	 // 반환 값 : 속성 값을 포함하는 정수.
 	virtual int queryProperties(int propertyType,Player* obj);
-	
-	//Get the editor data of the block.
-	//obj: The vector that will be filled with the editorData.
+
+	// 블록의 에디터 데이터를 가져옴
+ // OBJ : editorData으로 채워지는 벡터
 	virtual void getEditorData(std::vector<std::pair<std::string,std::string> >& obj);
-	//Set the editor data of the block.
-	//obj: The new editor data.
+
+	//블록 편집기 데이터를 설정 
+ // OBJ : 새로운 에디터 데이터.
 	virtual void setEditorData(std::map<std::string,std::string>& obj);
 	
-	//Method used for updating moving blocks or elements of blocks.
+	//이동 블록 또는 블록의 요소를 업데이트하는 방법
 	virtual void move();
 };
 

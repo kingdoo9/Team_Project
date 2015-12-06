@@ -1,4 +1,4 @@
-/*
+/* 60142233 강민경
  * Copyright (C) 2011-2012 Me and My Shadow
  *
  * This file is part of Me and My Shadow.
@@ -44,7 +44,7 @@ Settings::Settings(const string fileName): fileName(fileName){
 	settings["internet-proxy"]="";
 	settings["lang"]="";
 
-	//Key settings.
+	//키 설정
 	sprintf(s,"%d",(int)SDLK_UP);
 	settings["key_up"]=settings["key_jump"]=s;
 
@@ -106,7 +106,7 @@ Settings::Settings(const string fileName): fileName(fileName){
 
 
 void Settings::parseFile(){
-	//We open the settings file.
+	//세팅파일 열기
 	ifstream file;
 
 	file.open(fileName.c_str());
@@ -115,7 +115,7 @@ void Settings::parseFile(){
 		createFile();
 	}
 
-	//Now we're going to walk throught the file line by line.
+	//파일 라인을 따라 읽음
 	string line;
 	while(getline(file,line)){
 		string temp = line;
@@ -128,7 +128,7 @@ void Settings::parseFile(){
 		parseLine(temp);
 	}
 
-	//And close the file.
+	//파일닫음
 	file.close();
 }
 
@@ -140,18 +140,18 @@ void Settings::parseLine(const string &line){
 	temp.erase(0, temp.find_first_not_of("\t "));
 	int seperator = temp.find('=');
 
-	//Get the key and trim it.
+	//키를 취득하고 다듬기
 	string key, value;
 	key = line.substr(0, seperator);
 	if(key.find('\t')!=line.npos || key.find(' ')!=line.npos)
 		key.erase(key.find_first_of("\t "));
 	
-	//Get the value and trim it.
+	//값을 얻고 다듬기
 	value = line.substr(seperator + 1);
 	value.erase(0, value.find_first_not_of("\t "));
 	value.erase(value.find_last_not_of("\t ") + 1);
 	
-	//Add the setting to the settings map.
+	//설정 맵에 설정을 추가합니다.
 	setValue(key,value);
 }
 
@@ -203,7 +203,7 @@ void Settings::createFile(){
 	ofstream file;
 	file.open(fileName.c_str());
 	
-	//Default Config file.
+	//기본 구성 파일.
 	file<<"#MeAndMyShadow config file. Created on "<<endl;
 	
 	map<string, string>::iterator iter;
@@ -211,7 +211,7 @@ void Settings::createFile(){
 		file << iter->first << " = " << iter->second << endl;
 	}
 	
-	//And close the file.
+	//파일닫기
 	file.close();
 }
 
@@ -219,18 +219,18 @@ void Settings::save(){
 	ofstream file;
 	file.open(fileName.c_str());
 	
-	//First get the date and time.
+	//먼저 날짜와 시간을 갖기
 	time_t rawtime;
 	struct tm* timedate;
 	
 	time(&rawtime);
 	timedate=localtime(&rawtime);
 	
-	//Now write it to the first line of the config file.
-	//Note: There's no endl at the end since that's already in asctime(timeinfo).
+	// 설정 파일의 첫 번째 줄에 기록.
+// 참고 : asctime과 (timeinfo)에 이미 있기 때문에 마지막에 더 ENDL가 없다.
 	file<<"#MeAndMyShadow config file. Created on "<<asctime(timedate);
 	
-	//Loop through the settings and save them.
+	//설정을 통해 루프 및 저장합니다.
 	map<string,string>::const_iterator iter;
 	for(iter=settings.begin(); iter!=settings.end(); ++iter){
 		file<<iter->first<<" = "<<iter->second<<endl;
