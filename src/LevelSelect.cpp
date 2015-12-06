@@ -1,3 +1,4 @@
+// 60142234 강승덕 소스 분석
 /*
  * Copyright (C) 2011-2012 Me and My Shadow
  *
@@ -46,75 +47,75 @@ Number::Number(){
 	medal=0;
 	selected=false;
 	locked=false;
-	
-	//Set the default dimensions.
+
+	//초기 화면(demention)을 설정 한다.
 	box.x=0;
 	box.y=0;
 	box.h=50;
 	box.w=50;
-	
-	//Load the medals image.
+
+	//medals의 이미지를 불러온다.
 	background=loadImage(getDataPath()+"gfx/level.png");
 	backgroundLocked=loadImage(getDataPath()+"gfx/levellocked.png");
 	medals=loadImage(getDataPath()+"gfx/medals.png");
 }
 
 Number::~Number(){
-	//We only need to free the SDLSurface.
+	//SDLSurface free 해야한다.
 	if(image) SDL_FreeSurface(image);
 }
 
 void Number::init(int number,SDL_Rect box){
-	//First set the number and update our status.
+	//number를 처음으로 설정하고 status를 업데이트 한다.
 	this->number=number;
 
-	//Write our text, number+1 since the counting doens't start with 0, but with 1.
+	//text를 작성 0으로 시작하는게 아니라 1부터 세기 때문에 number+1을 한다.
 	std::stringstream text;
 	number++;
 	text<<number;
 
-	//Create the text image.
+	//text 이미지를 생성
 	SDL_Color black={0,0,0};
 	if(image) SDL_FreeSurface(image);
-	//Create the text image.
-	//Also check which font to use, if the number is higher than 100 use the small font.
+	//text 이미지를 생성
+	//사용할 폰트를 체크한다. 만약 수가 100 이상이라면 작은 font사이즈를 사용
 	image=TTF_RenderUTF8_Blended(fontGUI,text.str().c_str(),black);
 
-	//Set the new location of the number.
+	//number의 새로운 위치를 지정
 	this->box.x=box.x;
 	this->box.y=box.y;
 }
 
 void Number::init(std::string text,SDL_Rect box){
-	//First set the number and update our status.
+	//number를 처음으로 설정하고 status를 업데이트 한다.
 	this->number=-1;
 
-	//Create the text image.
+	//text 이미지를 설정함.
 	SDL_Color black={0,0,0};
 	if(image) SDL_FreeSurface(image);
 	image=TTF_RenderUTF8_Blended(fontGUI,text.c_str(),black);
 
-	//Set the new location of the number.
+	//number의 새로운 위치를 지정
 	this->box.x=box.x;
 	this->box.y=box.y;
 }
 
 void Number::show(int dy){
-	//First draw the background, also apply the yOffset(dy).
+	//background를 그리고 yoffset을 적용한다.
 	if(!locked)
 		applySurface(box.x,box.y-dy,background,screen,NULL);
 	else
 		applySurface(box.x,box.y-dy,backgroundLocked,screen,NULL);
-	//Now draw the text image over the background.
-	//We draw it centered inside the box.
+	//background위에 text이미지를 그린다.
+	//box안 가운데 위치하도록 한다.
 	applySurface((box.x+25-(image->w/2)),box.y-dy,image,screen,NULL);
 
-	//Draw the selection mark.
+	//selection mark를 draw
 	if(selected){
 		drawGUIBox(box.x,box.y-dy,50,50,screen,0xFFFFFF23);
 	}
-	
-	//Draw the medal.
+
+	//medal을 draw
 	if(medal>0){
 		SDL_Rect r={(medal-1)*30,0,30,30};
 		applySurface(box.x+30,(box.y+30)-dy,medals,screen,&r);
@@ -132,16 +133,16 @@ void Number::setMedal(int medal){
 
 /////////////////////LEVEL SELECT/////////////////////
 LevelSelect::LevelSelect(string titleText,LevelPackManager::LevelPackLists packType){
-	//clear the selected level
+	//선택된 level을 clear
 	selectedNumber=NULL;
-	
-	//Calculate the LEVELS_PER_ROW and LEVEL_ROWS if they aren't calculated already.
+
+	//이미 계산되어있지 않다면 LEVELS_PER_ROW and LEVEL_ROWS 를 계산함.
 	calcRows();
-	
+
 	//Render the title.
 	SDL_Color black={0,0,0};
 	title=TTF_RenderUTF8_Blended(fontTitle,titleText.c_str(),black);
-	
+
 	//create GUI (test only)
 	GUIObject* obj;
 	if(GUIObjectRoot){
@@ -155,7 +156,7 @@ LevelSelect::LevelSelect(string titleText,LevelPackManager::LevelPackLists packT
 	levelScrollBar=new GUIScrollBar(SCREEN_WIDTH*0.9,184,16,SCREEN_HEIGHT-344,ScrollBarVertical,0,0,0,1,4,true,false);
 	GUIObjectRoot->childControls.push_back(levelScrollBar);
 
-	//level pack description
+	//level pack 묘사
 	levelpackDescription=new GUIObject(0,140,SCREEN_WIDTH,32,GUIObjectLabel,"",0,true,true,GUIGravityCenter);
 	GUIObjectRoot->childControls.push_back(levelpackDescription);
 
@@ -166,29 +167,29 @@ LevelSelect::LevelSelect(string titleText,LevelPackManager::LevelPackLists packT
 	levelpacks->item=v;
 	levelpacks->value=0;
 
-	//Check if we can find the lastlevelpack.
+	//lastlevelpack을 찾을 수 있는지 체크
 	for(vector<string>::iterator i=v.begin(); i!=v.end(); ++i){
 		if(*i==getSettings()->getValue("lastlevelpack")){
 			levelpacks->value=i-v.begin();
 		}
 	}
-	
-	//Get the name of the selected levelpack.
+
+	//선택된 levelpack의 name을 얻음
 	string levelpackName=levelpacks->item[levelpacks->value];
 	string s1=getUserPath(USER_DATA)+"progress/"+levelpackName+".progress";
-	
-	//Load the progress.
+
+	//progress를 로드함.
 	levels=getLevelPackManager()->getLevelPack(v[levelpacks->value]);
 	levels->loadProgress(s1);
-	
+
 	//And add the levelpack single line listbox to the GUIObjectRoot.
 	GUIObjectRoot->childControls.push_back(levelpacks);
-	
+
 	obj=new GUIObject(20,20,-1,32,GUIObjectButton,_("Back"));
 	obj->name="cmdBack";
 	obj->eventCallback=this;
 	GUIObjectRoot->childControls.push_back(obj);
-	
+
 	section=1;
 }
 
@@ -199,15 +200,15 @@ LevelSelect::~LevelSelect(){
 	}
 	levelScrollBar=NULL;
 	levelpackDescription=NULL;
-	
+
 	selectedNumber=NULL;
-	
+
 	//Free the rendered title surface.
 	SDL_FreeSurface(title);
 }
 
 void LevelSelect::calcRows(){
-	//Calculate the number of rows and the number of levels per row.
+	//열(row)와 한열 속에 들어가는 levels의 수를 계산한다.
 	LEVELS_PER_ROW=(SCREEN_WIDTH*0.8)/64;
 	int LEVEL_ROWS=(SCREEN_HEIGHT-344)/64;
 	LEVELS_DISPLAYED_IN_SCREEN=LEVELS_PER_ROW*LEVEL_ROWS;
@@ -215,12 +216,12 @@ void LevelSelect::calcRows(){
 
 void LevelSelect::selectNumberKeyboard(int x,int y){
 	if(section==2){
-		//Move selection
+		//selection을 움직임
 		int realNumber=0;
 		if(selectedNumber)
 			realNumber=selectedNumber->getNumber()+x+(y*LEVELS_PER_ROW);
-		
-		//If selection is outside of the map grid, change section
+
+		//만약 selection이 map grid밖에 있다면 section을 바꾼다.
 		if(realNumber<0 || realNumber>numbers.size()-1){
 			section=1;
 			for(int i=0;i<levels->getLevelCount();i++){
@@ -228,7 +229,7 @@ void LevelSelect::selectNumberKeyboard(int x,int y){
 				refresh();
 			}
 		}else{
-			//If not, move selection
+			//그렇지 않다면 selection을 움직인다.
 			if(!numbers[realNumber].getLocked()){
 				for(int i=0;i<levels->getLevelCount();i++){
 					numbers[i].selected=(i==realNumber);
@@ -237,18 +238,18 @@ void LevelSelect::selectNumberKeyboard(int x,int y){
 			}
 		}
 	}else if(section==1){
-		//Loop through levelpacks and update GUI
+		//levelpacks를 loop 돌고 GUI를 업데이트 함.
 		levelpacks->value+=x;
-		
+
 		if(levelpacks->value<0){
 			levelpacks->value=levelpacks->item.size()-1;
 		}else if(levelpacks->value>levelpacks->item.size()-1){
 			levelpacks->value=0;
 		}
-		
+
 		GUIEventCallback_OnEvent("cmdLvlPack",static_cast<GUIObject*>(levelpacks),0);
-		
-		//If up is pressed, change section
+
+		//up키가 눌렸다면 section을 바꿈.
 		if(y==1){
 			section=2;
 			selectNumber(0,false);
@@ -260,17 +261,17 @@ void LevelSelect::selectNumberKeyboard(int x,int y){
 }
 
 void LevelSelect::handleEvents(){
-	//Check for an SDL_QUIT event.
+	//SDL_QUIT 이벤트를 체크함.
 	if(event.type==SDL_QUIT){
 		setNextState(STATE_EXIT);
 	}
-	
-	//Check for a mouse click.
+
+	//mouse click을 체크함
 	if(event.type==SDL_MOUSEBUTTONUP && event.button.button==SDL_BUTTON_LEFT){
 		checkMouse();
 	}
-	
-	//Check focus movement
+
+	//focus된 움직임을 체크한다.
 	if(inputMgr.isKeyDownEvent(INPUTMGR_RIGHT)){
 		selectNumberKeyboard(1,0);
 	}else if(inputMgr.isKeyDownEvent(INPUTMGR_LEFT)){
@@ -280,18 +281,18 @@ void LevelSelect::handleEvents(){
 	}else if(inputMgr.isKeyDownEvent(INPUTMGR_DOWN)){
 		selectNumberKeyboard(0,1);
 	}
-	
-	//Check if enter is pressed
+
+	//enter키가 눌렸는지 체크한다.
 	if(section==2 && inputMgr.isKeyUpEvent(INPUTMGR_SELECT)){
 		selectNumber(selectedNumber->getNumber(),true);
 	}
-	
-	//Check if escape is pressed.
+
+	//escape키가 눌렸는지 체크한다.
 	if(inputMgr.isKeyUpEvent(INPUTMGR_ESCAPE)){
 		setNextState(STATE_MENU);
 	}
-	
-	//Check for scrolling down and up.
+
+	//scrolling 아래인지 위인지 체크한다.
 	if(event.type==SDL_MOUSEBUTTONDOWN && event.button.button==SDL_BUTTON_WHEELDOWN && levelScrollBar){
 		if(levelScrollBar->value<levelScrollBar->maxValue) levelScrollBar->value++;
 		return;
@@ -303,11 +304,11 @@ void LevelSelect::handleEvents(){
 
 void LevelSelect::checkMouse(){
 	int x,y,dy=0,m=numbers.size();
-	
-	//Get the current mouse location.
+
+	//현재 마우스 위치를 얻음
 	SDL_GetMouseState(&x,&y);
 
-	//Check if there's a scrollbar, if so get the value.
+	//scrollbar가 있는지 체크하고 만약 그렇다면 값을 얻어온다.
 	if(levelScrollBar)
 		dy=levelScrollBar->value;
 	//Upper bound of levels we'd like to display.
@@ -323,7 +324,7 @@ void LevelSelect::checkMouse(){
 				if(numbers[n].selected){
 					selectNumber(n,true);
 				}else{
-					//Select current level
+					//현재 level을 선택한다.
 					for(int i=0;i<levels->getLevelCount();i++){
 						numbers[i].selected=(i==n);
 					}
@@ -341,8 +342,8 @@ void LevelSelect::logic(){}
 void LevelSelect::render(){
 	int x,y,dy=0,m=numbers.size();
 	int idx=-1;
-	
-	//Get the current mouse location.
+
+	//현재 마우스 좌표를 얻어온다.
 	SDL_GetMouseState(&x,&y);
 
 	if(levelScrollBar)
@@ -354,19 +355,19 @@ void LevelSelect::render(){
 
 	SDL_Rect mouse={x,y,0,0};
 
-	//Draw the menu background.
+	//menu background를 그린다.
 	applySurface(0,0,menuBackground,screen,NULL);
-	//Draw the title.
+	//title을 그린다.
 	applySurface((SCREEN_WIDTH-title->w)/2,40-TITLE_FONT_RAISE,title,screen,NULL);
-	
-	//Loop through the level blocks and draw them.
+
+	//level blocks를 loop돌면서 그것들을 그린다.
 	for(int n=dy*LEVELS_PER_ROW;n<m;n++){
 		numbers[n].show(dy*64);
 		if(numbers[n].getLocked()==false && checkCollision(mouse,numbers[n].box)==true)
 			idx=n;
 	}
-	
-	//Show the tool tip text.
+
+	//tool tip text를 보여준다.
 	if(idx>=0){
 		renderTooltip(idx,dy);
 	}
@@ -375,7 +376,7 @@ void LevelSelect::render(){
 void LevelSelect::resize(){
 	calcRows();
 	refresh(false);
-	
+
 	//NOTE: We don't need to recreate the listbox and the back button, only resize the list.
 	levelpacks->left=(SCREEN_WIDTH-500)/2;
 	levelpackDescription->width = SCREEN_WIDTH;
@@ -398,9 +399,9 @@ void LevelSelect::GUIEventCallback_OnEvent(std::string name,GUIObject* obj,int e
 
 	string s1=getUserPath(USER_DATA)+"progress/"+static_cast<GUISingleLineListBox*>(obj)->item[obj->value]+".progress";
 	levels=getLevelPackManager()->getLevelPack(static_cast<GUISingleLineListBox*>(obj)->item[obj->value]);
-	//Load the progress file.
+	//progress file을 로드
 	levels->loadProgress(s1);
-	
-	//And refresh the numbers.
+
+	//numbers변수 새로고침.
 	refresh();
 }
