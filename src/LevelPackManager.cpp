@@ -1,3 +1,4 @@
+// 60142234 강승덕 소스 분석
 /*
  * Copyright (C) 2012 Me and My Shadow
  *
@@ -23,35 +24,35 @@
 #include <stdio.h>
 
 void LevelPackManager::loadLevelPack(std::string path){
-	//Load the levelpack.
+	//levelpack을 로드
 	LevelPack* levelpack=new LevelPack();
 	levelpack->loadLevels(path+"/levels.lst");
-	
-	//Check if the entry doesn't already exist.
+
+	//entry가 이미 존재하진 않는지 체크
 	if(levelpacks.find(levelpack->levelpackName)!=levelpacks.end()){
 		cerr<<"WARNING: Levelpack entry \""+levelpack->levelpackName+"\" already exist."<<endl;
 		return;
 	}
-	
-	//It doesn't exist so add it.
+
+	//존재하지 않으면 추가한다.
 	levelpacks[levelpack->levelpackName]=levelpack;
 }
 
 void LevelPackManager::addLevelPack(LevelPack* levelpack){
-	//Check if the entry doesn't already exist.
+	//entry가 이미 존재하진 않는지 체크
 	if(levelpacks.find(levelpack->levelpackName)!=levelpacks.end()){
 		cerr<<"WARNING: Levelpack entry \""+levelpack->levelpackName+"\" already exist."<<endl;
 		return;
 	}
-	
-	//It doesn't exist so add it.
+
+	//존재하지 않으면 추가한다.
 	levelpacks[levelpack->levelpackName]=levelpack;
 }
 
 void LevelPackManager::removeLevelPack(std::string name){
 	std::map<std::string,LevelPack*>::iterator it=levelpacks.find(name);
-	
-	//Check if the entry exists.
+
+	//entry가 있는지 확인
 	if(it!=levelpacks.end()){
 		levelpacks.erase(it);
 	}else{
@@ -64,16 +65,16 @@ LevelPack* LevelPackManager::getLevelPack(std::string name){
 }
 
 vector<string> LevelPackManager::enumLevelPacks(int type){
-	//The vector that will be returned.
+	//vector가 return 될 것이다.
 	vector<string> v;
-	
+
 	//Now do the type dependent adding.
 	switch(type){
 		case ALL_PACKS:
 		{
 			std::map<std::string,LevelPack*>::iterator i;
 			for(i=levelpacks.begin();i!=levelpacks.end();++i){
-				//We add everything except the "Custom Levels" pack since that's also in "Levels".
+				//levels안에있는 "Custom Levels" pack 을 제외한 모든것을 추가
 				if(i->first!="Custom Levels")
 					v.push_back(i->first);
 			}
@@ -83,7 +84,7 @@ vector<string> LevelPackManager::enumLevelPacks(int type){
 		{
 			std::map<std::string,LevelPack*>::iterator i;
 			for(i=levelpacks.begin();i!=levelpacks.end();++i){
-				//Only add levelpacks that are under the custom folder OR if it's the "Custom Levels" levelpack.
+				//"Custom Levels" levelpack.일 경우에 custom 폴더 안에 있는 levelpacks를 추가한다.
 				if(i->second->levelpackPath.find(getUserPath(USER_DATA)+"custom/")==0 || i->first=="Custom Levels"){
 					v.push_back(i->first);
 				}
@@ -91,8 +92,8 @@ vector<string> LevelPackManager::enumLevelPacks(int type){
 			break;
 		}
 	}
-	
-	//And return the vector.
+
+	//vector를 return
 	return v;
 }
 
@@ -104,12 +105,12 @@ void LevelPackManager::updateLanguage(){
 }
 
 LevelPackManager::~LevelPackManager(){
-	//We call destroy().
+	//destroy() 함수를 부른다.
 	destroy();
 }
 
 void LevelPackManager::destroy(){
-	//Loop through the levelpacks and delete them.
+	//levelpacks를 loop돌면서 delete한다.
 	std::map<std::string,LevelPack*>::iterator i;
 	for(i=levelpacks.begin();i!=levelpacks.end();++i){
 		delete i->second;
