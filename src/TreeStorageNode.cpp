@@ -1,4 +1,4 @@
-/*
+/* 코드 분석자 : 60142270 남채린 
  * Copyright (C) 2011-2012 Me and My Shadow
  *
  * This file is part of Me and My Shadow.
@@ -27,17 +27,17 @@
 using namespace std;
 
 TreeStorageNode::~TreeStorageNode(){
-	//The deconstructor will just calls destroy().
+	//The deconstructor will just calls destroy(). 소멸자는 destroy()를 부름 
 	destroy();
 }
 
 void TreeStorageNode::destroy(){
-	//Loop through the subnodes and delete them.
+	//Loop through the subnodes and delete them. 서브노드를 통해 루프하고 그것들을 삭제 
 	for(unsigned int i=0;i<subNodes.size();i++){
 		delete subNodes[i];
 	}
 	
-	//Now clear some stuff.
+	//Now clear some stuff. 몇몇의 물건을 클리어 
 	name.clear();
 	value.clear();
 	attributes.clear();
@@ -65,7 +65,7 @@ ITreeStorageBuilder* TreeStorageNode::newNode(){
 }
 
 void TreeStorageNode::newAttribute(std::string& name,std::vector<std::string>& value){
-	//Put the attribute in the attributes map.
+	//Put the attribute in the attributes map. 속성 맵에 속성을 넣어라 
 	attributes[name]=value;
 }
 
@@ -84,7 +84,8 @@ void* TreeStorageNode::getNextAttribute(void* pUserData,std::string& name,std::v
 void* TreeStorageNode::getNextNode(void* pUserData,ITreeStorageReader*& obj){
 	intptr_t i=(intptr_t)pUserData;
 	
-	//Check if the pointer is in range of the subNodes vector.
+	//Check if the pointer is in range of the subNodes vector. 
+	// 포인터가 서브노드 벡터의 범위에 있는지 아닌지 확인
 	if(i<(int)subNodes.size()){
 		obj=subNodes[i];
 		return (void*)(i+1);
