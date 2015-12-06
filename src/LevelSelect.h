@@ -1,3 +1,4 @@
+// 60142234 강승덕 소스 분석
 /*
  * Copyright (C) 2011-2012 Me and My Shadow
  *
@@ -32,135 +33,135 @@
 #include <vector>
 #include <string>
 
-//Class that represents a level in the levelselect menu.
+//levelselect menu안에 level을 대표하는 클래스
 class Number{
 private:
-	//The background image of the number.
+	//배경화면의 수
 	SDL_Surface* background;
-	//The background image of the number when it's locked.
+	//배경화면의 개수 그것이 잠기었을 때
 	SDL_Surface* backgroundLocked;
-	//The (text) image of the number.
+	//text이미지의 개수
 	SDL_Surface* image;
 
-	//Image containing the three stars a player can earn.
+	//player가 얻을 수 있는 세개의 별을 포함하는 이미지
 	SDL_Surface* medals;
 
-	//The number (or text).
+	//숫자나 텍스트
 	int number;
-	//Integer containing the medal the player got.
+	//player가 얻을 수 있는 medal을 포함하는 integer
 	//0 = none, 1 = bronze, 2 = silver, 3 = gold
 	int medal;
 
-	//Boolean if the number is locked or not.
+	//숫자가 잠겼는지 아닌지 체크하는 Boolean
 	bool locked;
 public:
-	//The location and size of the number.
+	//숫자의 크기와 위치
 	SDL_Rect box;
 
-	//If the Number is selected then we draw something indicates it.
+	//선택된 수가 있다면 그것을 가리키는 무언가를 draw한다.
 	bool selected;
 
-	//Constructor.
+	//생성자.
 	Number();
-	//Destructor.
+	//소멸자.
 	~Number();
 
-	//Method used for initialising the number.
+	//수를 초기화 하는 함수
 	//number: The number.
-	//box: The location and size of the number.
+	//box: 숫자의 크기와 위치
 	void init(int number,SDL_Rect box);
 
-	//Method used for initialising the number.
+	//수를 초기화 하는 함수
 	//text: The caption of the number.
-	//box: The location and size of the number.
+	//box: 숫자의 크기와 위치
 	void init(std::string text,SDL_Rect box);
 
-	//get current number.
+	//현재 수를 얻음.
 	inline int getNumber(){return number;}
 
-	//Method used to set the locked status of the number.
-	//locked: Boolean if it should be locked or not.
+	//수의 상태가 잠겼는지 설정할 때 사용하는 함수
+	//locked: 잠겼는지 아닌지 확인하는 Boolean함수
 	void setLocked(bool locked=true);
-	//Method used to retrieve the locked status of the number.
-	//Returns: True if the number is locked.
+	//수의 잠금 상태를 되돌려주는 함수
+	//Returns: 수가 잠겼으면 true를 반환
 	inline bool getLocked(){return locked;}
 
-	//Method used to set the medal for this number.
+	//이 수의 메달을 설정할 때 사용하는 함수
 	//medal: The new medal for this number.
 	void setMedal(int medal);
 
-	//Method that is used to draw the number.
+	//수를 그리는데 사용되는 함수
 	//dy: The y offset.
 	void show(int dy);
 };
 
-//This is the LevelSelect state, here you can select levelpacks and levels.
+//이 파일을 LevelSelect 상태파일이다. levels와 levelpacks 을 선택 할 수 있다
 class LevelSelect : public GameState,public GUIEventCallback{
 protected:
-	//Surface containing the title.
+	//title을 포함하는 surface
 	SDL_Surface* title;
 
-	//Vector containing the numbers.
+	//numbers를 포함하는 vector
 	std::vector<Number> numbers;
 
-	//Contains selected level number (displayed at bottom left corner).
-	//If it's NULL then nothing selected.
+	//선택된 level number를 포함한다.(좌측 하단 코너에서 보여짐)
+	//만약 null이라면 아무것도 선택되지 않음.
 	Number* selectedNumber;
 
-	//Pointer to the scrollbar.
+	//scrollbar의 pointer
 	GUIScrollBar* levelScrollBar;
-	//Pointer to the description.
+	//description의 pointer
 	GUIObject* levelpackDescription;
 
-	//Pointer to the levelpack list.
+	//levelpack list의 pointer
 	GUISingleLineListBox* levelpacks;
 
-	//Check where and if the mouse clicked on a number.
-	//If so select that number.
+	//number위에서 마우스가 어디를 선택했는지 체크
+	//만약그렇다면 number를 선택함.
 	virtual void checkMouse();
 
-	//Selected section for keyboard/gamepad control
+	//keyboard/gamepad control 의 부분을 선택
 	int section;
 
-	//The number of blocks in a row.
+	//열(row)의 블럭 개수.
 	int LEVELS_PER_ROW;
-	//The number of levels displayed on screen at once.
+	//한번에 스크린에 보여지는 levels의 개수
 	int LEVELS_DISPLAYED_IN_SCREEN;
 public:
-	//Constructor.
-	//titleText: The title that is shown at the top of the screen.
-	//packType: The type of levelpacks that should be listed (See LevelPackManager.h).
+	//생성자.
+	//titleText: 스크린 위쪽에 보여지는 title
+	//packType: list에 있는 levelpack의 type들. (LevelPackManager.h안에 있다.).
 	LevelSelect(std::string titleText,LevelPackManager::LevelPackLists packType=LevelPackManager::ALL_PACKS);
-	//Destructor.
+	//소멸자.
 	virtual ~LevelSelect();
 
-	//Method that will calculate the number of rows and the number of levels per row.
+	//열(row)의 개수와 한 열(row)에 있는 levels의 개수를 계산 할 함수
 	void calcRows();
 
-	//Method used to update the numbers and the scrollbar.
+	//scrollbar와 수를 update시켜주는 함수.
 	//change: Boolean if the levelpack changed, if not only the numbers need to be replaced.
 	virtual void refresh(bool change=true)=0;
 
-	//Method that is called when a number is selected.
+	//number이 선택되었을 때 불러오는 함수.
 	//number: The selected number.
-	//selected: Boolean if the number was already selected.
+	//selected: number이 이미 선택되었는지 아닌지의 Boolean 함수.
 	virtual void selectNumber(unsigned int number,bool selected)=0;
 
 	//Used for keyboard/gamepad navigation
 	void selectNumberKeyboard(int x,int y);
 
-	//Inherited from GameState.
+	//GameState에서 불러옴.
 	void handleEvents();
 	void logic();
 	void render();
 	void resize();
 
-	//Method that is called to render the tooltip.
+	//tooltip을 render하기 위해 불러오는 함수.
 	//number: The number that the tooltip should be drawn for.
 	//dy: The y offset of the number, used to draw the tooltip in the right place.
 	virtual void renderTooltip(unsigned int number,int dy)=0;
 
-	//GUI events will be handled here.
+	//GUI이벤트는 여기서 다룬다.
 	virtual void GUIEventCallback_OnEvent(std::string name,GUIObject* obj,int eventType)=0;
 };
 
