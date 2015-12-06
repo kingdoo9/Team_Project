@@ -38,18 +38,18 @@ vector<SDL_Rect> recordPlayerPosition,recordPlayerPosition_saved;
 #endif
 
 Player::Player(Game* objParent):xVelBase(0),yVelBase(0),objParent(objParent){
-	//Set the dimensions of the player.
-	//The size of the player is 21x40.
+	// 플레이어의 차원을 설정
+	// 플레이어의 사이즈 >> 22*40
 	box.x=0;
 	box.y=0;
 	box.w=21;
 	box.h=40;
 
-	//Set his velocity to zero.
+	// 플레이어의 속도를 0으로 설정
 	xVel=0;
 	yVel=0;
 
-	//Set the start position.
+	// 시작위치 세팅
 	fx=0;
 	fy=0;
 
@@ -464,7 +464,7 @@ void Player::move(vector<GameObject*> &levelObjects){
 					objParent->won=true;
 				}
 			}
-			
+
 			//Check if the object is a portal.
 			if(levelObjects[o]->type==TYPE_PORTAL && checkCollision(box,levelObjects[o]->getBox())){
 				//Check if the teleport id isn't empty.
@@ -663,7 +663,7 @@ void Player::move(vector<GameObject*> &levelObjects){
 										break;
 									}
 								}
-								
+
 								//Check collision with the player and the block and with the block and the spikes.
 								if(checkCollision(box,r)){
 									//We break the loop to prevent going round (and calling the die() method).
@@ -687,7 +687,7 @@ void Player::move(vector<GameObject*> &levelObjects){
 					//The player is squashed so first move him back.
 					box.x=lastX;
 					box.y=lastY;
-					
+
 					//Now call the die method.
 					die();
 				}

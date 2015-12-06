@@ -24,11 +24,11 @@
 #include "LevelPack.h"
 #include "GameState.h"
 
-//Timer used to maintain a constant number of fps.
+// 타이머가 FPS의 상수를 유지하는걸 하용
 extern Timer FPS;
-//Pointer to the current levelpack.
+// 현재의 levelpack을 가르킨다.
 extern LevelPack* levels;
-//The currentState.
+// 현재상태
 extern GameState* currentState;
 
 #endif

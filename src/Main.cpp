@@ -36,8 +36,7 @@
 #include <GL/glu.h>
 #endif
 
-//Variables for recording.
-//To enable picture recording uncomment the next line:
+// 녹화를 위한 변수
 //#define RECORD_PICUTRE_SEQUENCE
 #ifdef RECORD_PICUTRE_SEQUENCE
 bool recordPictureSequence=false;
@@ -46,11 +45,11 @@ int recordPictureIndex=0;
 
 int main(int argc, char** argv) {
 #ifdef _MSC_VER
-	//Fix the non-latin file name bug under Visual Studio
+	// 비쥬얼 스트디오 아래에있는 non-latin파일(이름이bug)을 고정시킨다.
 	setlocale(LC_ALL,"");
 #endif
 
-	//First parse the comand line arguments.
+	// command 라인의 논쟁을 첫번째로넘긴다.
 	int s=parseArguments(argc,argv);
 	if(s==-1){
 		printf("Usage: %s [OPTIONS] ...\n",argv[0]);
@@ -69,82 +68,83 @@ int main(int argc, char** argv) {
 		return 0;
 	}
 
-	//Try to configure the dataPath, userPath, etc...
+	// dataPath, userPath 등등의 환경을 설정한다.
 	if(configurePaths()==false){
 		fprintf(stderr,"FATAL ERROR: Failed to configure paths.\n");
 		return 1;
 	}
-	//Load the settings.
+	// 설정을 불러온다.
 	if(loadSettings()==false){
 		fprintf(stderr,"FATAL ERROR: Failed to load config file.\n");
 		return 1;
-	}	
-	//Initialise some stuff like SDL, the window, SDL_Mixer.
+	}
+
+	// SDL, 윈도우, SDL_Mixer 같은것을 초기화한다.
 	if(init()==false) {
 		fprintf(stderr,"FATAL ERROR: Failed to initalize game.\n");
 		return 1;
 	}
-	//Load some important files like the background music, default theme.
+	// 배경음악이나 default테마같은 중요한 파일들을 불러온다.
 	if(loadFiles()==false){
 		fprintf(stderr,"FATAL ERROR: Failed to load necessary files.\n");
 		return 1;
 	}
-	
-	//Set the currentState id to the main menu and create it.
+
+	// 메인메뉴에 현재 상태 id를 설정하고 그걸 생성한다.
 	stateID=STATE_MENU;
 	currentState=new Menu();
 
-	//Seed random.
+	// 랜덤 seed
 	srand((unsigned)time(NULL));
-	
-	//Set the fadeIn value to zero.
+
+	// 0에 fadeIn 값을 설정한다.
 	int fadeIn=0;
-	
-	//Keep the last resize event, this is to only process one.
+
+	// 마지막으로 사시즈 재정의된 사건을 저장하고 이건 불러오는 한가지이다.
 	SDL_Event lastResize={};
-	
-	//Start the game loop.
+
+	// 게임 순환을 시작한다.
 	while(stateID!=STATE_EXIT){
-		//We start the timer.
+		// 타이머를 시작한다.
 		FPS.start();
-		
-		//Loop the SDL events.
+
+		// sdl 사건을 loop
 		while(SDL_PollEvent(&event)){
-			//Check if user resizes the window.
+			// 만약 사용자가 윈도우를 재사이즈정의하면 체크한다.
 			if(event.type==SDL_VIDEORESIZE){
 				lastResize=event;
 
-				//Don't let other objects process this event (?)
+
 				continue;
 			}
-			
-			//Check if the fullscreen toggle shortcut is pressed (Alt+Enter).
+
+			// 만약 꽉찬화면 키가 살짝 눌리면 체크
 			if(event.type==SDL_KEYUP && event.key.keysym.sym==SDLK_RETURN && (event.key.keysym.mod & KMOD_ALT)){
 				getSettings()->setValue("fullscreen",getSettings()->getBoolValue("fullscreen")?"0":"1");
-				
-				//We need to create a new screen.
+
+				// 새로운 화면생셩이 필요하다.
 				if(!createScreen()){
 					//Screen creation failed so set to safe settings.
 					getSettings()->setValue("fullscreen","0");
 					getSettings()->setValue("width","800");
 					getSettings()->setValue("height","600");
-					
-					//Try it with the safe settings.
+
+					// 안전한 설정으로 시도한다.
 					if(!createScreen()){
-						//Everything fails so quit.
+						// 모든것이 실패하면 그만둔다.
 						setNextState(STATE_EXIT);
 						cerr<<"ERROR: Unable to create screen."<<endl;
 					}
 				}
-				
+
+				// 화면이 생성되면 테마를 불러온다.
 				//The screen is created, now load the (menu) theme.
 				if(!loadTheme()){
-					//Loading the theme failed so quit.
+					// 실패하거나 중지되면 테ㅏ를 불러온다.
 					setNextState(STATE_EXIT);
 					cerr<<"ERROR: Unable to load theme after toggling fullscreen."<<endl;
 				}
-				
-				//Don't let other objects process this event.
+
 				continue;
 			}
 
@@ -154,37 +154,35 @@ int main(int argc, char** argv) {
 				printf("Record Picture Sequence %s\n",recordPictureSequence?"ON":"OFF");
 			}
 #endif
-			//Let the input manager handle the events.
+			// 입력 관리자 다루는 이벤트를 시켜라
 			inputMgr.updateState(true);
-			//Let the currentState handle the events.
+			// 현재상태를 다루는 이벤트
 			currentState->handleEvents();
-			//Also pass the events to the GUI.
+			// 또한 GUI로 이벤트를 넘겨라
 			GUIObjectHandleEvents();
 		}
-		
-		//Process the resize event.
+
+		// ㅅ다시 사이즈 정의하는 사건의 과정
 		if(lastResize.type==SDL_VIDEORESIZE){
 			event=lastResize;
 			onVideoResize();
 
-			//After resize we erase the event type
+			// 크기를 다시 정의한 후 이벤트 타입을 지워라
 			lastResize.type=SDL_NOEVENT;
 		}
 
-		//maybe we should add a check here (??) to fix some bugs (ticket #47)
 		if(nextState!=STATE_NULL){
 			fadeIn=17;
 			changeState();
 		}
 		if(stateID==STATE_EXIT) break;
 
-		//update input state (??)
+		// 입력상태를 업데이트
 		inputMgr.updateState(false);
-		//Now it's time for the state to do his logic.
+		// 이제 그의 논리대로 행동할 시간이다.
 		currentState->logic();
-		
+
 		currentState->render();
-		//TODO: Shouldn't the gamestate take care of rendering the GUI?
 		if(GUIObjectRoot) GUIObjectRoot->render();
 		if(fadeIn>0&&fadeIn<255){
 			SDL_BlitSurface(screen,NULL,tempSurface,NULL);
@@ -202,16 +200,16 @@ int main(int argc, char** argv) {
 			SDL_SaveBMP(screen,(getUserPath(USER_CACHE)+s).c_str());
 		}
 #endif
-		//And draw the screen surface to the actual screen.
+	// 그리고 사실적일 화면이로 표면 화면을 그려라
 		flipScreen();
-		
-		//Check if nextState is set, meaning we should fade in and change state.
+
+		// 만약 다음상태가 설정되면 체크해라  우리는 희미해지고 상태가 바뀔거라는 의미이다.
 		if(nextState!=STATE_NULL){
 			fadeIn=17;
 			changeState();
 		}
-		
-		//Now calcualte how long we need to wait to keep a constant framerate.
+
+		// 이제 계싼해라 우리가 얼마나 기다려야하는지 프레임
 		int t=FPS.getTicks();
 		t=(1000/g_FPS)-t;
 		if(t>0){
@@ -219,12 +217,12 @@ int main(int argc, char** argv) {
 		}
 	}
 
-	//The game has ended, save the settings just to be sure.
+	// 게임이 끝나면 설정을 저장한다.
 	saveSettings();
-	
-	//Clean everything up.
+
+	// 모든것을 청소한다.
 	clean();
-	
-	//End of program.
+
+	// 프로그램을 많이끝낸다.
 	return 0;
 }
