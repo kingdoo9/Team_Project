@@ -95,7 +95,7 @@ private:
 	//부모 오브젝트
 	LevelEditor* parent;
 
-	//The position of window
+	//윈도우 창의 위치
 	SDL_Rect rect;
 
 	//배경화면
@@ -261,7 +261,7 @@ public:
 		if(event.type==SDL_MOUSEBUTTONDOWN && event.button.button==SDL_BUTTON_LEFT){
 			SDL_Rect mouse={event.button.x,event.button.y,0,0};
 
-			//Check if item is clicked
+			//item이 클릭되었는지 체크
 			for(int i=0;i<2;i++){
 				int j=startRow+i;
 				if(j>=maxRow) j-=maxRow;
@@ -273,7 +273,7 @@ public:
 					SDL_Rect r={rect.x+k*60+10,rect.y+i*60+50,60,60};
 
 					//check highlight
-					if(checkCollision(mouse,r)){
+					if(checkCollision(mouse,r)){ //마우스와 충돌하는지 체크함.
 						parent->currentType=idx;
 						return;
 					}
@@ -336,7 +336,7 @@ public:
 	int startRow,showedRow;
 	bool dragging;
 
-	//If selection is dirty
+	//선택에 뭐라도 남아있는지의 Boolean 변수
 	bool dirty;
 
 public:
@@ -728,7 +728,7 @@ LevelEditor::LevelEditor():Game(true){
 	//움직임
 	movingMark=loadImage(getDataPath()+"gfx/menu/moving.png");
 
-	//Create the semi transparent surface.
+	//반투명한 화면을 만든다.
 	placement=SDL_CreateRGBSurface(SDL_SWSURFACE|SDL_SRCALPHA,SCREEN_WIDTH,SCREEN_HEIGHT,32,0x000000FF,0x0000FF00,0x00FF0000,0);
 	SDL_SetColorKey(placement,SDL_SRCCOLORKEY|SDL_RLEACCEL,SDL_MapRGB(placement->format,255,0,255));
 	SDL_SetAlpha(placement,SDL_SRCALPHA,125);
@@ -894,7 +894,7 @@ void LevelEditor::saveLevel(string fileName){
 			sprintf(s,"%d",box.y);
 			obj1->value.push_back(s);
 
-			//Loop through the editor data and save it also.
+			//EditorData를 loop돌면서 저장.
 			vector<pair<string,string> > obj;
 			levelObjects[o]->getEditorData(obj);
 			for(unsigned int i=0;i<obj.size();i++){
@@ -924,7 +924,7 @@ void LevelEditor::handleEvents(){
 
 		//PLAY모드를 종료시킨다면 그에 따른 SET과정.
 		if(inputMgr.isKeyDownEvent(INPUTMGR_ESCAPE)){
-			//Reset the game and disable playMode.
+			//play모드가 종료되고 게임을 reset
 			Game::reset(true);
 			playMode=false;
 			camera.x=cameraSave.x;
@@ -3080,7 +3080,7 @@ void LevelEditor::render(){
 			SDL_FillRect(placement,&r,0);
 		}
 
-		//lacement surface위를 그렸는지 체크함
+		//placement surface위를 그렸는지 체크함
 		if(selectionDrag){
 			showSelectionDrag();
 		}else{
