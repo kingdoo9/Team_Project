@@ -268,7 +268,7 @@ public:
 	//dy: The relative y distance the camera moved.
 	void onCameraMove(int dx,int dy);
 	//물체위에서 enter 키가 눌렸을때 알려주는 함수.
-	//obj: Pointer to the GameObject entered above.
+	//obj: 엔터키가 눌려진 GameObject의 포인터
 	void onEnterObject(GameObject* obj);
 
 	//레벨에 오브직트를 추가할때 알려주는 함수
