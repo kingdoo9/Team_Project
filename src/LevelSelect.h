@@ -41,16 +41,16 @@ private:
 	SDL_Surface* backgroundLocked;
 	//The (text) image of the number.
 	SDL_Surface* image;
-	
+
 	//Image containing the three stars a player can earn.
 	SDL_Surface* medals;
-	
+
 	//The number (or text).
 	int number;
 	//Integer containing the medal the player got.
 	//0 = none, 1 = bronze, 2 = silver, 3 = gold
 	int medal;
-	
+
 	//Boolean if the number is locked or not.
 	bool locked;
 public:
@@ -69,7 +69,7 @@ public:
 	//number: The number.
 	//box: The location and size of the number.
 	void init(int number,SDL_Rect box);
-	
+
 	//Method used for initialising the number.
 	//text: The caption of the number.
 	//box: The location and size of the number.
@@ -77,18 +77,18 @@ public:
 
 	//get current number.
 	inline int getNumber(){return number;}
-	
+
 	//Method used to set the locked status of the number.
 	//locked: Boolean if it should be locked or not.
 	void setLocked(bool locked=true);
 	//Method used to retrieve the locked status of the number.
 	//Returns: True if the number is locked.
 	inline bool getLocked(){return locked;}
-	
+
 	//Method used to set the medal for this number.
 	//medal: The new medal for this number.
 	void setMedal(int medal);
-	
+
 	//Method that is used to draw the number.
 	//dy: The y offset.
 	void show(int dy);
@@ -99,26 +99,26 @@ class LevelSelect : public GameState,public GUIEventCallback{
 protected:
 	//Surface containing the title.
 	SDL_Surface* title;
-	
+
 	//Vector containing the numbers.
 	std::vector<Number> numbers;
-	
+
 	//Contains selected level number (displayed at bottom left corner).
 	//If it's NULL then nothing selected.
 	Number* selectedNumber;
-	
+
 	//Pointer to the scrollbar.
 	GUIScrollBar* levelScrollBar;
 	//Pointer to the description.
 	GUIObject* levelpackDescription;
-	
+
 	//Pointer to the levelpack list.
 	GUISingleLineListBox* levelpacks;
-	
+
 	//Check where and if the mouse clicked on a number.
 	//If so select that number.
 	virtual void checkMouse();
-	
+
 	//Selected section for keyboard/gamepad control
 	int section;
 
@@ -136,16 +136,16 @@ public:
 
 	//Method that will calculate the number of rows and the number of levels per row.
 	void calcRows();
-	
+
 	//Method used to update the numbers and the scrollbar.
 	//change: Boolean if the levelpack changed, if not only the numbers need to be replaced.
 	virtual void refresh(bool change=true)=0;
-	
+
 	//Method that is called when a number is selected.
 	//number: The selected number.
 	//selected: Boolean if the number was already selected.
 	virtual void selectNumber(unsigned int number,bool selected)=0;
-	
+
 	//Used for keyboard/gamepad navigation
 	void selectNumberKeyboard(int x,int y);
 
@@ -154,7 +154,7 @@ public:
 	void logic();
 	void render();
 	void resize();
-	
+
 	//Method that is called to render the tooltip.
 	//number: The number that the tooltip should be drawn for.
 	//dy: The y offset of the number, used to draw the tooltip in the right place.
