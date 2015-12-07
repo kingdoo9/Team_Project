@@ -52,6 +52,7 @@ class ThemeCharacter;
 
 
 //Instance class of a ThemeObject, this is used by the other Instance classes.
+// ThemeObject의 인스턴스 클래스로, 다른 인스턴스 클래스들에 의해 사용된다.
 class ThemeObjectInstance{
 public:
 	//사진을 가리키는 포인터
@@ -59,9 +60,9 @@ public:
 	//Pointer to the parent the object an instance os is.
 	ThemeObject* parent;
 	
-	//Integer containing the current animation frame.
+	//Integer containing the current animation frame. 현재 애니메이션 프레임을 포함하는 인티져
 	int animation;
-	//Integer containing the saved animation frame.
+	//Integer containing the saved animation frame. 저장된 애니메이션 프레임을 포함하는 인티져 
 	int savedAnimation;
 public:
 	// 생성자

@@ -1,3 +1,4 @@
+# 코드분석자 : 60142270 남채린
 # Locate SDL_mixer library
 # This module defines
 # SDLGFX_LIBRARY, the name of the library to link against
