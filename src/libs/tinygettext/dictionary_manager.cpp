@@ -1,3 +1,4 @@
+// 코드 분석자 : 60142270 남채린 
 //  tinygettext - A gettext replacement that works directly on .po files
 //  Copyright (C) 2006 Ingo Ruhnke <grumbel@gmx.de>
 //
@@ -120,6 +121,7 @@ DictionaryManager::get_dictionary(const Language& language)
       for(std::vector<std::string>::iterator filename = files.begin(); filename != files.end(); filename++)
       {
         // check if filename matches requested language
+		// 요청된 언어랑 파일이름이랑 매치하는지 아닌지 확인 
         if (has_suffix(*filename, ".po"))
         { // ignore anything that isn't a .po file
           Language po_language = Language::from_env(filename->substr(0, filename->size()-3));
@@ -207,7 +209,7 @@ DictionaryManager::get_language() const
 void
 DictionaryManager::set_charset(const std::string& charset_)
 {
-  clear_cache(); // changing charset invalidates cache
+  clear_cache(); // changing charset invalidates cache 캐시무효화 하고 캐릭터세트변경 
   charset = charset_;
 }
 
@@ -227,7 +229,7 @@ DictionaryManager::get_use_fuzzy() const
 void
 DictionaryManager::add_directory(const std::string& pathname)
 {
-  clear_cache(); // adding directories invalidates cache
+  clear_cache(); // adding directories invalidates cache 캐시 무효화 디렉토리 추가 
   search_path.push_back(pathname);
 }
 

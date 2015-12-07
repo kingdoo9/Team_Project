@@ -1,3 +1,4 @@
+// ÄÚµå ºÐ¼®ÀÚ : 60142270 ³²Ã¤¸° 
 //  tinygettext - A gettext replacement that works directly on .po files
 //  Copyright (C) 2006 Ingo Ruhnke <grumbel@gmx.de>
 //
@@ -191,7 +192,7 @@ LanguageSpec languages[] = {
   { "my", 0,    0, "Burmese"                     },
   { "my", "MM", 0, "Burmese (Myanmar)"           },
   { "nb", 0,    0, "Norwegian Bokmal"            },
-  { "nb", "NO", 0, "Norwegian Bokmål (Norway)"   },
+  { "nb", "NO", 0, "Norwegian Bokm? (Norway)"   },
   { "ne", 0,    0, "Nepali"                      },
   { "nl", 0,    0, "Dutch"                       },
   { "nl", "BE", 0, "Dutch (Belgium)"             },
@@ -295,7 +296,7 @@ resolve_language_alias(const std::string& name)
 
     // Aliases taken from /etc/locale.alias
     language_aliases["bokmal"]           = "nb_NO.ISO-8859-1";
-    language_aliases["bokmål"]           = "nb_NO.ISO-8859-1";
+    language_aliases["bokm?"]           = "nb_NO.ISO-8859-1";
     language_aliases["catalan"]          = "ca_ES.ISO-8859-1";
     language_aliases["croatian"]         = "hr_HR.ISO-8859-2";
     language_aliases["czech"]            = "cs_CZ.ISO-8859-2";
@@ -306,7 +307,7 @@ resolve_language_alias(const std::string& name)
     language_aliases["eesti"]            = "et_EE.ISO-8859-1";
     language_aliases["estonian"]         = "et_EE.ISO-8859-1";
     language_aliases["finnish"]          = "fi_FI.ISO-8859-1";
-    language_aliases["français"]         = "fr_FR.ISO-8859-1";
+    language_aliases["fran?is"]         = "fr_FR.ISO-8859-1";
     language_aliases["french"]           = "fr_FR.ISO-8859-1";
     language_aliases["galego"]           = "gl_ES.ISO-8859-1";
     language_aliases["galician"]         = "gl_ES.ISO-8859-1";

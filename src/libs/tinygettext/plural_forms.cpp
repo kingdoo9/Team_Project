@@ -1,3 +1,4 @@
+// 코드 분석자 : 60142270 남채린 
 //  tinygettext - A gettext replacement that works directly on .po files
 //  Copyright (C) 2006 Ingo Ruhnke <grumbel@gmx.de>
 //
@@ -51,6 +52,7 @@ PluralForms::from_string(const std::string& str)
   if (plural_forms.empty())
   {
     // Note that the plural forms here shouldn't contain any spaces
+	// 이곳에 복수의 폼이 다른 공간을 포함하지 않아야 하는 기록
     plural_forms["Plural-Forms:nplurals=1;plural=0;"] = PluralForms(1, plural1);
     plural_forms["Plural-Forms:nplurals=2;plural=(n!=1);"] = PluralForms(2, plural2_1);
     plural_forms["Plural-Forms:nplurals=2;plural=n!=1;"] = PluralForms(2, plural2_1);
@@ -67,7 +69,7 @@ PluralForms::from_string(const std::string& str)
     plural_forms["Plural-Forms:nplurals=4;plural=n==1?0:n==2?1:n>=3&&n<=10?2:3;"]=PluralForms(4, plural4_ar);
   }
   
-  // Remove spaces from string before lookup
+  // Remove spaces from string before lookup 찾기 이전의 스트링으로부터 공간을 제거 
   std::string space_less_str;
   for(std::string::size_type i = 0; i < str.size(); ++i)
     if (!isspace(str[i]))

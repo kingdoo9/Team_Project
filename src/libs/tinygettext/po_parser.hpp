@@ -1,3 +1,4 @@
+// 코드 분석자 : 60142270 남채린 
 //  tinygettext - A gettext replacement that works directly on .po files
 //  Copyright (C) 2009 Ingo Ruhnke <grumbel@gmx.de>
 //
