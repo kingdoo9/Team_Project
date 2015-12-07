@@ -46,7 +46,7 @@ public:
 		//level을 이겼는지 확인하는 Boolean
 		bool won;
 
-		//Integer containing the number of ticks (40 = 1s) it took to finish the level.
+		//level을 끝내기위해 걸리는 몇번의 째깍거림을 가지고있는 정수 (40 = 1S)
 		//만약 time이 없다면 값은 -1
 		int time;
 		//medal을 얻는데까지 목적 시간을 가지고 있다.
@@ -58,7 +58,7 @@ public:
 		//medal을 얻기 위한 목적 녹화의 개수를 가지고있다.
 		int targetRecordings;
 
-		//MD5 of level node. :/
+		//level 노드의 MD5
 		unsigned char md5Digest[16];
 	};
 private:
@@ -114,23 +114,23 @@ public:
 	//level2: 목적지
 	void moveLevel(unsigned int level1,unsigned int level2);
 	//레벨을 바꿈
-	//level1: The first level to swap.
-	//level2: The second level to swap.
+	//level1: 바꾸기위한 첫번째 level
+	//level2: 바꾸기위한 두번째 level
 	void swapLevel(unsigned int level1,unsigned int level2);
 
-	//주어진 level을 위한 levelFile을 얻음
-	//level: The level index to get the levelFileName from.
+	//주어진 level을 위해 levelFile을 얻음
+	//levelfileName으로부터 level의 인덱스를 얻는다.
 	//Returns: levelFileName을 포함한 String
 	const std::string& getLevelFile(int level=-1);
-	//thelevels의 levelpackPath를 얻음
+	//levels의 levelpackPath를 얻음
 	//Returns: levelpackPath를 포함한 String
 	const std::string& getLevelpackPath();
 	//주어진 level을 위한 levelName을 얻음
-	//level: The level index to get the levelName from.
+	//levelName으로부터 얻는 level index
 	//Returns: levelName를 포함한 String
 	const std::string& getLevelName(int level=-1);
 	//주어진 level을 위해 levelName을 설정
-	//level: The level index to get the levelName from.
+	//level: levelName으로부터 얻는 level index
 	//name: level의 새로운 이름
 	void setLevelName(unsigned int level,const std::string& name);
 	//주어진 level을 위한 MD5를 얻음
@@ -170,7 +170,7 @@ public:
 	//locked: level의 새로운 잠금 상태, default값은 잠금
 	void setLocked(unsigned int level,bool locked=false);
 
-	//levles를 clear
+	//levels를 clear
 	void clear();
 
 
