@@ -34,7 +34,7 @@ typedef void (WINAPI* F_MD5Init)(MD5_CTX *context);
 typedef void (WINAPI* F_MD5Update)(MD5_CTX *context, const unsigned char *input, unsigned int inlen);
 typedef void (WINAPI* F_MD5Final)(MD5_CTX *context);
 
-//first time calling API will be redirect to these functions
+// 첫번째로 부른 API는 이 함수를 다시보낼 것 이다.
 static void WINAPI myMD5Init(MD5_CTX *context);
 static void WINAPI myMD5Update(MD5_CTX *context, const unsigned char *input, unsigned int inlen);
 static void WINAPI myMD5Final(MD5_CTX *context);
@@ -95,9 +95,9 @@ static void WINAPI myMD5Final(MD5_CTX *context){
 
 #endif
 
-//compute the MD5 message digest of the n bytes at d and place it in md
-//(which must have space for 16 bytes of output). If md is NULL,
-//the digest is placed in a static array. 
+// n 바이트의 digest메세지는 계산하고 md에 존재한다.
+// 만약 MD가 NULL이면, 각각은 출력을 위해 16바이트의 스페이스를 가져야한다.
+// digest는 정적배열 안에 위치한다
 unsigned char *Md5::calc(const void *d, unsigned long n, unsigned char *md){
 #ifdef WIN32
 	static MD5_CTX ctx;
@@ -120,7 +120,7 @@ unsigned char *Md5::calc(const void *d, unsigned long n, unsigned char *md){
 char *Md5::toString(unsigned char *md){
 	static char s[40];
 	const char* hex="0123456789abcdef";
-	
+
 	for(int i=0;i<16;i++){
 		s[i*2]=hex[(md[i]&0xF0)>>4];
 		s[i*2+1]=hex[md[i]&0xF];
@@ -130,9 +130,9 @@ char *Md5::toString(unsigned char *md){
 	return s;
 }
 
-//initializes the class for calculating MD5.
+// MD5 계산을 위해 클래스를 초기화한다
 void Md5::init(){
-	//First check the size
+  // 첫번째로 사이즈를 체크한다
 	assert(sizeof(MD5_CTX)<=MD5_CTX_SIZE);
 
 #ifdef WIN32
@@ -142,9 +142,9 @@ void Md5::init(){
 #endif
 }
 
-//add chunks of the message to be hashed (len bytes at data). 
+// hash에 메세지의 구문을 더한다
 void Md5::update(const void *data, unsigned long len){
-	//First check the size
+  // 첫번째로 사이즈를 체크한다
 	assert(sizeof(MD5_CTX)<=MD5_CTX_SIZE);
 
 #ifdef WIN32
@@ -154,11 +154,11 @@ void Md5::update(const void *data, unsigned long len){
 #endif
 }
 
-//finished the caluclation, places the message digest in md,
-//which must have space for 16 bytes of output (or NULL).
+// 계산을 마치고, md에있는 메시지의 digest를 위치시킨다
+// 출력의 16바이트를 위해 스페이스를 반드시 가져야한다.
 unsigned char *Md5::final(unsigned char *md){
 	static unsigned char digest[16];
-	//First check the size
+  // 첫번째로 크기를 체크한다
 	assert(sizeof(MD5_CTX)<=MD5_CTX_SIZE);
 
 #ifdef WIN32

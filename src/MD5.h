@@ -24,26 +24,24 @@
 
 class Md5{
 public:
-	//compute the MD5 message digest of the n bytes at d and place it in md
-	//(which must have space for 16 bytes of output). If md is NULL,
-	//the digest is placed in a static array. 
+	// digest는 정적 배열에 위치해있다.
 	static unsigned char *calc(const void *d, unsigned long n, unsigned char *md);
 
-	//convert a 16-byte digest to string representation.
-	//the return value is in a static array.
+	// 16byte digest를 string 대표로 변환한다.
+	// 반환값은 정적 배열이다.
 	static char *toString(unsigned char *md);
 
-	//Following are lower-level functions.
+	// 따라오는 것은 낮은 레벨의 함수이다.
+	// MD5를 계산하기 위해 클래스를 초기화한다.
 
-	//initializes the class for calculating MD5.
 	void init();
-	//add chunks of the message to be hashed (len bytes at data). 
+	// HASH에 메세지 구분을 더한다.
 	void update(const void *data, unsigned long len);
-	//finished the caluclation, places the message digest in md,
-	//which must have space for 16 bytes of output (or NULL).
+	// 계산이 끝나면, 메세지 DIGEST를 MD에 위치시킨다.
+	// 출력을 위해 16바이트의 띄어쓰기가 필요하다.
 	unsigned char *final(unsigned char *md);
 private:
-	//byte array, should be large enough to holding MD5_CTX.
+	// BYTE 배열, MD5_CTX를 가질만큼 충분히 커야한다.
 	char md5_ctx[MD5_CTX_SIZE];
 };
 
