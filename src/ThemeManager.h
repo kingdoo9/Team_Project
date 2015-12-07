@@ -105,9 +105,9 @@ public:
 	//Vector containing the ThemeObjectInstances.
 	vector<ThemeObjectInstance> objects;
 	
-	//Integer containing the current animation frame.
+	//Integer containing the current animation frame. 현재 애니메이션 프레임을 포함하는 인티져
 	int animation;
-	//Integer containing the saved animation frame.
+	//Integer containing the saved animation frame. 저장된 애니메이션 프레임을 포함하는 인티져 
 	int savedAnimation;
 public:
 	//생성자
